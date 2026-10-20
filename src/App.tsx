@@ -1,5 +1,7 @@
+import { BoosterOpening } from './features/boosters/components/BoosterOpening'
+
 function App() {
-  return <></>
+  return <BoosterOpening />
 }
 
 export default App
