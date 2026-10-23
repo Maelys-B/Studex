@@ -5,6 +5,9 @@ export type CardKind = 'collection' | 'battle' | 'student'
 export type Card = {
     readonly id: number,
     name: string,
+    subtitle?: string,
+    image?: string,
+    color?: string,
     rarity: Rarity,
     type: CardKind,
 
