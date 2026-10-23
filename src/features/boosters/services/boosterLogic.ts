@@ -1,4 +1,4 @@
-import type { Card, CardKind, BoosterContent, Rarity } from '../types'
+import type { Card, CardKind, BoosterContent, Rarity, BoosterState } from '../types'
 
 const TABLE_LUCK: Record<Rarity, number> = {
     commun: 60,
@@ -60,3 +60,30 @@ export function openBooster(pool: Card[]): BoosterContent {
         student: pickRandom(pool, 'student', rollRarity())
     }
 }
+
+export const MAX_BOOSTERS = 5
+export const BOOSTER_INTERVAL_MS = 2 * 60 * 60 * 1000
+
+export function  refillBoosters(state: BoosterState, now: number): BoosterState {
+    if (state.stored >= MAX_BOOSTERS) return state
+
+    const gained = Math.floor((now - state.lastGainedAt) / BOOSTER_INTERVAL_MS)
+    if (gained <= 0) return state
+
+    return {
+        stored: Math.min(state.stored + gained, MAX_BOOSTERS),
+        lastGainedAt: state.lastGainedAt + gained * BOOSTER_INTERVAL_MS
+    }
+}
+
+export function consumeBooster(state: BoosterState, now: number): BoosterState | null {
+    const current = refillBoosters(state, now)
+    if (current.stored <= 0) return null
+
+    return {
+        stored: current.stored - 1,
+        lastGainedAt: current.stored >= MAX_BOOSTERS ? now : current.lastGainedAt
+    }
+}
+
+

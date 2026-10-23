@@ -1,7 +1,57 @@
 import type { Card } from '../types'
+import carteEtudiante01 from '../assets/carte_étudiante/carte_étudiante_01.png'
+import carteEtudiante02 from '../assets/carte_étudiante/carte_étudiante_02.png'
+import carteEtudiante03 from '../assets/carte_étudiante/carte_étudiante_03.png'
+import carteEtudiante04 from '../assets/carte_étudiante/carte_étudiante_04.png'
+import carteEtudiante05 from '../assets/carte_étudiante/carte_étudiante_05.png'
 
 export const CARD_POOL: Card[] = [
     // ---------- collection ----------
+    {
+        id: 31,
+        name: 'Maëlys.B',
+        subtitle: 'Adore le tennis mais elle est nul',
+        image: carteEtudiante01,
+        color: '#2aa9ad',
+        rarity: 'uncommun',
+        type: 'student'
+    },
+    {
+        id: 32,
+        name: 'Théo.B',
+        subtitle: 'Le roi du style entrepreneur',
+        image: carteEtudiante02,
+        color: '#ffe100',
+        rarity: 'rare',
+        type: 'student'
+    },
+    {
+        id: 33,
+        name: 'Mahé.P',
+        subtitle: 'Un chien',
+        image: carteEtudiante03,
+        color: '#00e5ff',
+        rarity: 'commun',
+        type: 'student'
+    },
+    {
+        id: 34,
+        name: 'Antoine.A',
+        subtitle: 'Un canadian Pinguoin',
+        image: carteEtudiante04,
+        color: '#0800ff',
+        rarity: 'epic',
+        type: 'student'
+    },
+    {
+        id: 35,
+        name: 'Julien.V',
+        subtitle: 'Le roi des girondins',
+        image: carteEtudiante05,
+        color: '#e100ff',
+        rarity: 'legendary',
+        type: 'student'
+    },
     { id: 1, name: 'Mon ordi qui rame', rarity: 'commun', type: 'collection' },
     { id: 2, name: 'Le café tiède', rarity: 'commun', type: 'collection' },
     { id: 3, name: 'La salle 204 sans prise', rarity: 'uncommun', type: 'collection' },
@@ -26,14 +76,4 @@ export const CARD_POOL: Card[] = [
     { id: 20, name: 'Le serveur en prod un vendredi', rarity: 'legendary', type: 'battle' },
 
     // ---------- student ----------
-    { id: 21, name: 'Alice Martin', rarity: 'commun', type: 'student' },
-    { id: 22, name: 'Bastien Leroy', rarity: 'commun', type: 'student' },
-    { id: 23, name: 'Chloé Dubois', rarity: 'uncommun', type: 'student' },
-    { id: 24, name: 'David Moreau', rarity: 'uncommun', type: 'student' },
-    { id: 25, name: 'Emma Laurent', rarity: 'rare', type: 'student' },
-    { id: 26, name: 'Farid Benali', rarity: 'rare', type: 'student' },
-    { id: 27, name: 'Gaëlle Petit', rarity: 'epic', type: 'student' },
-    { id: 28, name: 'Hugo Roux', rarity: 'epic', type: 'student' },
-    { id: 29, name: 'Inès Garnier', rarity: 'legendary', type: 'student' },
-    { id: 30, name: 'Jules Fontaine', rarity: 'legendary', type: 'student' },
 ]

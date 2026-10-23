@@ -1,13 +1,7 @@
 import { useBooster } from '../hooks/useBooster'
-import type { Card, Rarity } from '../types'
-
-const RARITY_COLORS: Record<Rarity, string> = {
-    commun: 'gray',
-    uncommun: 'green',
-    rare: 'blue',
-    epic: 'purple',
-    legendary: 'orange'
-}
+import { RARITY_COLORS } from './rarityColors'
+import { CardView } from './CardView'
+import type { Card } from '../types'
 
 function CardItem({ card }: { card: Card }) {
     return (
@@ -18,19 +12,20 @@ function CardItem({ card }: { card: Card }) {
 }
 
 export function BoosterOpening() {
-    const { content, open } = useBooster()
+    const { currentCard, isLast, index, cards, open, next, previous } = useBooster()
 
     return (
         <div>
             <button onClick={open}>Ouvrir un booster</button>
-            {content && (
-                <ul>
-                    {content.collection.map((card, i) => (
-                        <CardItem key={i} card={card} />
-                    ))}
-                    <CardItem card={content.battle} />
-                    <CardItem card={content.student} />
-                </ul>
+            {currentCard && (
+                <div>
+                    {currentCard.image
+                        ? <CardView card={currentCard} />
+                        : <ul><CardItem card={currentCard} /></ul>}
+                    <p>{index + 1} / {cards.length}</p>
+                    <button onClick={previous} disabled={index === 0}>←</button>
+                    <button onClick={next} disabled={isLast}>→</button>
+                </div>
             )}
         </div>
     )

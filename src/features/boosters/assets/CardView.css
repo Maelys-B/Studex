@@ -1,0 +1,45 @@
+.card {
+    --card-width: 320px;
+    container-type: inline-size;
+    aspect-ratio: 2 / 3;
+    width: var(--card-width);
+    position: relative;
+    overflow: hidden;
+    padding: calc(var(--card-width) * 0.06);
+    border: 6px solid;
+    border-radius: calc(var(--card-width) * 0.04);
+    box-sizing: border-box;
+}
+
+.card__title {
+    margin: 0;
+    font-family: 'Archivo Black', 'Arial Black', Impact, sans-serif;
+    font-size: 17cqw;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    color: rgb(255, 255, 255);
+    position: relative;
+    z-index: 1;
+}
+
+.card__subtitle {
+    margin: 2cqw 0 0;
+    font-size: 5.5cqw;
+    font-weight: 700;
+    color: rgb(255, 255, 255);
+    position: relative;
+    z-index: 1;
+}
+
+.card__image {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0 auto;
+    width: 85%;
+    height: auto;
+    transform: translateY(1%);
+    z-index: 0;
+}
