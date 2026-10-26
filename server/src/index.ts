@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
 import { cardsRouter } from './routes/cards.js'
+import { boostersRouter } from './routes/boosters.js'
 
 const app = express()
 
@@ -13,6 +14,7 @@ app.get('/api/health', (_req, res) => {
 })
 
 app.use('/api/cards', cardsRouter)
+app.use('/api/boosters', boostersRouter)
 
 const port = Number(process.env.PORT) || 3000
 app.listen(port, () => {

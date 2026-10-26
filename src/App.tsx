@@ -32,7 +32,7 @@ function App() {
     <div>
       <p>Bienvenue {user.pseudo}</p>
       <button onClick={logout}>se déconnecter</button>
-      <BoosterOpening />
+      <BoosterOpening userId={user.id} />
     </div>
   )
 }

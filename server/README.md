@@ -28,3 +28,7 @@ Le serveur tourne sur http://localhost:3000 et redémarre tout seul à chaque mo
 |---|---|---|
 | GET | `/api/health` | vérifier que le serveur répond |
 | GET | `/api/cards` | toutes les cartes du jeu |
+| GET | `/api/boosters` | stock de boosters du joueur (recalculé avec le temps écoulé) |
+| POST | `/api/boosters/open` | ouvre un booster : retire un booster du stock et renvoie les 5 cartes tirées |
+
+Les routes `/api/boosters` lisent l'identifiant du joueur dans l'en-tête `x-user-id`, en attendant l'authentification côté serveur. La table `user_boosters` est dans `db/schema.sql` : relancer ce fichier pour la créer (il est sans danger sur une base existante).

@@ -1,4 +1,4 @@
-import type { Card, CardKind, BoosterContent, Rarity, BoosterState } from '../types'
+import type { Card, CardKind, BoosterContent, Rarity, BoosterState } from '../types.js'
 
 const TABLE_LUCK: Record<Rarity, number> = {
     commun: 60,
@@ -40,7 +40,10 @@ const RARITY_RANK: Record<Rarity, number> = {
 
 function pickRandom(pool: Card[], type: CardKind, rarity: Rarity): Card {
     const candidates = pool.filter(card => card.rarity === rarity && card.type === type)
-    return candidates[Math.floor(Math.random() * candidates.length) ]
+    if (candidates.length === 0) {
+        throw new Error(`Aucune carte ${type} de rareté ${rarity} dans la base`)
+    }
+    return candidates[Math.floor(Math.random() * candidates.length)]
 }
 
 export function openBooster(pool: Card[]): BoosterContent {
@@ -64,7 +67,7 @@ export function openBooster(pool: Card[]): BoosterContent {
 export const MAX_BOOSTERS = 5
 export const BOOSTER_INTERVAL_MS = 2 * 60 * 60 * 1000
 
-export function  refillBoosters(state: BoosterState, now: number): BoosterState {
+export function refillBoosters(state: BoosterState, now: number): BoosterState {
     if (state.stored >= MAX_BOOSTERS) return state
 
     const gained = Math.floor((now - state.lastGainedAt) / BOOSTER_INTERVAL_MS)
@@ -85,5 +88,3 @@ export function consumeBooster(state: BoosterState, now: number): BoosterState |
         lastGainedAt: current.stored >= MAX_BOOSTERS ? now : current.lastGainedAt
     }
 }
-
-
