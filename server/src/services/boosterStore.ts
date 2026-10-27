@@ -1,6 +1,6 @@
 import type { PoolConnection, RowDataPacket } from 'mysql2/promise'
 import { db } from '../db.js'
-import type { BoosterState, Card } from '../types.js'
+import type { BoosterState, Card, Attack } from '../types.js'
 import { MAX_BOOSTERS } from './boosterLogic.js'
 
 export async function withTransaction<T>(fn: (conn: PoolConnection) => Promise<T>): Promise<T> {
@@ -39,14 +39,32 @@ export async function saveState(conn: PoolConnection, userId: number, state: Boo
 
 export async function loadPool(conn: PoolConnection): Promise<Card[]> {
     const [rows] = await conn.query<RowDataPacket[]>(
-        'SELECT id, name, subtitle, description, image, color, rarity, type FROM cards'
+        'SELECT id, name, subtitle, description, image, hp, color, rarity, type FROM cards'
     )
+    const [attackRows] = await conn.query<RowDataPacket[]>(
+        'SELECT card_id, name, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
+    )
+
+    const attacksByCard = new Map<number, Attack[]>()
+    for (const row of attackRows) {
+        const list = attacksByCard.get(row.card_id) ?? []
+        list.push({
+            name: row.name,
+            cost: row.energy_cost,
+            damage: row.damage,
+            description: row.description
+        })
+        attacksByCard.set(row.card_id, list)
+    }
+
     return rows.map(row => ({
         id: row.id,
         name: row.name,
         subtitle: row.subtitle ?? undefined,
         description: row.description ?? undefined,
         image: row.image ?? undefined,
+        hp: row.hp ?? undefined,
+        attacks: attacksByCard.get(row.id),
         color: row.color ?? undefined,
         rarity: row.rarity,
         type: row.type

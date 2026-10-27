@@ -20,9 +20,23 @@ CREATE TABLE IF NOT EXISTS cards (
     subtitle VARCHAR(255) NULL,
     description VARCHAR(500) NULL,
     image VARCHAR(255) NULL,
+    hp INT NULL,
     color VARCHAR(7) NULL,
     rarity ENUM('commun', 'uncommun', 'rare', 'epic', 'legendary') NOT NULL,
     type ENUM('collection', 'battle', 'student') NOT NULL
+) ENGINE=InnoDB;
+
+-- Les 2 attaques de chaque carte de combat (slot = 1 ou 2)
+CREATE TABLE IF NOT EXISTS card_attacks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    card_id INT NOT NULL,
+    slot TINYINT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    energy_cost TINYINT NOT NULL,
+    damage INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    UNIQUE KEY uniq_card_slot (card_id, slot),
+    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Qui possède quelle carte, et en combien d'exemplaires

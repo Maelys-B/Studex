@@ -2,6 +2,7 @@ import { useBooster } from '../hooks/useBooster'
 import { RARITY_COLORS } from './rarityColors'
 import { CardView } from './CardView'
 import { CollectionCardView } from './CollectionCardView'
+import { BattleCardView } from './BattleCardView'
 import type { Card } from '../types'
 
 function CardItem({ card }: { card: Card }) {
@@ -35,9 +36,11 @@ export function BoosterOpening({ userId }: { userId: number }) {
                 <div>
                     {currentCard.type === 'collection'
                         ? <CollectionCardView card={currentCard} />
-                        : currentCard.image
-                            ? <CardView card={currentCard} />
-                            : <ul><CardItem card={currentCard} /></ul>}
+                        : currentCard.type === 'battle'
+                            ? <BattleCardView card={currentCard} />
+                            : currentCard.image
+                                ? <CardView card={currentCard} />
+                                : <ul><CardItem card={currentCard} /></ul>}
                     <p>{index + 1} / {cards.length}</p>
                     <button onClick={previous} disabled={index === 0}>←</button>
                     <button onClick={next} disabled={isLast}>→</button>
