@@ -115,7 +115,22 @@ authRouter.post('/login', async (req, res, next) => {
     }
 })
 
-authRouter.get('/profil', verifierToken, (_req, res) => {
-    res.json({ message: 'Accès autorisé !', userId: res.locals.userId })
+authRouter.get('/profil', verifierToken, async (_req, res, next) => {
+    try {
+        const [rows] = await db.query<RowDataPacket[]>(
+            'SELECT id, pseudo, email FROM users WHERE id = ?',
+            [res.locals.userId]
+        )
+        const user = rows[0]
+
+        if (!user) {
+            return res.status(401).json({ erreur: 'Veuillez vous reconnecter' })
+        }
+
+        const publicUser: PublicUser = { id: user.id, pseudo: user.pseudo, email: user.email }
+        res.json({ user: publicUser })
+    } catch (err) {
+        next(err)
+    }
 })
 

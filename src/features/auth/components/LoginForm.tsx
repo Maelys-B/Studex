@@ -1,18 +1,28 @@
 import {useState} from 'react'
-import type {LoginData} from '../types'
+import {login} from '../services/authService'
 
 type LoginFormProps = {
-    onLogin: (data: LoginData) => void,
-    error: string | null,
+    onConnexion: () => void,
+    onAllerVersInscription: () => void,
 }
 
-export function LoginForm({ onLogin, error }: LoginFormProps) {
+export function LoginForm({onConnexion, onAllerVersInscription }: LoginFormProps) {
     const [email, setEmail] = useState('')
     const [mdp, setMdp] = useState('')
+    const [erreur, setErreur] = useState('')
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        onLogin({email, mdp})
+        setErreur('')
+
+        try {
+            await login({email, mdp})
+            onConnexion()
+        } catch (err) {
+            if (err instanceof Error) {
+                setErreur(err.message)
+            }
+        }
     }
 
     return (
@@ -41,9 +51,10 @@ export function LoginForm({ onLogin, error }: LoginFormProps) {
                 />
             </div>
 
-            {error && <p>{error}</p>}
+            {erreur && <p>{erreur}</p>}
 
             <button type="submit">Envoyer</button>
+            <button type="button" onClick={onAllerVersInscription}>Pas encore de compte ? S'inscrire</button>
         </form>
     )
 }
