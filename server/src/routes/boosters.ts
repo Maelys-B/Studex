@@ -1,5 +1,4 @@
 import { Router } from 'express'
-import type { Request } from 'express'
 import {
     BOOSTER_INTERVAL_MS,
     MAX_BOOSTERS,
@@ -9,13 +8,10 @@ import {
 } from '../services/boosterLogic.js'
 import { getState, loadPool, saveState, withTransaction } from '../services/boosterStore.js'
 import type { BoosterState } from '../types.js'
+import verifierToken from '../middleware/verifierToken.js'
 
 export const boostersRouter = Router()
-
-function userIdOf(req: Request): number | null {
-    const userId = Number(req.header('x-user-id'))
-    return Number.isSafeInteger(userId) && userId > 0 ? userId : null
-}
+boostersRouter.use(verifierToken)
 
 function describe(state: BoosterState, now: number) {
     return {
@@ -26,12 +22,8 @@ function describe(state: BoosterState, now: number) {
     }
 }
 
-boostersRouter.get('/', async (req, res) => {
-    const userId = userIdOf(req)
-    if (userId === null) {
-        res.status(401).json({ error: 'user_required' })
-        return
-    }
+boostersRouter.get('/', async (_req, res) => {
+    const userId = res.locals.userId as number
 
     const now = Date.now()
     const state = await withTransaction(async conn => {
@@ -43,12 +35,8 @@ boostersRouter.get('/', async (req, res) => {
     res.json(describe(state, now))
 })
 
-boostersRouter.post('/open', async (req, res) => {
-    const userId = userIdOf(req)
-    if (userId === null) {
-        res.status(401).json({ error: 'user_required' })
-        return
-    }
+boostersRouter.post('/open', async (_req, res) => {
+    const userId = res.locals.userId as number
 
     const now = Date.now()
     const result = await withTransaction(async conn => {

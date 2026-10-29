@@ -2,7 +2,7 @@ import type { BoosterContent, BoosterStatus } from '../types'
 import { useCallback, useEffect, useState } from 'react'
 import { fetchBoosterStatus, requestOpenBooster } from '../services/boosterApi'
 
-export function useBooster(userId: number) {
+export function useBooster() {
     const [content, setContent] = useState<BoosterContent | null>(null)
     const [index, setIndex] = useState(0)
     const [status, setStatus] = useState<BoosterStatus | null>(null)
@@ -18,10 +18,10 @@ export function useBooster(userId: number) {
     }, [])
 
     const refresh = useCallback(() => {
-        fetchBoosterStatus(userId)
+        fetchBoosterStatus()
             .then(applyStatus)
             .catch((err: Error) => setError(err.message))
-    }, [userId, applyStatus])
+    }, [applyStatus])
 
     useEffect(() => {
         refresh()
@@ -41,7 +41,7 @@ export function useBooster(userId: number) {
 
     const open = async () => {
         try {
-            const result = await requestOpenBooster(userId)
+            const result = await requestOpenBooster()
             if (!result) {
                 refresh()
                 return

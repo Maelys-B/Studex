@@ -22,10 +22,10 @@ function formatTime(ms: number): string {
     return [hours, minutes, seconds].map(n => String(n).padStart(2, '0')).join(':')
 }
 
-export function BoosterOpening({ userId }: { userId: number }) {
+export function BoosterOpening() {
     const {
         currentCard, isLast, index, cards, stored, max, msBeforeNext, error, open, next, previous, close
-    } = useBooster(userId)
+    } = useBooster()
 
     return (
         <section className="booster-page">
