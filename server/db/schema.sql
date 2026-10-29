@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS cards (
     id INT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    position_collection INT NOT NULL DEFAULT 0,
     subtitle VARCHAR(255) NULL,
     description VARCHAR(500) NULL,
     image VARCHAR(255) NULL,

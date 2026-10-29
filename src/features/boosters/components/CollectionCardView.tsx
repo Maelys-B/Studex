@@ -13,7 +13,7 @@ export function CollectionCardView({ card }: { card: Card}) {
             <h2 className="ccard__title">{card.name}</h2>
             <div className="ccard__text">
                 <p>{card.description}</p>
-                <span className="ccard__number">{card.id}</span>
+                <span className="ccard__number">{card.position_collection}</span>
             </div>
         </div>
     )

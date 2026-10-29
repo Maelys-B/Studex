@@ -39,7 +39,7 @@ export async function saveState(conn: PoolConnection, userId: number, state: Boo
 
 export async function loadPool(conn: PoolConnection): Promise<Card[]> {
     const [rows] = await conn.query<RowDataPacket[]>(
-        'SELECT id, name, subtitle, description, image, hp, color, rarity, type FROM cards'
+        'SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type FROM cards'
     )
     const [attackRows] = await conn.query<RowDataPacket[]>(
         'SELECT card_id, name, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
@@ -60,6 +60,7 @@ export async function loadPool(conn: PoolConnection): Promise<Card[]> {
     return rows.map(row => ({
         id: row.id,
         name: row.name,
+        position_collection: row.position_collection,
         subtitle: row.subtitle ?? undefined,
         description: row.description ?? undefined,
         image: row.image ?? undefined,

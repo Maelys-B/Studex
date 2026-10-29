@@ -9,7 +9,7 @@ export function BattleCardView({ card }: { card: Card}) {
         <div className="bcard" style={{ '--frame': RARITY_COLORS[card.rarity] } as CSSProperties}>
             <div className="bcard__art">
                 <img src={getCardImage(card.image)} alt="" />
-                <span className="bcard__number">N° {String(card.id).padStart(3, '0')}</span>
+                <span className="bcard__number">N° {String(card.position_collection).padStart(3, '0')}</span>
                 <span className="bcard__hp"><small>PV</small> {card.hp}</span>
             </div>
             <ul className="bcard__attacks">

@@ -3,6 +3,7 @@ import { RARITY_COLORS } from './rarityColors'
 import { CardView } from './CardView'
 import { CollectionCardView } from './CollectionCardView'
 import { BattleCardView } from './BattleCardView'
+import { BoosterPack } from './BoosterPack'
 import type { Card } from '../types'
 
 function CardItem({ card }: { card: Card }) {
@@ -23,17 +24,13 @@ function formatTime(ms: number): string {
 
 export function BoosterOpening({ userId }: { userId: number }) {
     const {
-        currentCard, isLast, index, cards, stored, max, msBeforeNext, error, open, next, previous
+        currentCard, isLast, index, cards, stored, max, msBeforeNext, error, open, next, previous, close
     } = useBooster(userId)
 
     return (
-        <div>
-            <p>Boosters : {stored} / {max}</p>
-            {stored < max && <p>Prochain dans {formatTime(msBeforeNext)}</p>}
-            {error && <p>{error}</p>}
-            <button onClick={open} disabled={stored === 0}>Ouvrir un booster</button>
-            {currentCard && (
-                <div>
+        <section className="booster-page">
+            {currentCard ? (
+                <div className="booster-page__reveal">
                     {currentCard.type === 'collection'
                         ? <CollectionCardView card={currentCard} />
                         : currentCard.type === 'battle'
@@ -41,11 +38,32 @@ export function BoosterOpening({ userId }: { userId: number }) {
                             : currentCard.image
                                 ? <CardView card={currentCard} />
                                 : <ul><CardItem card={currentCard} /></ul>}
-                    <p>{index + 1} / {cards.length}</p>
-                    <button onClick={previous} disabled={index === 0}>←</button>
-                    <button onClick={next} disabled={isLast}>→</button>
+                    <div className="booster-page__nav">
+                        <button onClick={previous} disabled={index === 0}>←</button>
+                        <span>{index + 1} / {cards.length}</span>
+                        <button onClick={next} disabled={isLast}>→</button>
+                    </div>
+                    {isLast && (
+                        <button className="booster-page__open" onClick={close}>
+                            Continuer
+                        </button>
+                    )}
                 </div>
+            ) : (
+                <>
+                    <BoosterPack disabled={stored === 0} />
+                    <button className="booster-page__open" onClick={open} disabled={stored === 0}>
+                        Ouvrir un booster
+                    </button>
+                </>
             )}
-        </div>
+            {!currentCard && (
+                <>
+                    <p className="booster-page__stock">{stored} / {max}</p>
+                    {stored < max && <p className="booster-page__timer">Prochain dans {formatTime(msBeforeNext)}</p>}
+                </>
+            )}
+            {error && <p className="booster-page__error">{error}</p>}
+        </section>
     )
 }

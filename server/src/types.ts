@@ -12,6 +12,7 @@ export type Attack = {
 export type Card = {
     readonly id: number,
     name: string,
+    position_collection: number,
     subtitle?: string,
     description?: string,
     image?: string,
@@ -31,4 +32,11 @@ export type BoosterContent = {
 export type BoosterState = {
     stored: number,
     lastGainedAt: number,
+}
+
+export type BoosterStatus = {
+    stored: number,
+    max: number,
+    serverNow: number,
+    nextAt: number | null
 }

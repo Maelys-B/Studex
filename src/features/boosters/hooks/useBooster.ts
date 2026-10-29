@@ -61,6 +61,11 @@ export function useBooster(userId: number) {
 
     const previous = () => setIndex(i => Math.max(i - 1, 0))
 
+    const close = () => {
+        setContent(null)
+        setIndex(0)
+    }
+
     const msBeforeNext = status?.nextAt
         ? Math.max(0, status.nextAt - (now + clockOffset))
         : 0
@@ -76,6 +81,7 @@ export function useBooster(userId: number) {
         error,
         open,
         next,
-        previous
+        previous,
+        close
     }
 }

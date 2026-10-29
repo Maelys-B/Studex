@@ -1,0 +1,34 @@
+.booster-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;  
+    gap: 20px;
+}
+
+.booster-page__reveal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* carte, flèches et bouton Continuer centrés */
+    gap: 12px;
+}
+
+.booster-page__nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.pack {
+    width: 220px;
+    aspect-ratio: 2 / 3;
+    display: block;
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+    transition: transform 0.2s;
+}
+
+.pack:hover { transform: translateY(-6px) rotate(-1deg); }
+.pack--empty { filter: grayscale(1) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45)); opacity: 0.5; }
