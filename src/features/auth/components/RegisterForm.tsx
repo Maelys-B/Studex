@@ -1,19 +1,29 @@
 import {useState} from 'react'
-import type {RegisterData} from '../types'
+import {register} from '../services/authService'
 
 type RegisterFormProps = {
-    onRegister: (data: RegisterData) => void,
-    error: string | null,
+    onInscription: () => void,
+    onAllerVersConnexion: () => void,
 }
 
-export function RegisterForm({ onRegister, error }: RegisterFormProps) {
+export function RegisterForm({ onInscription, onAllerVersConnexion }: RegisterFormProps) {
     const [email, setEmail] = useState('')
     const [mdp, setMdp] = useState('')
     const [pseudo, setPseudo] = useState('')
+    const [erreur, setErreur] = useState('')
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        onRegister({email, mdp, pseudo})
+        setErreur('')
+
+        try {
+            await register({email, mdp, pseudo})
+            onInscription()
+        } catch (err) {
+            if (err instanceof Error) {
+                setErreur(err.message)
+            }
+        }
     }
 
     return (
@@ -53,10 +63,10 @@ export function RegisterForm({ onRegister, error }: RegisterFormProps) {
                 />
             </div>
 
-            {error && <p>{error}</p>}
-            
+            {erreur && <p>{erreur}</p>}
 
             <button type="submit">Envoyer</button>
+            <button type="button" onClick={onAllerVersConnexion}>Déjà un compte ? Se connecter</button>
         </form>
     )
 }

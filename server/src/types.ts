@@ -40,3 +40,9 @@ export type BoosterStatus = {
     serverNow: number,
     nextAt: number | null
 }
+
+export type PublicUser = {
+    id: number,
+    pseudo: string,
+    email: string,
+}
