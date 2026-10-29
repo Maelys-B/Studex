@@ -1,0 +1,81 @@
+.ccard {
+    --w: 320px;
+    width: var(--w);
+    aspect-ratio: 2 / 3;            /* même format que les cartes étudiantes (CardView.css) */
+    container-type: inline-size;
+    box-sizing: border-box;
+    /* pas de cqw ici : on est dans le conteneur lui-même */
+    padding: calc(var(--w) * 0.05);
+    border-radius: calc(var(--w) * 0.06);
+    box-shadow: 0 calc(var(--w) * 0.02) calc(var(--w) * 0.05) rgba(0, 0, 0, 0.35);
+    background: var(--frame);       /* le cadre prend la couleur de la rareté */
+    display: flex;
+    flex-direction: column;
+}
+
+.ccard__art {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    border-radius: 4cqw;
+    background: #0d1b2a;             /* visible si la carte n'a pas d'illustration */
+}
+
+.ccard__art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ccard__title {
+    margin: -9cqw 2cqw 2cqw;         /* marge négative : le bandeau remonte sur l'illustration */
+    padding: 1cqw 4cqw;
+    position: relative;
+    z-index: 1;
+    background: white;
+    border-radius: 7cqw;
+    box-shadow: 0 0.6cqw 1.6cqw rgba(0, 0, 0, 0.25);
+    text-align: center;
+    text-wrap: balance;
+    font-family: 'Caveat Brush', 'Segoe Script', cursive;
+    font-size: 11cqw;
+    font-weight: 400;
+    line-height: 1.1;
+    color: #3a3a3a;
+}
+
+.ccard__text {
+    padding: 3cqw 4cqw;
+    background: #f3f3f3;
+    border-radius: 4cqw;
+    text-align: center;
+    font-family: 'Nunito', system-ui, sans-serif;
+    font-size: 4cqw;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #444;
+}
+
+.ccard__text p {
+    margin: 0;
+}
+
+.ccard__number {
+    display: flex;
+    align-items: center;
+    gap: 3cqw;
+    margin-top: 2.5cqw;
+    font-size: 6cqw;
+    font-weight: 800;
+    color: #333;
+}
+
+/* les deux traits de chaque côté du numéro */
+.ccard__number::before,
+.ccard__number::after {
+    content: '';
+    flex: 1;
+    height: 0.5cqw;
+    background: #bdbdbd;
+}
