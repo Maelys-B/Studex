@@ -4,6 +4,7 @@ import { CardView } from './CardView'
 import { CollectionCardView } from './CollectionCardView'
 import { BattleCardView } from './BattleCardView'
 import { BoosterPack } from './BoosterPack'
+import { useState } from 'react'
 import type { Card } from '../types'
 
 function CardItem({ card }: { card: Card }) {
@@ -26,6 +27,13 @@ export function BoosterOpening() {
     const {
         currentCard, isLast, index, cards, stored, max, msBeforeNext, error, open, next, previous, close
     } = useBooster()
+
+    const [opening, setOpening] = useState(false)
+
+    const handleAnimationEnd = async () => {
+        await open()
+        setOpening(false)
+    }
 
     return (
         <section className="booster-page">
@@ -50,9 +58,20 @@ export function BoosterOpening() {
                     )}
                 </div>
             ) : (
-                <>
-                    <BoosterPack disabled={stored === 0} />
-                    <button className="booster-page__open" onClick={open} disabled={stored === 0}>
+                <>  
+                    <BoosterPack 
+                        onClick={() => setOpening(true)} 
+                        disabled={stored === 0}
+                        opening={opening}
+                        onAnimationEnd={handleAnimationEnd}
+                    />
+                    <button 
+                        className="booster-page__open" 
+                        onClick={() => setOpening(true)} 
+                        disabled={stored === 0}
+                        opening={opening}
+                        onAnimationEnd={handleAnimationEnd}
+                    >
                         Ouvrir un booster
                     </button>
                 </>

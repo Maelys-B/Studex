@@ -39,7 +39,7 @@ export async function saveState(conn: PoolConnection, userId: number, state: Boo
 
 export async function loadPool(conn: PoolConnection): Promise<Card[]> {
     const [rows] = await conn.query<RowDataPacket[]>(
-        'SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type FROM cards'
+        "SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type, avatar FROM cards WHERE status = 'approved'"
     )
     const [attackRows] = await conn.query<RowDataPacket[]>(
         'SELECT card_id, name, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
