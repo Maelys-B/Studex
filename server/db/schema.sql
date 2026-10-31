@@ -10,12 +10,16 @@ CREATE TABLE IF NOT EXISTS users (
     pseudo VARCHAR(50) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     mdp VARCHAR(255) NOT NULL,
+    role ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- Toutes les cartes du jeu
+-- created_by : joueur qui a créé sa carte étudiante (NULL pour les cartes du seed), une seule carte par joueur
+-- avatar : choix de personnalisation de l avatar en JSON
+-- status : une carte créée par un joueur reste pending tant qu un admin ne l a pas validée
 CREATE TABLE IF NOT EXISTS cards (
-    id INT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     position_collection INT NOT NULL DEFAULT 0,
     subtitle VARCHAR(255) NULL,
@@ -24,7 +28,11 @@ CREATE TABLE IF NOT EXISTS cards (
     hp INT NULL,
     color VARCHAR(7) NULL,
     rarity ENUM('commun', 'uncommun', 'rare', 'epic', 'legendary') NOT NULL,
-    type ENUM('collection', 'battle', 'student') NOT NULL
+    type ENUM('collection', 'battle', 'student') NOT NULL,
+    created_by INT NULL UNIQUE,
+    avatar JSON NULL,
+    status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'approved',
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Les 2 attaques de chaque carte de combat (slot = 1 ou 2)
