@@ -51,6 +51,7 @@ export type PublicUser = {
 }
 
 export type Avatar = {
+    pose: number,
     skin: number,
     hair: number,
     eyes: number,

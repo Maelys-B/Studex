@@ -3,7 +3,7 @@ import type { Avatar } from '../types.js'
 export const FRAME_COLORS = ['#2aa9ad', '#ffe100', '#00e5ff', '#0800ff', '#e100ff']
 
 const AVATAR_LIMITS: Record<keyof Avatar, number> = {
-    skin: 4, hair: 6, eyes: 5, mouth: 4, outfit: 6
+    pose: 3, skin: 4, hair: 6, eyes: 5, mouth: 4, outfit: 4
 }
 
 export type StudentCardInput = {

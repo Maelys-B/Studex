@@ -43,3 +43,12 @@
     transform: translateY(1%);
     z-index: 0;
 }
+
+/* L'avatar est carré et son personnage n'en occupe qu'une partie : on l'agrandit, la carte rogne les bords */
+.card__avatar {
+    left: 50%;
+    right: auto;
+    margin: 0;
+    width: 125%;
+    transform: translateX(-50%);
+}
