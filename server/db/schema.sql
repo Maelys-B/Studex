@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS user_cards (
     user_id INT NOT NULL,
     card_id INT NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
+    obtained_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, card_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (card_id) REFERENCES cards(id)

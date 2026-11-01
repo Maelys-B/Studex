@@ -1,6 +1,6 @@
 import type { PoolConnection, RowDataPacket } from 'mysql2/promise'
 import { db } from '../db.js'
-import type { BoosterState, Card, Attack } from '../types.js'
+import type { BoosterState, Card, Attack, BoosterContent } from '../types.js'
 import { MAX_BOOSTERS } from './boosterLogic.js'
 
 export async function withTransaction<T>(fn: (conn: PoolConnection) => Promise<T>): Promise<T> {
@@ -70,4 +70,14 @@ export async function loadPool(conn: PoolConnection): Promise<Card[]> {
         rarity: row.rarity,
         type: row.type
     }))
+}
+
+export async function saveCards(conn: PoolConnection, userId: number, content: BoosterContent): Promise<void> {
+    const cards: Card[] = [...content.collection, content.battle, content.student]
+    for (const card of cards){
+        await conn.query(
+            'INSERT INTO user_cards(user_id, card_id) VALUES (?,?) ON DUPLICATE KEY UPDATE quantity = quantity + 1',
+            [userId, card.id]
+        )
+    }
 }

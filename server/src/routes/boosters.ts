@@ -6,7 +6,7 @@ import {
     openBooster,
     refillBoosters
 } from '../services/boosterLogic.js'
-import { getState, loadPool, saveState, withTransaction } from '../services/boosterStore.js'
+import { getState, loadPool, saveState, withTransaction, saveCards } from '../services/boosterStore.js'
 import type { BoosterState } from '../types.js'
 import verifierToken from '../middleware/verifierToken.js'
 
@@ -45,6 +45,7 @@ boostersRouter.post('/open', async (_req, res) => {
 
         const content = openBooster(await loadPool(conn))
         await saveState(conn, userId, next)
+        await saveCards(conn, userId, content)
         return { state: next, content }
     })
 
