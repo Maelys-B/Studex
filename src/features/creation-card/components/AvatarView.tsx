@@ -1,8 +1,7 @@
 import type { Avatar } from '../../boosters/types'
-import { POSES, SKIN_TONES, getAvatarPart, getPoseProp } from '../assets/avatarParts'
+import { POSES, getAvatarPart, getPoseProp } from '../assets/avatarParts'
 import '../assets/AvatarView.css'
 
-// Les cheveux sont dessinés avant le visage : la frange ne doit pas recouvrir les yeux
 const HEAD_PARTS = ['hair', 'mouth', 'eyes'] as const
 
 export function AvatarView({ avatar }: { avatar: Avatar }) {
@@ -17,7 +16,7 @@ export function AvatarView({ avatar }: { avatar: Avatar }) {
                 <div
                     className="avatar__tint"
                     style={{
-                        backgroundColor: SKIN_TONES[avatar.skin],
+                        backgroundColor: avatar.skin,
                         maskImage: `url(${body})`,
                         WebkitMaskImage: `url(${body})`
                     }}

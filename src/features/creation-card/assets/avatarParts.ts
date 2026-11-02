@@ -7,15 +7,15 @@ export const POSES = [
     { id: 'ordi',   label: 'Ordinateur', head: { x: 0, y: 0, rotate: 0 } }
 ] as const
 
-export const SKIN_TONES = ['#ffe3d0', '#f1c27d', '#c68642', '#8d5524'] as const
+export const DEFAULT_SKIN = '#f1c27d'
 
 const OUTFITS_PER_POSE = 4
 
-// Calques de bas en haut : la peau et la tenue dépendent de la pose
-export const AVATAR_ORDER = ['skin', 'outfit', 'mouth', 'eyes', 'hair'] as const satisfies readonly (keyof Avatar)[]
+// Choix par pièce (tout sauf la peau, qui est une couleur libre)
+export type AvatarChoice = Exclude<keyof Avatar, 'skin'>
 
 // Ordre des choix dans le formulaire
-export const AVATAR_CHOICES = ['pose', ...AVATAR_ORDER] as const satisfies readonly (keyof Avatar)[]
+export const AVATAR_CHOICES = ['pose', 'outfit', 'mouth', 'eyes', 'hair'] as const satisfies readonly AvatarChoice[]
 
 const files = import.meta.glob('./avatar/*.webp', { eager: true, import: 'default' }) as Record<string, string>
 
@@ -32,9 +32,8 @@ export function getAvatarPart(category: keyof Avatar, avatar: Avatar): string | 
 // Accessoire dessiné devant le personnage (gobelet, ordinateur), absent pour certaines poses
 export const getPoseProp = (poseIndex: number) => file(`prop_${POSES[poseIndex]?.id}`)
 
-export const AVATAR_COUNTS: Record<keyof Avatar, number> = {
+export const AVATAR_COUNTS: Record<AvatarChoice, number> = {
     pose: POSES.length,
-    skin: SKIN_TONES.length,
     outfit: OUTFITS_PER_POSE,
     mouth: count('mouth'),
     eyes: count('eyes'),

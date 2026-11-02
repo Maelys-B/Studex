@@ -14,7 +14,7 @@ function App() {
   const [pageAuth, setPageAuth] = useState<'login' | 'register'>('register')
 
   useEffect(() => {
-    if (!estConnecte) { setAreAdmin(false); return }
+    if (!estConnecte) return
     getProfil()
       .then(user => setAreAdmin(user.role === 'admin'))
       .catch(() => setEstConnecte(false))
@@ -23,6 +23,7 @@ function App() {
   const deconnexion = () => {
     localStorage.removeItem('token')
     setEstConnecte(false)
+    setAreAdmin(false)
   }
 
   if (!estConnecte) {

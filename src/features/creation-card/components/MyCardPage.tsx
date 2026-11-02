@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Avatar, CardStatus } from '../../boosters/types'
 import { CardView } from '../../boosters/components/CardView'
-import { AVATAR_CHOICES, AVATAR_COUNTS, POSES } from '../assets/avatarParts'
+import { AVATAR_CHOICES, AVATAR_COUNTS, DEFAULT_SKIN, POSES } from '../assets/avatarParts'
+import type { AvatarChoice } from '../assets/avatarParts'
 import { fetchMyCard, saveMyCard } from '../services/cardApi'
 
 const FRAME_COLORS = ['#2aa9ad', '#ffe100', '#00e5ff', '#0800ff', '#e100ff']
 
-const LABELS: Record<keyof Avatar, string> = {
-    pose: 'Pose', skin: 'Peau', hair: 'Cheveux', eyes: 'Yeux', mouth: 'Bouche', outfit: 'Tenue'
+const LABELS: Record<AvatarChoice, string> = {
+    pose: 'Pose', hair: 'Cheveux', eyes: 'Yeux', mouth: 'Bouche', outfit: 'Tenue'
 }
 
 const STATUS_LABELS: Record<CardStatus, string> = {
@@ -25,7 +26,7 @@ export function MyCardPage() {
     const [lastName, setLastName] = useState('')
     const [subtitle, setSubtitle] = useState('')
     const [color, setColor] = useState(FRAME_COLORS[0])
-    const [avatar, setAvatar] = useState<Avatar>({ pose: 0, skin: 0, hair: 0, eyes: 0, mouth: 0, outfit: 0 })
+    const [avatar, setAvatar] = useState<Avatar>({ pose: 0, skin: DEFAULT_SKIN, hair: 0, eyes: 0, mouth: 0, outfit: 0 })
     const [error, setError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false) 
 
@@ -46,7 +47,7 @@ export function MyCardPage() {
             .finally(() => setLoading(false))
     }, [])
 
-    const cycle = (category: keyof Avatar, step: number) =>
+    const cycle = (category: AvatarChoice, step: number) =>
         setAvatar(a => {
             const count = AVATAR_COUNTS[category]
             if(count === 0) return a
@@ -117,6 +118,15 @@ export function MyCardPage() {
                         />
                     ))}
                 </div>
+
+                <label>
+                    Couleur de peau
+                    <input
+                        type="color"
+                        value={avatar.skin}
+                        onChange={e => setAvatar(a => ({ ...a, skin: e.target.value }))}
+                    />
+                </label>
 
                 {AVATAR_CHOICES.map(category => (
                     <div key={category}>

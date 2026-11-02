@@ -2,9 +2,11 @@ import type { Avatar } from '../types.js'
 
 export const FRAME_COLORS = ['#2aa9ad', '#ffe100', '#00e5ff', '#0800ff', '#e100ff']
 
-const AVATAR_LIMITS: Record<keyof Avatar, number> = {
-    pose: 3, skin: 4, hair: 6, eyes: 5, mouth: 4, outfit: 4
+const AVATAR_LIMITS: Record<Exclude<keyof Avatar, 'skin'>, number> = {
+    pose: 3, hair: 6, eyes: 5, mouth: 4, outfit: 4
 }
+
+const SKIN_PATTERN = /^#[0-9a-fA-F]{6}$/
 
 export type StudentCardInput = {
     first_name: string,
@@ -36,8 +38,11 @@ export function validateStudentCard(body: any): StudentCardInput | string {
     if (!SUBTITLE_PATTERN.test(subtitle)) return "L'accroche contient des caractères non autorisés"
     if (!FRAME_COLORS.includes(body?.color)) return 'Couleur invalide'
 
-    const avatar = {} as Avatar
-    for (const key of Object.keys(AVATAR_LIMITS) as (keyof Avatar)[]) {
+    const skin = body?.avatar?.skin
+    if (typeof skin !== 'string' || !SKIN_PATTERN.test(skin)) return 'Couleur de peau invalide'
+
+    const avatar: Avatar = { skin, pose: 0, hair: 0, eyes: 0, mouth: 0, outfit: 0 }
+    for (const key of Object.keys(AVATAR_LIMITS) as (keyof typeof AVATAR_LIMITS)[]) {
         const value = body?.avatar?.[key]
         if (!isValidChoice(value, AVATAR_LIMITS[key])) return `Avatar invalide : ${key}`
         avatar[key] = value
