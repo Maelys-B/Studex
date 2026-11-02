@@ -2,7 +2,8 @@ import type { Avatar } from '../../boosters/types'
 import { POSES, SKIN_TONES, getAvatarPart, getPoseProp } from '../assets/avatarParts'
 import '../assets/AvatarView.css'
 
-const HEAD_PARTS = ['mouth', 'eyes', 'hair'] as const
+// Les cheveux sont dessinés avant le visage : la frange ne doit pas recouvrir les yeux
+const HEAD_PARTS = ['hair', 'mouth', 'eyes'] as const
 
 export function AvatarView({ avatar }: { avatar: Avatar }) {
     const pose = POSES[avatar.pose]

@@ -48,6 +48,7 @@ export type PublicUser = {
     id: number,
     pseudo: string,
     email: string,
+    role: 'user' | 'admin',
 }
 
 export type Avatar = {
