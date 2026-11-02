@@ -4,6 +4,7 @@ import 'dotenv/config'
 import { cardsRouter } from './routes/cards.js'
 import { boostersRouter } from './routes/boosters.js'
 import { authRouter } from './routes/auth.js'
+import { collectionRouter } from './routes/collection.js'
 import type { Request, Response, NextFunction } from 'express'
 import { adminRouter } from './routes/admin.js';
 
@@ -19,6 +20,7 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/cards', cardsRouter)
 app.use('/api/boosters', boostersRouter)
 app.use('/api/auth', authRouter);
+app.use('/api/collection', collectionRouter)
 app.use('/api/admin', adminRouter)
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
