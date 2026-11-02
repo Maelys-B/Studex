@@ -45,7 +45,8 @@ export type BoosterStatus = {
 }
 
 export type Avatar = {
-    skin: number,
+    pose: number,
+    skin: string,
     hair: number,
     eyes: number,
     mouth: number,

@@ -69,8 +69,6 @@ export function BoosterOpening() {
                         className="booster-page__open" 
                         onClick={() => setOpening(true)} 
                         disabled={stored === 0}
-                        opening={opening}
-                        onAnimationEnd={handleAnimationEnd}
                     >
                         Ouvrir un booster
                     </button>

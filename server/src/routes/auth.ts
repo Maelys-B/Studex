@@ -67,6 +67,7 @@ authRouter.post('/register', async (req, res, next) => {
             id: result.insertId,
             pseudo,
             email,
+            role: 'user',
         }
 
         res.status(201).json({ token, user: publicUser })
@@ -107,6 +108,7 @@ authRouter.post('/login', async (req, res, next) => {
             id: user.id,
             pseudo: user.pseudo,
             email: user.email,
+            role: user.role,
         }
 
         res.json({ token, user: publicUser })
@@ -118,7 +120,7 @@ authRouter.post('/login', async (req, res, next) => {
 authRouter.get('/profil', verifierToken, async (_req, res, next) => {
     try {
         const [rows] = await db.query<RowDataPacket[]>(
-            'SELECT id, pseudo, email FROM users WHERE id = ?',
+            'SELECT id, pseudo, email, role FROM users WHERE id = ?',
             [res.locals.userId]
         )
         const user = rows[0]
@@ -127,7 +129,7 @@ authRouter.get('/profil', verifierToken, async (_req, res, next) => {
             return res.status(401).json({ erreur: 'Veuillez vous reconnecter' })
         }
 
-        const publicUser: PublicUser = { id: user.id, pseudo: user.pseudo, email: user.email }
+        const publicUser: PublicUser = { id: user.id, pseudo: user.pseudo, email: user.email, role: user.role }
         res.json({ user: publicUser })
     } catch (err) {
         next(err)
