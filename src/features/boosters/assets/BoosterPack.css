@@ -32,3 +32,32 @@
 
 .pack:hover { transform: translateY(-6px) rotate(-1deg); }
 .pack--empty { filter: grayscale(1) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45)); opacity: 0.5; }
+
+.pack-slot {
+    width: 220px;
+    aspect-ratio: 2 / 3;
+    position: relative;
+}
+
+.pack-video {
+    position: absolute;
+    top: 39%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 220px;
+    max-width: none;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.pack-button {
+    background: none;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+.pack-button:hover {
+    background: none;     
+}

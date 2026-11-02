@@ -1,0 +1,41 @@
+.avatar {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.avatar__layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.avatar__skin {
+    isolation: isolate;   /* le multiply ne se mélange qu'avec l'image du corps */
+}
+
+.avatar__skin img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.avatar__tint {
+    position: absolute;
+    inset: 0;
+    mix-blend-mode: multiply;
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+}
+
+.avatar__head {
+    transform-origin: 50% 35%;   /* centre approximatif de la tête */
+}

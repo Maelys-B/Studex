@@ -2,6 +2,7 @@ export type User = {
     readonly id: number,
     pseudo: string,
     email: string,
+    role: 'user' | 'admin',
 }
 
 export type LoginData = {
