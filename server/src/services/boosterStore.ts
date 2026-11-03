@@ -67,6 +67,7 @@ export async function loadPool(conn: PoolConnection): Promise<Card[]> {
         hp: row.hp ?? undefined,
         attacks: attacksByCard.get(row.id),
         color: row.color ?? undefined,
+        avatar: row.avatar ?? undefined,
         rarity: row.rarity,
         type: row.type
     }))
