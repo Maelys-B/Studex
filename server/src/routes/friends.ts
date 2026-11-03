@@ -103,7 +103,7 @@ friendsRouter.get('/', async (_req, res) => {
     res.json(rows)   
 })
 
-friendsRouter.patch('/request/:id', async (req, res) => {
+friendsRouter.patch('/requests/:id', async (req, res) => {
     const userId = res.locals.userId
     const requestId = Number(req.params.id)
     const status = req.body?.status
@@ -112,7 +112,7 @@ friendsRouter.patch('/request/:id', async (req, res) => {
         return res.status(400).json({ erreur: 'Statut invalide' })
     }
 
-    const sql = status === 'accepeted'
+    const sql = status === 'accepted'
         ? `UPDATE friendships SET status = 'accepted'
            WHERE id = ? AND addressee_id = ? AND status = 'pending'`
         : `DELETE FROM friendships
