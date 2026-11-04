@@ -73,10 +73,6 @@ button {
   transition: background 0.15s, transform 0.05s;
 }
 
-button:hover {
-  background: var(--primary-hover);
-}
-
 button:active {
   transform: scale(0.97);
 }
