@@ -6,10 +6,12 @@ import { BoosterOpening } from './features/boosters/components/BoosterOpening'
 import { MyCardPage } from './features/creation-card/components/MyCardPage'
 import { AdminPage } from './features/admin/components/AdminPage'
 import { FriendsPage } from './features/friends/components/FriendsPage'
-import { Routes, Route, NavLink, Navigate } from 'react-router'
+import { AppNav } from './features/navigation/components/AppNav'
+import { Routes, Route, Navigate, useLocation } from 'react-router'
 
 
 function App() {
+  const { pathname } = useLocation()
   const [estConnecte, setEstConnecte] = useState(!!localStorage.getItem('token'))
   const [AreAdmin, setAreAdmin] = useState(false)
   const [pageAuth, setPageAuth] = useState<'login' | 'register'>('register')
@@ -43,21 +45,17 @@ function App() {
 
   return (
     <div>
-      <nav>
-        <NavLink to="/">Boosters</NavLink>
-        <NavLink to="/ma-carte">Ma carte</NavLink>
-        {AreAdmin && <NavLink to="/admin">Modération</NavLink>}
-        <NavLink to="/amis">Amis</NavLink>
-        <button onClick={deconnexion}>se déconnecter</button>
-      </nav>
+      <AppNav isAdmin={AreAdmin} onLogout={deconnexion} />
 
-      <Routes>
-        <Route path="/" element={<BoosterOpening />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-        <Route path="/admin" element={AreAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
-        <Route path="/ma-carte" element={<MyCardPage />} />
-        <Route path="/amis" element={<FriendsPage />} />
-      </Routes>
+      <div className="app-page" key={pathname}>
+        <Routes>
+          <Route path="/" element={<BoosterOpening />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/admin" element={AreAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
+          <Route path="/ma-carte" element={<MyCardPage />} />
+          <Route path="/amis" element={<FriendsPage />} />
+        </Routes>
+      </div>
     </div>
   )
 }
