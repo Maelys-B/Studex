@@ -5,6 +5,7 @@ import { getProfil } from './features/auth/services/authService'
 import { BoosterOpening } from './features/boosters/components/BoosterOpening'
 import { MyCardPage } from './features/creation-card/components/MyCardPage'
 import { AdminPage } from './features/admin/components/AdminPage'
+import { FriendsPage } from './features/friends/components/FriendsPage'
 import { Routes, Route, NavLink, Navigate } from 'react-router'
 
 
@@ -46,6 +47,7 @@ function App() {
         <NavLink to="/">Boosters</NavLink>
         <NavLink to="/ma-carte">Ma carte</NavLink>
         {AreAdmin && <NavLink to="/admin">Modération</NavLink>}
+        <NavLink to="/amis">Amis</NavLink>
         <button onClick={deconnexion}>se déconnecter</button>
       </nav>
 
@@ -54,6 +56,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/admin" element={AreAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
         <Route path="/ma-carte" element={<MyCardPage />} />
+        <Route path="/amis" element={<FriendsPage />} />
       </Routes>
     </div>
   )

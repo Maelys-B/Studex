@@ -67,3 +67,18 @@ CREATE TABLE IF NOT EXISTS user_boosters (
     stored_booster INT NOT NULL,
     last_gained_at BIGINT NOT NULL
 ) ENGINE=InnoDB;
+
+-- Les demandes d'amis et les amitiés (une seule ligne par paire de joueurs)
+-- user_low / user_high : calculées par MySQL, elles empêchent d'avoir à la fois A->B et B->A
+CREATE TABLE IF NOT EXISTS friendships (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    requester_id INT NOT NULL,
+    addressee_id INT NOT NULL,
+    status ENUM('pending', 'accepted') NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_low INT AS (LEAST(requester_id, addressee_id)) VIRTUAL,
+    user_high INT AS (GREATEST(requester_id, addressee_id)) VIRTUAL,
+    UNIQUE KEY uniq_pair (user_low, user_high),
+    FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (addressee_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
