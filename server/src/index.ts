@@ -5,8 +5,9 @@ import { cardsRouter } from './routes/cards.js'
 import { boostersRouter } from './routes/boosters.js'
 import { authRouter } from './routes/auth.js'
 import { collectionRouter } from './routes/collection.js'
-import type { Request, Response, NextFunction } from 'express'
 import { adminRouter } from './routes/admin.js';
+import { friendsRouter } from './routes/friends.js';
+import type { Request, Response, NextFunction } from 'express'
 
 const app = express()
 
@@ -22,6 +23,7 @@ app.use('/api/boosters', boostersRouter)
 app.use('/api/auth', authRouter);
 app.use('/api/collection', collectionRouter)
 app.use('/api/admin', adminRouter)
+app.use('/api/friends', friendsRouter)
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
