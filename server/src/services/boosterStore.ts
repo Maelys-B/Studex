@@ -37,11 +37,21 @@ export async function saveState(conn: PoolConnection, userId: number, state: Boo
     )
 }
 
-// attaques de toutes les cartes, rangées par id de carte
-export async function loadAttacksByCard(conn: Pool | PoolConnection): Promise<Map<number, Attack[]>> {
-    const [attackRows] = await conn.query<RowDataPacket[]>(
-        'SELECT card_id, name, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
-    )
+// sans cardIds : attaques de toutes les cartes, sinon seulement celles des cartes demandées
+export async function loadAttacksByCard(conn: Pool | PoolConnection, cardIds?: number[]): Promise<Map<number, Attack[]>> {
+    // IN () vide est invalide en SQL
+    if (cardIds && cardIds.length === 0) {
+        return new Map()
+    }
+
+    const [attackRows] = cardIds
+        ? await conn.query<RowDataPacket[]>(
+            'SELECT card_id, name, energy_cost, damage, description FROM card_attacks WHERE card_id IN (?) ORDER BY card_id, slot',
+            [cardIds]
+        )
+        : await conn.query<RowDataPacket[]>(
+            'SELECT card_id, name, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
+        )
 
     const attacksByCard = new Map<number, Attack[]>()
     for (const row of attackRows) {

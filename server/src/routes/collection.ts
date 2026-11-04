@@ -13,7 +13,7 @@ collectionRouter.get('/', async (_req, res, next) => {
             'SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type, avatar, quantity, obtained_at FROM cards JOIN user_cards ON cards.id = user_cards.card_id WHERE user_cards.user_id = ? ORDER BY obtained_at DESC',
             [res.locals.userId]
         )
-        const attacksByCard = await loadAttacksByCard(db)
+        const attacksByCard = await loadAttacksByCard(db, rows.map(row => row.id))
 
         res.json(rows.map(row => ({ ...row, attacks: attacksByCard.get(row.id) })))
     }

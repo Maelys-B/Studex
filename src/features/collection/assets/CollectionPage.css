@@ -70,6 +70,7 @@ html:has(.collection-page)::-webkit-scrollbar {
     transition: transform 0.15s;
 }
 
+/* background: none annule le fond violet du button:hover global, seule la carte se soulève */
 .collection-page__card-button:hover,
 .collection-page__card-button:focus-visible {
     background: none;
