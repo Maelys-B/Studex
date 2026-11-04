@@ -1,6 +1,6 @@
-import type { PoolConnection, RowDataPacket } from 'mysql2/promise'
+import type { Pool, PoolConnection, RowDataPacket } from 'mysql2/promise'
 import { db } from '../db.js'
-import type { BoosterState, Card, Attack } from '../types.js'
+import type { BoosterState, Card, Attack, BoosterContent } from '../types.js'
 import { MAX_BOOSTERS } from './boosterLogic.js'
 
 export async function withTransaction<T>(fn: (conn: PoolConnection) => Promise<T>): Promise<T> {
@@ -37,10 +37,8 @@ export async function saveState(conn: PoolConnection, userId: number, state: Boo
     )
 }
 
-export async function loadPool(conn: PoolConnection): Promise<Card[]> {
-    const [rows] = await conn.query<RowDataPacket[]>(
-        "SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type, avatar FROM cards WHERE status = 'approved'"
-    )
+// attaques de toutes les cartes, rangées par id de carte
+export async function loadAttacksByCard(conn: Pool | PoolConnection): Promise<Map<number, Attack[]>> {
     const [attackRows] = await conn.query<RowDataPacket[]>(
         'SELECT card_id, name, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
     )
@@ -56,6 +54,14 @@ export async function loadPool(conn: PoolConnection): Promise<Card[]> {
         })
         attacksByCard.set(row.card_id, list)
     }
+    return attacksByCard
+}
+
+export async function loadPool(conn: PoolConnection): Promise<Card[]> {
+    const [rows] = await conn.query<RowDataPacket[]>(
+        "SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type, avatar FROM cards WHERE status = 'approved'"
+    )
+    const attacksByCard = await loadAttacksByCard(conn)
 
     return rows.map(row => ({
         id: row.id,
@@ -67,7 +73,18 @@ export async function loadPool(conn: PoolConnection): Promise<Card[]> {
         hp: row.hp ?? undefined,
         attacks: attacksByCard.get(row.id),
         color: row.color ?? undefined,
+        avatar: row.avatar ?? undefined,
         rarity: row.rarity,
         type: row.type
     }))
+}
+
+export async function saveCards(conn: PoolConnection, userId: number, content: BoosterContent): Promise<void> {
+    const cards: Card[] = [...content.collection, content.battle, content.student]
+    for (const card of cards){
+        await conn.query(
+            'INSERT INTO user_cards(user_id, card_id) VALUES (?,?) ON DUPLICATE KEY UPDATE quantity = quantity + 1',
+            [userId, card.id]
+        )
+    }
 }

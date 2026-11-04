@@ -43,7 +43,7 @@ export function BoosterOpening() {
                         ? <CollectionCardView card={currentCard} />
                         : currentCard.type === 'battle'
                             ? <BattleCardView card={currentCard} />
-                            : currentCard.image
+                            : currentCard.image || currentCard.avatar
                                 ? <CardView card={currentCard} />
                                 : <ul><CardItem card={currentCard} /></ul>}
                     <div className="booster-page__nav">
