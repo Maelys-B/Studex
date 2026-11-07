@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import verifierToken from '../middleware/verifierToken.js'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
 import type { PublicUser } from '../types.js'
+import { containsForbiddenWord } from '../services/wordFilter.js';
 
 export const authRouter = Router()
 
@@ -34,6 +35,10 @@ authRouter.post('/register', async (req, res, next) => {
 
         if (!pseudo) {
             return res.status(400).json({ erreur: 'Pseudo requis' })
+        }
+
+        if (containsForbiddenWord(pseudo)) {
+            return res.status(400).json({ erreur: 'Ce pseudo contient un mot interdit'})
         }
 
         const regexMotDePasse = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/
