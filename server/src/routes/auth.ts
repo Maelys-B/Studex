@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import verifierToken from '../middleware/verifierToken.js'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
 import type { PublicUser } from '../types.js'
+import { nettoyerEmail, regexMotDePasse } from '../services/authValidation.js'
 
 export const authRouter = Router()
 
@@ -29,14 +30,12 @@ authRouter.post('/register', async (req, res, next) => {
             return res.status(400).json({ erreur: 'Pseudo requis' })
         }
 
-        const email = rawEmail.trim().toLowerCase()
+        const email = nettoyerEmail(rawEmail)
         const pseudo = rawPseudo.trim()
 
         if (!pseudo) {
             return res.status(400).json({ erreur: 'Pseudo requis' })
         }
-
-        const regexMotDePasse = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/
 
         if (!regexMotDePasse.test(mdp)) {
             return res.status(400).json({
@@ -84,7 +83,7 @@ authRouter.post('/login', async (req, res, next) => {
             return res.status(400).json({ erreur: 'Email et mot de passe requis' })
         }
 
-        const email = rawEmail.trim().toLowerCase()
+        const email = nettoyerEmail(rawEmail)
 
         const [rows] = await db.query<RowDataPacket[]>(
             'SELECT * FROM users WHERE email = ?',
@@ -135,4 +134,3 @@ authRouter.get('/profil', verifierToken, async (_req, res, next) => {
         next(err)
     }
 })
-
