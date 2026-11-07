@@ -1,4 +1,5 @@
 import type { Avatar } from '../types.js'
+import { containsForbiddenWord } from './wordFilter.js'
 
 export const FRAME_COLORS = ['#2aa9ad', '#ffe100', '#00e5ff', '#0800ff', '#e100ff']
 
@@ -37,6 +38,10 @@ export function validateStudentCard(body: any): StudentCardInput | string {
     if (subtitle.length > 80) return "L'accroche ne doit pas dépasser 80 caractères"
     if (!SUBTITLE_PATTERN.test(subtitle)) return "L'accroche contient des caractères non autorisés"
     if (!FRAME_COLORS.includes(body?.color)) return 'Couleur invalide'
+    if (containsForbiddenWord(first_name)) return 'Le prénom contient un mot interdit'
+    if (containsForbiddenWord(rawLastName)) return 'Le nom contient un mot interdit'
+    if (containsForbiddenWord(subtitle)) return "L'accroche contient un mot interdit"
+    if (containsForbiddenWord(`${first_name}${last_name}`)) return 'Le nom de la carte continet un mot interdit'
 
     const skin = body?.avatar?.skin
     if (typeof skin !== 'string' || !SKIN_PATTERN.test(skin)) return 'Couleur de peau invalide'
