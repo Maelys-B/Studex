@@ -6,6 +6,7 @@ import verifierToken from '../middleware/verifierToken.js'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
 import type { PublicUser } from '../types.js'
 import { nettoyerEmail, regexMotDePasse } from '../services/authValidation.js'
+import { containsForbiddenWord } from '../services/wordFilter.js';
 
 export const authRouter = Router()
 
@@ -35,6 +36,10 @@ authRouter.post('/register', async (req, res, next) => {
 
         if (!pseudo) {
             return res.status(400).json({ erreur: 'Pseudo requis' })
+        }
+
+        if (containsForbiddenWord(pseudo)) {
+            return res.status(400).json({ erreur: 'Ce pseudo contient un mot interdit'})
         }
 
         if (!regexMotDePasse.test(mdp)) {
