@@ -7,21 +7,27 @@ type AppNavProps = {
     onLogout: () => void
 }
 
-// Raideur des ressorts : le bord qui mène part vite, le bord qui suit traîne et crée l'étirement
-const LEAD_STIFFNESS = 420
-const TRAIL_STIFFNESS = 160
+// Raideur du bord avant : sa durée de trajet ne dépend pas de la distance à parcourir
+const LEAD_STIFFNESS = 240
+
+// Étirement visé, en part de la hauteur de la forme : le même sur tous les trajets, même entre deux mots voisins
+const STRETCH_RATIO = 1.85
+
+// Vitesses de l'étirement : il se met en place vite et se résorbe plus lentement, à l'arrivée
+const STRETCH_GROW = 20
+const STRETCH_SHRINK = 13
+
+// Part du trajet restant à partir de laquelle la forme se resserre : proportionnelle pour tenir aussi longtemps sur un petit trajet
+const ARRIVAL_RATIO = 0.06
 
 // Le col mesure 41 % de la hauteur de la forme quand elle est étirée au maximum, comme sur le modèle
 const NECK_RATIO = 0.41
-
-// Sous 1, le ressort dépasse à peine sa cible avant de se poser, ce qui rend l'arrivée plus souple
-const DAMPING = 0.82
 
 // Dessine une pastille de left à right ; plus elle est étirée, plus son milieu se creuse
 function buildShape(left: number, right: number, height: number, stretch: number) {
     const width = right - left
     const radius = Math.min(height / 2, width / 2)
-    const amount = Math.min(stretch / (height * 1.6), 1)
+    const amount = Math.min(stretch / (height * 1.1), 1)
     const pinch = amount * amount * (3 - 2 * amount)
     const neck = (height / 2) * (1 - NECK_RATIO) * pinch
     const reach = Math.max(width / 2 - radius, 0) * 0.85
@@ -53,17 +59,33 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
         return { left: link.offsetLeft, right: link.offsetLeft + link.offsetWidth }
     }
 
-    let index = activeIndex()
-    let goal = index
-    let { left, right } = edgesOf(index)
-    let leftSpeed = 0
-    let rightSpeed = 0
+    // Largeur de la forme au repos à cet endroit de la barre, entre les deux mots qui l'entourent :
+    // sans ça, passer d'un mot long à un mot court creuserait la forme d'un coup
+    const restWidth = (middle: number) => {
+        const words = getLinks().map(link => ({
+            middle: link.offsetLeft + link.offsetWidth / 2,
+            width: link.offsetWidth
+        }))
+        const next = words.findIndex(word => word.middle >= middle)
+        if (next === 0) return words[0].width
+        if (next === -1) return words[words.length - 1].width
+
+        const previous = words[next - 1]
+        const progress = (middle - previous.middle) / (words[next].middle - previous.middle)
+        return previous.width + (words[next].width - previous.width) * progress
+    }
+
+    let goal = activeIndex()
+    let { left, right } = edgesOf(goal)
+    let movingRight = true
+    let leadSpeed = 0
+    let pull = 0
+    let distance = 0
     let frame = 0
     let lastTime = 0
 
     const draw = () => {
-        const edges = edgesOf(index)
-        const stretch = Math.max(right - left - (edges.right - edges.left), 0)
+        const stretch = Math.max(right - left - restWidth((left + right) / 2), 0)
         path.setAttribute('d', buildShape(left, right, shape.clientHeight, stretch))
 
         // Un mot passe en foncé dès que le blanc est derrière lui
@@ -74,10 +96,9 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
     }
 
     const snap = () => {
-        index = goal
-        ;({ left, right } = edgesOf(index))
-        leftSpeed = 0
-        rightSpeed = 0
+        ;({ left, right } = edgesOf(goal))
+        leadSpeed = 0
+        pull = 0
         draw()
     }
 
@@ -85,29 +106,32 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
         const delta = Math.min((time - lastTime) / 1000, 1 / 30)
         lastTime = time
 
-        const edges = edgesOf(index)
-        const movingRight = edges.left + edges.right > left + right
-        const leftStiffness = movingRight ? TRAIL_STIFFNESS : LEAD_STIFFNESS
-        const rightStiffness = movingRight ? LEAD_STIFFNESS : TRAIL_STIFFNESS
+        const target = edgesOf(goal)
+        const leadGoal = movingRight ? target.right : target.left
+        let lead = movingRight ? right : left
 
-        leftSpeed += (leftStiffness * (edges.left - left) - 2 * DAMPING * Math.sqrt(leftStiffness) * leftSpeed) * delta
-        rightSpeed += (rightStiffness * (edges.right - right) - 2 * DAMPING * Math.sqrt(rightStiffness) * rightSpeed) * delta
-        left += leftSpeed * delta
-        right += rightSpeed * delta
+        leadSpeed += (LEAD_STIFFNESS * (leadGoal - lead) - 2 * Math.sqrt(LEAD_STIFFNESS) * leadSpeed) * delta
+        lead += leadSpeed * delta
 
-        // Mot par mot : on vise le mot suivant juste avant d'atteindre le mot actuel, pour ne pas marquer d'arrêt
-        const leadGap = movingRight ? edges.right - right : left - edges.left
-        const trailGap = movingRight ? edges.left - left : right - edges.right
-        const wordWidth = edges.right - edges.left
-        if (index !== goal && leadGap < wordWidth * 0.25 && trailGap < wordWidth) {
-            index += Math.sign(goal - index)
+        const leadGap = Math.abs(leadGoal - lead)
+        const pullGoal = leadGap > distance * ARRIVAL_RATIO ? shape.clientHeight * STRETCH_RATIO : 0
+        const rate = pullGoal > pull ? STRETCH_GROW : STRETCH_SHRINK
+        pull += (pullGoal - pull) * (1 - Math.exp(-rate * delta))
+
+        // Le bord arrière ne recule jamais : il se contente de suivre, à la distance fixée par l'étirement
+        const width = restWidth((left + right) / 2) + pull
+        if (movingRight) {
+            right = lead
+            left = Math.min(Math.max(left, right - width), target.left)
+        } else {
+            left = lead
+            right = Math.max(Math.min(right, left + width), target.right)
         }
 
         draw()
 
-        const settled = index === goal
-            && Math.abs(edges.left - left) < 0.3 && Math.abs(edges.right - right) < 0.3
-            && Math.abs(leftSpeed) < 3 && Math.abs(rightSpeed) < 3
+        const settled = leadGap < 0.3 && Math.abs(leadSpeed) < 3 && pull < 0.5
+            && Math.abs(target.left - left) < 0.3 && Math.abs(target.right - right) < 0.3
         if (settled) {
             frame = 0
             snap()
@@ -117,7 +141,15 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
     }
 
     const goTo = (target: number) => {
+        if (target === goal && frame) return
+
         goal = target
+        const edges = edgesOf(goal)
+        const nextMovingRight = edges.left + edges.right > left + right
+        if (nextMovingRight !== movingRight) leadSpeed = 0
+        movingRight = nextMovingRight
+        distance = Math.abs(movingRight ? edges.right - right : edges.left - left)
+
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
             snap()
         } else if (!frame) {
