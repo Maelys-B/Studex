@@ -1,0 +1,24 @@
+.card-tilt {
+    perspective: 900px;
+}
+
+/* La carte recule un peu et pivote : le côté sous la souris s'enfonce plus que les autres */
+.card-tilt__inner {
+    --tilt-depth: 0px;
+    transform:
+        translateZ(var(--tilt-depth))
+        rotateX(var(--tilt-x, 0deg))
+        rotateY(var(--tilt-y, 0deg));
+    transition: transform 0.35s ease-out;
+}
+
+.card-tilt__inner[data-pressed] {
+    --tilt-depth: -40px;
+    transition-duration: 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-tilt__inner {
+        transform: none;
+    }
+}
