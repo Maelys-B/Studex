@@ -1,6 +1,3 @@
-/* Briques communes aux pages Amis et Modération, reprises de Boosters et de Ma carte */
-
-/* ---------- Fond fixe, le même que Boosters ---------- */
 .page-bg {
     position: fixed;
     inset: 0;
@@ -33,7 +30,6 @@
     gap: 16px 24px;
 }
 
-/* ---------- Titre ---------- */
 .page-title {
     position: relative;
     width: fit-content;
@@ -66,7 +62,6 @@
     fill: #dff7ff;
 }
 
-/* ---------- Pastille d'information, comme le stock de boosters ---------- */
 .page-pill {
     display: inline-flex;
     align-items: center;
@@ -100,7 +95,6 @@
     font-weight: 800;
 }
 
-/* ---------- Panneau holographique, comme les blocs de Ma carte ---------- */
 .holo-panel {
     position: relative;
     display: flex;
@@ -198,7 +192,6 @@
     outline-offset: 2px;
 }
 
-/* ---------- Boutons ronds lumineux ---------- */
 .holo-btn,
 .holo-btn:hover {
     background: var(--ink);
@@ -252,7 +245,6 @@
     box-shadow: 0 0 12px rgba(169, 123, 255, 0.6);
 }
 
-/* Bouton discret, pour une action qu'on ne veut pas mettre en avant */
 .holo-btn--ghost,
 .holo-btn--ghost:hover {
     background: transparent;

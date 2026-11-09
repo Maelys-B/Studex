@@ -9,7 +9,6 @@
     font-family: 'Nunito', sans-serif;
 }
 
-/* Les deux fonds partent du haut de l'écran pour passer aussi derrière la navbar */
 .my-card__bg {
     position: fixed;
     top: 0;
@@ -31,7 +30,6 @@
     z-index: -1;
 }
 
-/* ---------- Colonne de gauche : la carte ---------- */
 .my-card__preview {
     display: flex;
     flex-direction: column;
@@ -56,9 +54,7 @@
     box-shadow: 0 0 14px rgba(86, 216, 255, 0.45);
 }
 
-/* ---------- Colonne de droite : les réglages ---------- */
 .my-card__panel {
-    /* Remonte derrière la navbar pour que le titre soit à la hauteur du bouton Se déconnecter */
     margin-top: calc(var(--nav-height) * -1);
     min-height: 0;
     overflow-y: auto;
@@ -102,7 +98,6 @@
     width: 0.8em;
 }
 
-/* ---------- Blocs ---------- */
 .my-card__group {
     position: relative;
     display: grid;
@@ -266,7 +261,6 @@
     font-weight: 700;
 }
 
-/* ---------- Bouton de validation ---------- */
 .my-card__submit-row {
     position: relative;
     flex-shrink: 0;

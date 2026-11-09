@@ -1,10 +1,6 @@
--- Création de la base et des tables de Studex
--- À lancer une fois dans phpMyAdmin (onglet SQL) ou avec : mysql -u root < db/schema.sql
-
 CREATE DATABASE IF NOT EXISTS studex CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE studex;
 
--- Les joueurs
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pseudo VARCHAR(50) NOT NULL,
@@ -14,10 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Toutes les cartes du jeu
--- created_by : joueur qui a créé sa carte étudiante (NULL pour les cartes du seed), une seule carte par joueur
--- avatar : choix de personnalisation de l avatar en JSON
--- status : une carte créée par un joueur reste pending tant qu un admin ne l a pas validée
 CREATE TABLE IF NOT EXISTS cards (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -35,7 +27,6 @@ CREATE TABLE IF NOT EXISTS cards (
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- Les 2 attaques de chaque carte de combat (slot = 1 ou 2)
 CREATE TABLE IF NOT EXISTS card_attacks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     card_id INT NOT NULL,
@@ -48,7 +39,6 @@ CREATE TABLE IF NOT EXISTS card_attacks (
     FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Qui possède quelle carte, et en combien d'exemplaires
 CREATE TABLE IF NOT EXISTS user_cards (
     user_id INT NOT NULL,
     card_id INT NOT NULL,
@@ -59,17 +49,12 @@ CREATE TABLE IF NOT EXISTS user_cards (
     FOREIGN KEY (card_id) REFERENCES cards(id)
 ) ENGINE=InnoDB;
 
--- Le stock de boosters de chaque joueur (max 5, 1 gagné toutes les 2 h)
--- last_gained_at : date en millisecondes du dernier booster gagné
--- user_id sans clé étrangère pour l instant : l authentification serveur n est pas encore branchée
 CREATE TABLE IF NOT EXISTS user_boosters (
     user_id BIGINT UNSIGNED PRIMARY KEY,
     stored_booster INT NOT NULL,
     last_gained_at BIGINT NOT NULL
 ) ENGINE=InnoDB;
 
--- Les demandes d'amis et les amitiés (une seule ligne par paire de joueurs)
--- user_low / user_high : calculées par MySQL, elles empêchent d'avoir à la fois A->B et B->A
 CREATE TABLE IF NOT EXISTS friendships (
     id INT AUTO_INCREMENT PRIMARY KEY,
     requester_id INT NOT NULL,

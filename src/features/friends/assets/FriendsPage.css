@@ -26,14 +26,12 @@
     list-style: none;
 }
 
-/* Liste longue : elle défile dans son panneau au lieu d'allonger la page */
 .friends__mine .friends__list {
     max-height: 62vh;
     overflow-y: auto;
     padding-right: 4px;
 }
 
-/* ---------- Ligne d'un joueur ---------- */
 .friend-row {
     display: flex;
     align-items: center;
@@ -109,14 +107,12 @@
     }
 }
 
-/* Sur téléphone, les boutons passent sous le pseudo */
 @media (max-width: 520px) {
     .friend-row {
         flex-wrap: wrap;
         border-radius: 18px;
     }
 
-    /* Le pseudo reste lisible : l'étiquette passe à la ligne plutôt que de le couper */
     .friend-row__name {
         min-width: 40%;
     }

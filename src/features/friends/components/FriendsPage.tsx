@@ -6,7 +6,6 @@ import { PageTitle } from '../../ui/components/PageTitle'
 import fond from '../../boosters/assets/fond-booster.webp'
 import '../assets/FriendsPage.css'
 
-// Pastille avec l'initiale du joueur, à défaut de photo
 function Initial({ pseudo }: { pseudo: string }) {
     return <span className="friend-row__avatar" aria-hidden="true">{pseudo.charAt(0).toUpperCase()}</span>
 }

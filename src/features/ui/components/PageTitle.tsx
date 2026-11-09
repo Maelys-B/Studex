@@ -13,7 +13,6 @@ export function Sparks({ className = '' }: { className?: string }) {
     )
 }
 
-// Titre manuscrit penché avec son trait de pinceau, le même que sur la page Ma carte
 export function PageTitle({ children }: { children: ReactNode }) {
     return (
         <h1 className="page-title">

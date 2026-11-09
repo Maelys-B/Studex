@@ -37,9 +37,7 @@ export async function saveState(conn: PoolConnection, userId: number, state: Boo
     )
 }
 
-// sans cardIds : attaques de toutes les cartes, sinon seulement celles des cartes demandées
 export async function loadAttacksByCard(conn: Pool | PoolConnection, cardIds?: number[]): Promise<Map<number, Attack[]>> {
-    // IN () vide est invalide en SQL
     if (cardIds && cardIds.length === 0) {
         return new Map()
     }

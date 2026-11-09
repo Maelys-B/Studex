@@ -1,6 +1,3 @@
--- Les cartes de test du jeu
--- À lancer après schema.sql. Relançable sans danger : les cartes déjà présentes gardent leurs données,
--- seuls la description et l'image sont mises à jour, puis les PV et les attaques des cartes de combat sont réécrits (utile pour une base créée avant ces ajouts).
 USE studex;
 
 INSERT INTO cards (id, name, subtitle, description, image, color, rarity, type) VALUES
@@ -63,7 +60,6 @@ INSERT INTO card_attacks (card_id, slot, name, energy_cost, damage, description)
     (20, 1, 'Révisions de la veille', 2, 70, 'Inflige 70 dégâts. Tout le cours en une seule nuit.'),
     (20, 2, 'Les partiels', 3, 110, 'Inflige 110 dégâts. Cinq examens en cinq jours.');
 
--- Numéro de chaque carte dans la collection : collection 1-10, combat 11-20, étudiants 21-25
 UPDATE cards SET position_collection = CASE id
     WHEN 31 THEN 21 WHEN 32 THEN 22 WHEN 33 THEN 23 WHEN 34 THEN 24 WHEN 35 THEN 25
     ELSE id

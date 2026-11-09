@@ -45,7 +45,6 @@ export function BoosterOpening() {
         if (!leaving) setLeaving(direction)
     }
 
-    // La carte suivante n'arrive qu'une fois la carte actuelle sortie
     const handleCardAnimationEnd = (e: AnimationEvent<HTMLDivElement>) => {
         if (e.target !== e.currentTarget || !leaving) return
         if (leaving === 'next') next()

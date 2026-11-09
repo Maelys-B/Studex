@@ -2,7 +2,6 @@
     perspective: 900px;
 }
 
-/* La carte recule un peu et pivote : le côté sous la souris s'enfonce plus que les autres */
 .card-tilt__inner {
     --tilt-depth: 0px;
     transform:

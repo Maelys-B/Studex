@@ -1,6 +1,5 @@
 import type { Avatar } from '../../boosters/types'
 
-// head : petit décalage de la tête propre à chaque pose (x et y en % de l'image, rotate en degrés)
 export const POSES = [
     { id: 'debout', label: 'Debout',     head: { x: 0, y: 0, rotate: 0 } },
     { id: 'cafe',   label: 'Café',       head: { x: 0, y: 0, rotate: 0 } },
@@ -11,10 +10,8 @@ export const DEFAULT_SKIN = '#f1c27d'
 
 const OUTFITS_PER_POSE = 4
 
-// Choix par pièce (tout sauf la peau, qui est une couleur libre)
 export type AvatarChoice = Exclude<keyof Avatar, 'skin'>
 
-// Ordre des choix dans le formulaire
 export const AVATAR_CHOICES = ['pose', 'outfit', 'mouth', 'eyes', 'hair'] as const satisfies readonly AvatarChoice[]
 
 const files = import.meta.glob('./avatar/*.webp', { eager: true, import: 'default' }) as Record<string, string>
@@ -29,7 +26,6 @@ export function getAvatarPart(category: keyof Avatar, avatar: Avatar): string | 
     return file(`${category}_${avatar[category]}`)
 }
 
-// Accessoire dessiné devant le personnage (gobelet, ordinateur), absent pour certaines poses
 export const getPoseProp = (poseIndex: number) => file(`prop_${POSES[poseIndex]?.id}`)
 
 export const AVATAR_COUNTS: Record<AvatarChoice, number> = {

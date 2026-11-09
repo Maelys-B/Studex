@@ -7,23 +7,17 @@ type AppNavProps = {
     onLogout: () => void
 }
 
-// Raideur du bord avant : sa durée de trajet ne dépend pas de la distance à parcourir
 const LEAD_STIFFNESS = 240
 
-// Étirement visé, en part de la hauteur de la forme : le même sur tous les trajets, même entre deux mots voisins
 const STRETCH_RATIO = 1.85
 
-// Vitesses de l'étirement : il se met en place vite et se résorbe plus lentement, à l'arrivée
 const STRETCH_GROW = 20
 const STRETCH_SHRINK = 13
 
-// Part du trajet restant à partir de laquelle la forme se resserre : proportionnelle pour tenir aussi longtemps sur un petit trajet
 const ARRIVAL_RATIO = 0.06
 
-// Le col mesure 41 % de la hauteur de la forme quand elle est étirée au maximum, comme sur le modèle
 const NECK_RATIO = 0.41
 
-// Dessine une pastille de left à right ; plus elle est étirée, plus son milieu se creuse
 function buildShape(left: number, right: number, height: number, stretch: number) {
     const width = right - left
     const radius = Math.min(height / 2, width / 2)
@@ -59,8 +53,6 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
         return { left: link.offsetLeft, right: link.offsetLeft + link.offsetWidth }
     }
 
-    // Largeur de la forme au repos à cet endroit de la barre, entre les deux mots qui l'entourent :
-    // sans ça, passer d'un mot long à un mot court creuserait la forme d'un coup
     const restWidth = (middle: number) => {
         const words = getLinks().map(link => ({
             middle: link.offsetLeft + link.offsetWidth / 2,
@@ -88,7 +80,6 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
         const stretch = Math.max(right - left - restWidth((left + right) / 2), 0)
         path.setAttribute('d', buildShape(left, right, shape.clientHeight, stretch))
 
-        // Un mot passe en foncé dès que le blanc est derrière lui
         for (const link of getLinks()) {
             const middle = link.offsetLeft + link.offsetWidth / 2
             link.toggleAttribute('data-lit', middle > left && middle < right)
@@ -118,7 +109,6 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
         const rate = pullGoal > pull ? STRETCH_GROW : STRETCH_SHRINK
         pull += (pullGoal - pull) * (1 - Math.exp(-rate * delta))
 
-        // Le bord arrière ne recule jamais : il se contente de suivre, à la distance fixée par l'étirement
         const width = restWidth((left + right) / 2) + pull
         if (movingRight) {
             right = lead
@@ -188,7 +178,6 @@ export function AppNav({ isAdmin, onLogout }: AppNavProps) {
 
         const blob = createBlob(links, shape, path)
         blobRef.current = blob
-        // La taille de la barre suit l'écran et le chargement de la police
         const observer = new ResizeObserver(() => blob.refresh())
         observer.observe(links)
         return () => {
