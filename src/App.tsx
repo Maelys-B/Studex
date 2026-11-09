@@ -8,6 +8,7 @@ import { AdminPage } from './features/admin/components/AdminPage'
 import { FriendsPage } from './features/friends/components/FriendsPage'
 import { AppNav } from './features/navigation/components/AppNav'
 import { Routes, Route, Navigate, useLocation } from 'react-router'
+import { CollectionPage } from './features/collection/components/CollectionPage'
 
 
 function App() {
@@ -54,6 +55,7 @@ function App() {
           <Route path="/admin" element={AreAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
           <Route path="/ma-carte" element={<MyCardPage />} />
           <Route path="/amis" element={<FriendsPage />} />
+          <Route path="/collection" element={<CollectionPage />} />
         </Routes>
       </div>
     </div>

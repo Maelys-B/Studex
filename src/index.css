@@ -234,6 +234,11 @@ button:disabled {
 }
 
 @media (max-width: 560px) {
+  /* Cinq liens doivent tenir sur la largeur d'un téléphone, à côté du bouton de déconnexion */
+  :root {
+    --nav-font-size: clamp(11px, 3.2vw, 15px);
+  }
+
   .app-nav {
     padding: 0 12px;
   }
@@ -245,7 +250,7 @@ button:disabled {
   }
 
   .app-nav__links a {
-    padding: 0.15em 0.7em;
+    padding: 0.15em 0.6em;
   }
 
   .app-nav__logout {

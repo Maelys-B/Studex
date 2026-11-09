@@ -1,0 +1,267 @@
+/* cache la barre de défilement de la page (le défilement reste possible) uniquement quand la collection est affichée */
+html:has(.collection-page) {
+    scrollbar-width: none;
+}
+
+html:has(.collection-page)::-webkit-scrollbar {
+    display: none;
+}
+
+.collection-page {
+    padding: 100px;
+}
+
+.collection-page__grid {
+    /* 300px max, sinon la place disponible (écran - padding - espaces) divisée par 5 */
+    --card-size: min(300px, calc((100vw - 200px - 4 * 24px) / 5));
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    gap: 24px;
+    justify-content: center;
+}
+
+.collection-page__grid .ccard,
+.collection-page__grid .bcard {
+    --w: var(--card-size);
+}
+
+.collection-page__grid .card {
+    --card-width: var(--card-size);
+}
+
+/* dans la grille on montre une version allégée : la description et les attaques n'apparaissent qu'au clic */
+.collection-page__grid .ccard__text p,
+.collection-page__grid .bcard__attacks {
+    display: none;
+}
+
+.collection-page__grid .ccard__number {
+    margin-top: 0;
+}
+
+.collection-page__filters {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.collection-page__filters label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.collection-page__item {
+    position: relative;
+}
+
+/* bouton invisible autour de la carte : cliquable au clavier comme à la souris */
+.collection-page__card-button {
+    display: block;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+/* background: none annule le fond violet du button:hover global, seule la carte se soulève */
+.collection-page__card-button:hover,
+.collection-page__card-button:focus-visible {
+    background: none;
+    transform: translateY(-4px);
+}
+
+.collection-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    padding: 16px;
+    overflow-y: auto;
+    background: rgba(10, 11, 18, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.collection-modal__content {
+    /* la carte prend toute la hauteur de l'écran (largeur = 2/3 de la hauteur), les infos se mettent à côté */
+    --modal-card-size: min(460px, 50vw, calc((100dvh - 160px) * 2 / 3));
+    /* margin auto centre le contenu, sans couper le haut s'il dépasse de l'écran */
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.collection-modal__card {
+    position: relative;
+}
+
+/* le centre de la croix est pile sur le coin haut-droit de la carte */
+.collection-modal__close {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    background: #262938;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.collection-modal__close svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.collection-modal__close:hover,
+.collection-modal__close:focus-visible {
+    background: #31354a;
+}
+
+.collection-modal__side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.collection-modal__side .collection-modal__actions {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.collection-modal__danger {
+    border-color: #e5484d;
+    background: #e5484d;
+}
+
+.collection-modal__danger:hover {
+    background: #f0676b;
+}
+
+.collection-confirm {
+    position: fixed;
+    inset: 0;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.collection-confirm__box {
+    max-width: 420px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.collection-confirm__title {
+    font-weight: bold;
+}
+
+.collection-confirm__text {
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+.collection-modal__content .ccard,
+.collection-modal__content .bcard {
+    --w: var(--modal-card-size);
+}
+
+.collection-modal__content .card {
+    --card-width: var(--modal-card-size);
+}
+
+.collection-modal__quantity {
+    margin: 0;
+    color: #fff;
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.collection-modal__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.collection-modal__actions button {
+    padding: 14px 28px;
+    font-size: 1.1rem;
+}
+
+.collection-modal__error {
+    margin: 0;
+    color: #ff8a8a;
+}
+
+.collection-page__quantity {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-weight: bold;
+}
+
+.collection-page__empty,
+.collection-page__error {
+    text-align: center;
+    margin-top: 48px;
+}
+
+@media (max-width: 1000px) {
+    .collection-page {
+        padding: 48px 16px;
+    }
+
+    .collection-page__grid {
+        --card-size: calc((100vw - 32px - 2 * 24px) / 3);
+        grid-template-columns: repeat(3, max-content);
+    }
+}
+
+/* écran étroit : les infos repassent sous la carte */
+@media (max-width: 760px), (max-aspect-ratio: 1 / 1) {
+    .collection-modal__content {
+        --modal-card-size: min(90vw, calc((100dvh - 200px) * 2 / 3));
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .collection-modal__side .collection-modal__actions {
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 760px) {
+    .collection-page__grid {
+        --card-size: calc((100vw - 32px - 24px) / 2);
+        grid-template-columns: repeat(2, max-content);
+    }
+}

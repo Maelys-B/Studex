@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { db } from '../db.js'
 import verifierToken from '../middleware/verifierToken.js'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
-import { withTransaction } from '../services/boosterStore.js'
+import { loadAttacksByCard, withTransaction } from '../services/boosterStore.js'
 
 export const collectionRouter = Router()
 collectionRouter.use(verifierToken)
@@ -10,10 +10,12 @@ collectionRouter.use(verifierToken)
 collectionRouter.get('/', async (_req, res, next) => {
     try {
         const [rows] = await db.query<RowDataPacket[]>(
-            'SELECT id, name, position_collection, subtitle, image, color, rarity, type, quantity, obtained_at FROM cards JOIN user_cards ON cards.id = user_cards.card_id WHERE user_cards.user_id = ? ORDER BY obtained_at DESC',
+            'SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type, avatar, quantity, obtained_at FROM cards JOIN user_cards ON cards.id = user_cards.card_id WHERE user_cards.user_id = ? ORDER BY obtained_at DESC',
             [res.locals.userId]
         )
-        res.json(rows)
+        const attacksByCard = await loadAttacksByCard(db, rows.map(row => row.id))
+
+        res.json(rows.map(row => ({ ...row, attacks: attacksByCard.get(row.id) })))
     }
     catch (err) {
         next(err)
