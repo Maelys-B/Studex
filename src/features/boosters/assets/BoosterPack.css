@@ -52,6 +52,17 @@
     transition: filter 0.15s, transform 0.05s;
 }
 
+/* Flèche dessinée plutôt qu'un caractère : un glyphe de police n'est jamais pile au centre du rond */
+.booster-page__arrow svg {
+    width: 46%;
+    height: 46%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .booster-page__arrow:hover:not(:disabled) { filter: brightness(1.2); }
 
 .booster-page__arrow--previous { grid-area: previous; }
@@ -59,13 +70,15 @@
 
 .booster-page__foot .booster-page__open { animation: fade-in 0.25s ease-out; }
 
+/* Compteur au-dessus, bouton Continuer en dessous, tous deux centrés sous la carte.
+   La ligne du bouton est réservée même vide, pour que la carte ne saute pas à la dernière */
 .booster-page__foot {
     grid-area: foot;
-    display: flex;
+    display: grid;
+    grid-template-rows: auto calc(var(--pack-width) * 0.26);
+    justify-items: center;
     align-items: center;
-    justify-content: center;
-    gap: 16px;
-    min-height: calc(var(--pack-width) * 0.26);
+    gap: 12px;
 }
 
 .pack-scene {
@@ -329,6 +342,8 @@
             "card card card"
             "previous count next"
             "open open open";
+        /* Ligne du bouton réservée, comme sur grand écran */
+        grid-template-rows: auto auto calc(var(--pack-width) * 0.26);
     }
 
     .booster-page__foot { display: contents; }

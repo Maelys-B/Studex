@@ -70,7 +70,7 @@ export function BoosterOpening() {
                         disabled={index === 0}
                         aria-label="Carte précédente"
                     >
-                        ←
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
                     </button>
                     <div
                         key={index}
@@ -91,7 +91,7 @@ export function BoosterOpening() {
                         disabled={isLast}
                         aria-label="Carte suivante"
                     >
-                        →
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
                     </button>
                     <div className="booster-page__foot">
                         <span className="booster-page__stock">{index + 1} / {cards.length}</span>
