@@ -1,0 +1,143 @@
+.friends__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 44px 32px;
+}
+
+.friends__column {
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+    min-width: 0;
+}
+
+.friends__search {
+    flex-direction: row;
+    gap: 10px;
+}
+
+.friends__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Liste longue : elle défile dans son panneau au lieu d'allonger la page */
+.friends__mine .friends__list {
+    max-height: 62vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* ---------- Ligne d'un joueur ---------- */
+.friend-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 54px;
+    padding: 6px 8px 6px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.5);
+    transition: background 0.15s;
+}
+
+.friend-row:hover {
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.friend-row__avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--neon);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #27c4ea, var(--ink) 55%, #7a35e6);
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 0 8px rgba(123, 230, 255, 0.6);
+}
+
+.friend-row__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 800;
+}
+
+.friend-row__actions {
+    display: flex;
+    gap: 8px;
+}
+
+.friend-row__tag {
+    padding: 4px 14px;
+    border-radius: 999px;
+    background: rgba(18, 20, 74, 0.12);
+    color: rgba(18, 20, 74, 0.75);
+    font-size: 0.9rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.friend-row__tag--received {
+    background: rgba(122, 53, 230, 0.15);
+    color: #5a22b8;
+}
+
+.friend-row__tag--friends {
+    background: rgba(39, 196, 234, 0.2);
+    color: #0b6e88;
+}
+
+@media (max-width: 900px) {
+    .friends__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .friends__mine .friends__list {
+        max-height: none;
+        overflow: visible;
+    }
+}
+
+/* Sur téléphone, les boutons passent sous le pseudo */
+@media (max-width: 520px) {
+    .friend-row {
+        flex-wrap: wrap;
+        border-radius: 18px;
+    }
+
+    /* Le pseudo reste lisible : l'étiquette passe à la ligne plutôt que de le couper */
+    .friend-row__name {
+        min-width: 40%;
+    }
+
+    .friend-row__tag {
+        margin-left: auto;
+    }
+
+    .friend-row__actions {
+        width: 100%;
+    }
+
+    .friend-row__actions .holo-btn {
+        flex: 1;
+    }
+
+    .friends__search {
+        flex-direction: column;
+    }
+
+    .friends__search .holo-input {
+        flex: none;
+    }
+}
