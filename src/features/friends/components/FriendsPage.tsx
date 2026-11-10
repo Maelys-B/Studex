@@ -67,7 +67,7 @@ export function FriendsPage() {
                     {results.length === 0 && <li>Aucun joueur trouvé.</li>}
                     {results.map(r => (
                         <li key={r.id}>
-                            {r.pseudo}{' '}
+                            {r.username}{' '}
                             {r.relation === 'none' && (
                                 <button onClick={() => run(() => sendRequest(r.id))}>Ajouter</button>
                             )}
@@ -84,7 +84,7 @@ export function FriendsPage() {
                 {requests.length === 0 && <li>Aucune demande.</li>}
                 {requests.map(r => (
                     <li key={r.id}>
-                        {r.pseudo}{' '}
+                        {r.username}{' '}
                         <button onClick={() => run(() => answerRequest(r.id, 'accepted'))}>Accepter</button>
                         <button onClick={() => run(() => answerRequest(r.id, 'rejected'))}>Refuser</button>
                     </li>
@@ -96,7 +96,7 @@ export function FriendsPage() {
                 {friends.length === 0 && <li>Pas encore d'amis.</li>}
                 {friends.map(f => (
                     <li key={f.id}>
-                        {f.pseudo}{' '}
+                        {f.username}{' '}
                         <button onClick={() => run(() => removeFriend(f.id))}>Retirer</button>
                     </li>
                 ))}

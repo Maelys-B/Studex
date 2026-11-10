@@ -1,5 +1,5 @@
 import boosterImage from "../assets/booster/booster.webp"
-import openingVideo from "../assets/booster/court.webm"
+import openingVideo from "../assets/booster/short.webm"
 import "../assets/BoosterPack.css"
 
 type BoosterPackProps = {

@@ -1,28 +1,28 @@
 import {useState} from 'react'
-import {updateProfil} from '../services/profileService'
+import {updateProfile} from '../services/profileService'
 import type {User} from '../../auth/types'
 import type React from 'react';
 
-type ProfilProps = {
-    onModification: () => void,
+type ProfileProps = {
+    onUpdate: () => void,
     user: User
 }
 
-export function ProfilForm({onModification, user}:ProfilProps){
-    const [pseudo, setPseudo] = useState(user.pseudo)
+export function ProfileForm({onUpdate, user}:ProfileProps){
+    const [username, setUsername] = useState(user.username)
     const [email, setEmail] = useState(user.email)
-    const [erreur, setErreur] = useState('')
+    const [error, setError] = useState('')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        setErreur('')
+        setError('')
 
         try{
-            await updateProfil({email, pseudo})
-            onModification()
+            await updateProfile({email, username})
+            onUpdate()
         } catch(err){
             if (err instanceof Error) {
-                setErreur(err.message)
+                setError(err.message)
             }
         }
     }
@@ -33,20 +33,20 @@ export function ProfilForm({onModification, user}:ProfilProps){
 
             <h2>Modifier mon pseudo et email</h2>
             <div>
-                <label htmlFor="profil-pseudo">pseudo</label>
+                <label htmlFor="profile-username">pseudo</label>
                 <input
-                    id="profil-pseudo"
+                    id="profile-username"
                     type="text"
                     required
-                    value={pseudo}
-                    onChange={(e) => setPseudo(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
 
             <div>
-                <label htmlFor="profil-email">email</label>
+                <label htmlFor="profile-email">email</label>
                 <input
-                    id="profil-email"
+                    id="profile-email"
                     type="email"
                     required
                     value={email}
@@ -54,7 +54,7 @@ export function ProfilForm({onModification, user}:ProfilProps){
                 />
             </div>
 
-            {erreur && <p>{erreur}</p>}
+            {error && <p>{error}</p>}
 
             <button type="submit">Enregistrer</button>
         </form>

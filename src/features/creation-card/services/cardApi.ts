@@ -37,6 +37,6 @@ export async function saveMyCard(form: StudentCardForm, exists: boolean): Promis
     })
     if (!res.ok) {
         const body = await res.json().catch(() => null)
-        throw new Error(body?.erreur ?? 'Erreur serveur')
+        throw new Error(body?.error ?? 'Erreur serveur')
     }
 }

@@ -1,17 +1,17 @@
 export type User = {
     readonly id: number,
-    pseudo: string,
+    username: string,
     email: string,
     role: 'user' | 'admin',
 }
 
 export type LoginData = {
     email: string,
-    mdp: string,
+    password: string,
 }
 
 export type RegisterData = {
-    pseudo: string,
+    username: string,
     email: string,
-    mdp: string,
+    password: string,
 }

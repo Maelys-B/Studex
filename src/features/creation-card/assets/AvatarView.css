@@ -13,7 +13,7 @@
 }
 
 .avatar__skin {
-    isolation: isolate;   /* le multiply ne se mélange qu'avec l'image du corps */
+    isolation: isolate;   /* the multiply only blends with the body image */
 }
 
 .avatar__skin img {
@@ -37,5 +37,5 @@
 }
 
 .avatar__head {
-    transform-origin: 50% 35%;   /* centre approximatif de la tête */
+    transform-origin: 50% 35%;   /* approximate center of the head */
 }
