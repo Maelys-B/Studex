@@ -76,7 +76,7 @@ export function MyCardPage() {
 
     return (
         <section>
-            <h1>Ma carte</h1>
+            <h2>Ma carte</h2>
             {status && <p>Statut : {STATUS_LABELS[status]}</p>}
 
             <CardView
