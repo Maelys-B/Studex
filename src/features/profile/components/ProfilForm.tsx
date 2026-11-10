@@ -29,8 +29,9 @@ export function ProfilForm({onModification, user}:ProfilProps){
 
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Mon profil</h2>
+            <h1>Mon profil</h1>
 
+            <h2>Modifier mon pseudo et email</h2>
             <div>
                 <label htmlFor="profil-pseudo">pseudo</label>
                 <input

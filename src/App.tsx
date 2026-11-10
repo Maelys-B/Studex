@@ -60,7 +60,6 @@ function App() {
     <div>
       <nav>
         <NavLink to="/">Boosters</NavLink>
-        <NavLink to="/ma-carte">Ma carte</NavLink>
         {AreAdmin && <NavLink to="/admin">Modération</NavLink>}
         <NavLink to="/amis">Amis</NavLink>
         <NavLink to="/collection">Collection</NavLink>
@@ -73,12 +72,12 @@ function App() {
         <Route path="/collection" element={<CollectionPage/>}/>
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/admin" element={AreAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
-        <Route path="/ma-carte" element={<MyCardPage />} />
         <Route path="/amis" element={<FriendsPage />} />
         <Route path="/profil" element={user && (
           <>
             <ProfilForm user={user} onModification={rechargerProfil} />
             <MdpForm onModification={() => {}} />
+            <MyCardPage />
           </>
         )} />
       </Routes>
