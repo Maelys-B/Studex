@@ -1,4 +1,4 @@
- import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginForm } from './features/auth/components/LoginForm'
 import { RegisterForm } from './features/auth/components/RegisterForm'
 import { getProfil } from './features/auth/services/authService'
@@ -8,17 +8,24 @@ import { AdminPage } from './features/admin/components/AdminPage'
 import { FriendsPage } from './features/friends/components/FriendsPage'
 import { CollectionPage  } from './features/collection/components/CollectionPage'
 import { Routes, Route, NavLink, Navigate } from 'react-router'
+import { MdpForm } from './features/profile/components/MdpForm';
+import { ProfilForm } from './features/profile/components/ProfilForm';
+import type {User} from './features/auth/types';
 
 
 function App() {
   const [estConnecte, setEstConnecte] = useState(!!localStorage.getItem('token'))
   const [AreAdmin, setAreAdmin] = useState(false)
   const [pageAuth, setPageAuth] = useState<'login' | 'register'>('register')
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     if (!estConnecte) return
     getProfil()
-      .then(user => setAreAdmin(user.role === 'admin'))
+      .then(user => {
+        setUser(user)
+        setAreAdmin(user.role === 'admin')
+      })
       .catch(() => setEstConnecte(false))
   }, [estConnecte])
 
@@ -26,6 +33,13 @@ function App() {
     localStorage.removeItem('token')
     setEstConnecte(false)
     setAreAdmin(false)
+    setUser(null)
+  }
+
+  const rechargerProfil = () => {
+    getProfil()
+      .then(setUser)
+      .catch(() => setEstConnecte(false))
   }
 
   if (!estConnecte) {
@@ -50,6 +64,7 @@ function App() {
         {AreAdmin && <NavLink to="/admin">Modération</NavLink>}
         <NavLink to="/amis">Amis</NavLink>
         <NavLink to="/collection">Collection</NavLink>
+        <NavLink to="/profil">Profil</NavLink>
         <button onClick={deconnexion}>se déconnecter</button>
       </nav>
 
@@ -60,6 +75,12 @@ function App() {
         <Route path="/admin" element={AreAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
         <Route path="/ma-carte" element={<MyCardPage />} />
         <Route path="/amis" element={<FriendsPage />} />
+        <Route path="/profil" element={user && (
+          <>
+            <ProfilForm user={user} onModification={rechargerProfil} />
+            <MdpForm onModification={() => {}} />
+          </>
+        )} />
       </Routes>
     </div>
   )
