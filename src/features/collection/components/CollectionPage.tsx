@@ -39,6 +39,7 @@ function sortCards(cards: OwnedCard[], order: SortOrder): OwnedCard[] {
 
 export function CollectionPage() {
     const [cards, setCards] = useState<OwnedCard[]>([])
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [typeFilter, setTypeFilter] = useState<TypeFilter>('tous')
     const [sortOrder, setSortOrder] = useState<SortOrder>('recent')
@@ -51,6 +52,7 @@ export function CollectionPage() {
         fetchCollection()
             .then(setCards)
             .catch(err => setError(err.message))
+            .finally(() => setLoading(false))
     }, [])
 
     const selectedCard = cards.find(card => card.id === selectedId) ?? null
@@ -96,6 +98,10 @@ export function CollectionPage() {
         } finally {
             setDeleting(false)
         }
+    }
+
+    if (loading) {
+        return <p className="collection-page__empty">Chargement...</p>
     }
 
     if (error) {
