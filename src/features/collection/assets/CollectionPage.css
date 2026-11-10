@@ -1,4 +1,4 @@
-/* cache la barre de défilement de la page (le défilement reste possible) uniquement quand la collection est affichée */
+/* hides the page scrollbar (scrolling still works) only while the collection is displayed */
 html:has(.collection-page) {
     scrollbar-width: none;
 }
@@ -12,7 +12,7 @@ html:has(.collection-page)::-webkit-scrollbar {
 }
 
 .collection-page__grid {
-    /* 300px max, sinon la place disponible (écran - padding - espaces) divisée par 5 */
+    /* 300px max, otherwise the available space (screen - padding - gaps) divided by 5 */
     --card-size: min(300px, calc((100vw - 200px - 4 * 24px) / 5));
     list-style: none;
     margin: 0;
@@ -32,7 +32,7 @@ html:has(.collection-page)::-webkit-scrollbar {
     --card-width: var(--card-size);
 }
 
-/* dans la grille on montre une version allégée : la description et les attaques n'apparaissent qu'au clic */
+/* the grid shows a lighter version: the description and attacks only appear on click */
 .collection-page__grid .ccard__text p,
 .collection-page__grid .bcard__attacks {
     display: none;
@@ -60,7 +60,7 @@ html:has(.collection-page)::-webkit-scrollbar {
     position: relative;
 }
 
-/* bouton invisible autour de la carte : cliquable au clavier comme à la souris */
+/* invisible button around the card: clickable with the keyboard as well as the mouse */
 .collection-page__card-button {
     display: block;
     padding: 0;
@@ -70,7 +70,7 @@ html:has(.collection-page)::-webkit-scrollbar {
     transition: transform 0.15s;
 }
 
-/* background: none annule le fond violet du button:hover global, seule la carte se soulève */
+/* background: none cancels the purple background of the global button:hover, only the card lifts */
 .collection-page__card-button:hover,
 .collection-page__card-button:focus-visible {
     background: none;
@@ -90,9 +90,9 @@ html:has(.collection-page)::-webkit-scrollbar {
 }
 
 .collection-modal__content {
-    /* la carte prend toute la hauteur de l'écran (largeur = 2/3 de la hauteur), les infos se mettent à côté */
+    /* the card takes the full screen height (width = 2/3 of the height), the info sits beside it */
     --modal-card-size: min(460px, 50vw, calc((100dvh - 160px) * 2 / 3));
-    /* margin auto centre le contenu, sans couper le haut s'il dépasse de l'écran */
+    /* margin auto centers the content without cutting off the top if it overflows the screen */
     margin: auto;
     display: flex;
     align-items: center;
@@ -103,7 +103,7 @@ html:has(.collection-page)::-webkit-scrollbar {
     position: relative;
 }
 
-/* le centre de la croix est pile sur le coin haut-droit de la carte */
+/* the center of the cross sits exactly on the card's top-right corner */
 .collection-modal__close {
     position: absolute;
     top: -20px;
@@ -246,7 +246,7 @@ html:has(.collection-page)::-webkit-scrollbar {
     }
 }
 
-/* écran étroit : les infos repassent sous la carte */
+/* narrow screen: the info moves back under the card */
 @media (max-width: 760px), (max-aspect-ratio: 1 / 1) {
     .collection-modal__content {
         --modal-card-size: min(90vw, calc((100dvh - 200px) * 2 / 3));

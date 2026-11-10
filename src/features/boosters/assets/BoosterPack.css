@@ -10,7 +10,7 @@
 .booster-page__reveal {
     display: flex;
     flex-direction: column;
-    align-items: center;   /* carte, flèches et bouton Continuer centrés */
+    align-items: center;   /* card, arrows and Continue button centered */
     gap: 12px;
 }
 

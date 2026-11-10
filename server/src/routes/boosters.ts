@@ -8,10 +8,10 @@ import {
 } from '../services/boosterLogic.js'
 import { getState, loadPool, saveState, withTransaction, saveCards } from '../services/boosterStore.js'
 import type { BoosterState } from '../types.js'
-import verifierToken from '../middleware/verifierToken.js'
+import verifyToken from '../middleware/verifyToken.js'
 
 export const boostersRouter = Router()
-boostersRouter.use(verifierToken)
+boostersRouter.use(verifyToken)
 
 function describe(state: BoosterState, now: number) {
     return {

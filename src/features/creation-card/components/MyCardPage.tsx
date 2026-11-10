@@ -87,7 +87,7 @@ export function MyCardPage() {
                     subtitle,
                     color,
                     avatar,
-                    rarity: 'commun',
+                    rarity: 'common',
                     type: 'student'
                 }}
             />

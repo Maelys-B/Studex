@@ -44,7 +44,7 @@ export function AdminPage() {
                             subtitle: card.subtitle,
                             color: card.color,
                             avatar: card.avatar,
-                            rarity: 'commun',
+                            rarity: 'common',
                             type: 'student'
                         }}
                     />

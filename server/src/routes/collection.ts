@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import { db } from '../db.js'
-import verifierToken from '../middleware/verifierToken.js'
+import verifyToken from '../middleware/verifyToken.js'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
 import { loadAttacksByCard, withTransaction } from '../services/boosterStore.js'
 
 export const collectionRouter = Router()
-collectionRouter.use(verifierToken)
+collectionRouter.use(verifyToken)
 
 collectionRouter.get('/', async (_req, res, next) => {
     try {
@@ -24,19 +24,19 @@ collectionRouter.get('/', async (_req, res, next) => {
 
 collectionRouter.delete('/', async (req, res, next) => {
     try {
-        const { cardIds, tout } = req.body
+        const { cardIds, all } = req.body
 
         if (!Array.isArray(cardIds) || cardIds.length === 0) {
-            return res.status(400).json({ erreur: 'Identifiant de carte invalide' });
+            return res.status(400).json({ error: 'Identifiant de carte invalide' });
         }
         
         if (!cardIds.every(Number.isInteger)) {
-            return res.status(400).json({ erreur: 'Identifiant de carte invalide' });
+            return res.status(400).json({ error: 'Identifiant de carte invalide' });
         }   
 
         let result: ResultSetHeader;
 
-        if (tout === true) {
+        if (all === true) {
             result = await withTransaction(async conn => {
                 const [deleteResult] = await conn.query<ResultSetHeader>(
                     'DELETE FROM user_cards WHERE card_id IN (?) AND user_id = ?',
@@ -64,7 +64,7 @@ collectionRouter.delete('/', async (req, res, next) => {
         }
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ erreur: 'Carte absente de la collection' });
+            return res.status(404).json({ error: 'Carte absente de la collection' });
         }
 
         res.status(204).end()

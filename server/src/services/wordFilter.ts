@@ -14,11 +14,11 @@ function normalize(text: string): string {
 }
 
 export function containsForbiddenWord(text: string): boolean {
-    const noramlized = normalize(text)
+    const normalized = normalize(text)
 
-    const words = noramlized.split(/[^a-z]+/).filter(Boolean)
+    const words = normalized.split(/[^a-z]+/).filter(Boolean)
     if (words.some(word => FORBIDDEN_WORDS.includes(word))) return true
 
-    const compact = noramlized.replace(/[^a-z]/g, '')
+    const compact = normalized.replace(/[^a-z]/g, '')
     return FORBIDDEN_WORDS.some(word => word.length >= 5 && compact.includes(word))
 }

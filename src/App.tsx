@@ -1,57 +1,57 @@
 import { useState, useEffect } from 'react';
 import { LoginForm } from './features/auth/components/LoginForm'
 import { RegisterForm } from './features/auth/components/RegisterForm'
-import { getProfil } from './features/auth/services/authService'
+import { getProfile } from './features/auth/services/authService'
 import { BoosterOpening } from './features/boosters/components/BoosterOpening'
 import { MyCardPage } from './features/creation-card/components/MyCardPage'
 import { AdminPage } from './features/admin/components/AdminPage'
 import { FriendsPage } from './features/friends/components/FriendsPage'
 import { CollectionPage  } from './features/collection/components/CollectionPage'
 import { Routes, Route, NavLink, Navigate } from 'react-router'
-import { MdpForm } from './features/profile/components/MdpForm';
-import { ProfilForm } from './features/profile/components/ProfilForm';
+import { PasswordForm } from './features/profile/components/PasswordForm';
+import { ProfileForm } from './features/profile/components/ProfileForm';
 import type {User} from './features/auth/types';
 
 
 function App() {
-  const [estConnecte, setEstConnecte] = useState(!!localStorage.getItem('token'))
-  const [AreAdmin, setAreAdmin] = useState(false)
-  const [pageAuth, setPageAuth] = useState<'login' | 'register'>('register')
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'))
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [authPage, setAuthPage] = useState<'login' | 'register'>('register')
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    if (!estConnecte) return
-    getProfil()
+    if (!isLoggedIn) return
+    getProfile()
       .then(user => {
         setUser(user)
-        setAreAdmin(user.role === 'admin')
+        setIsAdmin(user.role === 'admin')
       })
-      .catch(() => setEstConnecte(false))
-  }, [estConnecte])
+      .catch(() => setIsLoggedIn(false))
+  }, [isLoggedIn])
 
-  const deconnexion = () => {
+  const logout = () => {
     localStorage.removeItem('token')
-    setEstConnecte(false)
-    setAreAdmin(false)
+    setIsLoggedIn(false)
+    setIsAdmin(false)
     setUser(null)
   }
 
-  const rechargerProfil = () => {
-    getProfil()
+  const reloadProfile = () => {
+    getProfile()
       .then(setUser)
-      .catch(() => setEstConnecte(false))
+      .catch(() => setIsLoggedIn(false))
   }
 
-  if (!estConnecte) {
-    return pageAuth === 'login' ? (
+  if (!isLoggedIn) {
+    return authPage === 'login' ? (
       <LoginForm
-        onConnexion={() => setEstConnecte(true)}
-        onAllerVersInscription={() => setPageAuth('register')}
+        onLogin={() => setIsLoggedIn(true)}
+        onGoToRegister={() => setAuthPage('register')}
       />
     ) : (
       <RegisterForm
-        onInscription={() => setEstConnecte(true)}
-        onAllerVersConnexion={() => setPageAuth('login')}
+        onRegister={() => setIsLoggedIn(true)}
+        onGoToLogin={() => setAuthPage('login')}
       />
     )
   }
@@ -60,23 +60,23 @@ function App() {
     <div>
       <nav>
         <NavLink to="/">Boosters</NavLink>
-        {AreAdmin && <NavLink to="/admin">Modération</NavLink>}
-        <NavLink to="/amis">Amis</NavLink>
+        {isAdmin && <NavLink to="/admin">Modération</NavLink>}
+        <NavLink to="/friends">Amis</NavLink>
         <NavLink to="/collection">Collection</NavLink>
-        <NavLink to="/profil">Profil</NavLink>
-        <button onClick={deconnexion}>se déconnecter</button>
+        <NavLink to="/profile">Profil</NavLink>
+        <button onClick={logout}>se déconnecter</button>
       </nav>
 
       <Routes>
         <Route path="/" element={<BoosterOpening />} />
         <Route path="/collection" element={<CollectionPage/>}/>
         <Route path="*" element={<Navigate to="/" replace />} />
-        <Route path="/admin" element={AreAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
-        <Route path="/amis" element={<FriendsPage />} />
-        <Route path="/profil" element={user && (
+        <Route path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
+        <Route path="/friends" element={<FriendsPage />} />
+        <Route path="/profile" element={user && (
           <>
-            <ProfilForm user={user} onModification={rechargerProfil} />
-            <MdpForm onModification={() => {}} />
+            <ProfileForm user={user} onUpdate={reloadProfile} />
+            <PasswordForm onUpdate={() => {}} />
             <MyCardPage />
           </>
         )} />

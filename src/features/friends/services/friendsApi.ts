@@ -1,8 +1,8 @@
 export type Relation = 'none' | 'sent' | 'received' | 'friends'
 
-export type SearchResult = { id: number, pseudo: string, relation: Relation }
-export type Friend = { id: number, pseudo: string }
-export type FriendRequest = { id: number, userId: number, pseudo: string }
+export type SearchResult = { id: number, username: string, relation: Relation }
+export type Friend = { id: number, username: string }
+export type FriendRequest = { id: number, userId: number, username: string }
 
 const authHeaders = () => ({
     'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
     const res = await fetch(url, { ...init, headers: authHeaders()})
     if (!res.ok) {
         const body = await res.json().catch(() => null)
-        throw new Error(body?.erreur ?? 'Erreur serveur')
+        throw new Error(body?.error ?? 'Erreur serveur')
     }
     return res.status === 204 ? (undefined as T) : res.json()
 }

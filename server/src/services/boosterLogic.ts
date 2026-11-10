@@ -1,8 +1,8 @@
 import type { Card, CardKind, BoosterContent, Rarity, BoosterState } from '../types.js'
 
 const TABLE_LUCK: Record<Rarity, number> = {
-    commun: 60,
-    uncommun: 25,
+    common: 60,
+    uncommon: 25,
     rare: 10,
     epic: 4,
     legendary: 1
@@ -11,19 +11,19 @@ const TABLE_LUCK: Record<Rarity, number> = {
 function rollRarity(): Rarity {
     const draw = Math.random() * 100
 
-    if (draw < TABLE_LUCK.commun) {
-        return 'commun'
+    if (draw < TABLE_LUCK.common) {
+        return 'common'
     }
 
-    if (draw < TABLE_LUCK.commun + TABLE_LUCK.uncommun) {
-        return 'uncommun'
+    if (draw < TABLE_LUCK.common + TABLE_LUCK.uncommon) {
+        return 'uncommon'
     }
 
-    if (draw < TABLE_LUCK.commun + TABLE_LUCK.uncommun + TABLE_LUCK.rare) {
+    if (draw < TABLE_LUCK.common + TABLE_LUCK.uncommon + TABLE_LUCK.rare) {
         return 'rare'
     }
 
-    if (draw < TABLE_LUCK.commun + TABLE_LUCK.uncommun + TABLE_LUCK.rare + TABLE_LUCK.epic) {
+    if (draw < TABLE_LUCK.common + TABLE_LUCK.uncommon + TABLE_LUCK.rare + TABLE_LUCK.epic) {
         return 'epic'
     }
 
@@ -31,8 +31,8 @@ function rollRarity(): Rarity {
 }
 
 const RARITY_RANK: Record<Rarity, number> = {
-    commun: 0,
-    uncommun: 1,
+    common: 0,
+    uncommon: 1,
     rare: 2,
     epic: 3,
     legendary: 4
@@ -41,7 +41,7 @@ const RARITY_RANK: Record<Rarity, number> = {
 function pickRandom(pool: Card[], type: CardKind, rarity: Rarity): Card {
     const candidates = pool.filter(card => card.rarity === rarity && card.type === type)
     if (candidates.length === 0) {
-        throw new Error(`Aucune carte ${type} de rareté ${rarity} dans la base`)
+        throw new Error(`No ${type} card with rarity ${rarity} in the database`)
     }
     return candidates[Math.floor(Math.random() * candidates.length)]
 }

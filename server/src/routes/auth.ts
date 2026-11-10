@@ -2,49 +2,49 @@ import { Router } from 'express'
 import { db } from '../db.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import verifierToken from '../middleware/verifierToken.js'
+import verifyToken from '../middleware/verifyToken.js'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
 import type { PublicUser } from '../types.js'
-import { nettoyerEmail, regexMotDePasse } from '../services/authValidation.js'
+import { normalizeEmail, PASSWORD_REGEX } from '../services/authValidation.js'
 import { containsForbiddenWord } from '../services/wordFilter.js';
 
 export const authRouter = Router()
 
 const JWT_SECRET = process.env.JWT_SECRET
 if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET manquant dans le .env')
+    throw new Error('JWT_SECRET missing from .env')
 }
 
 authRouter.post('/register', async (req, res, next) => {
     try {
-        const { email: rawEmail, mdp, pseudo: rawPseudo } = req.body
+        const { email: rawEmail, password, username: rawUsername } = req.body
 
         if (!rawEmail) {
-            return res.status(400).json({ erreur: 'Email requis' })
+            return res.status(400).json({ error: 'Email requis' })
         }
 
-        if (!mdp) {
-            return res.status(400).json({ erreur: 'Mot de passe requis' })
+        if (!password) {
+            return res.status(400).json({ error: 'Mot de passe requis' })
         }
 
-        if (!rawPseudo) {
-            return res.status(400).json({ erreur: 'Pseudo requis' })
+        if (!rawUsername) {
+            return res.status(400).json({ error: 'Pseudo requis' })
         }
 
-        const email = nettoyerEmail(rawEmail)
-        const pseudo = rawPseudo.trim()
+        const email = normalizeEmail(rawEmail)
+        const username = rawUsername.trim()
 
-        if (!pseudo) {
-            return res.status(400).json({ erreur: 'Pseudo requis' })
+        if (!username) {
+            return res.status(400).json({ error: 'Pseudo requis' })
         }
 
-        if (containsForbiddenWord(pseudo)) {
-            return res.status(400).json({ erreur: 'Ce pseudo contient un mot interdit'})
+        if (containsForbiddenWord(username)) {
+            return res.status(400).json({ error: 'Ce pseudo contient un mot interdit'})
         }
 
-        if (!regexMotDePasse.test(mdp)) {
+        if (!PASSWORD_REGEX.test(password)) {
             return res.status(400).json({
-                erreur:
+                error:
                     'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial',
             })
         }
@@ -55,21 +55,21 @@ authRouter.post('/register', async (req, res, next) => {
         )
 
         if (rows.length > 0) {
-            return res.status(409).json({ erreur: "Email déjà existant" })
+            return res.status(409).json({ error: "Email déjà existant" })
         }
 
-        const hash = await bcrypt.hash(mdp, 10)
+        const hash = await bcrypt.hash(password, 10)
 
         const [result] = await db.query<ResultSetHeader>(
-            'INSERT INTO users (email, mdp, pseudo) VALUES (?, ?, ?)',
-            [email, hash, pseudo]
+            'INSERT INTO users (email, password, username) VALUES (?, ?, ?)',
+            [email, hash, username]
         )
 
         const token = jwt.sign({ userId: result.insertId }, JWT_SECRET, { expiresIn: '24h' })
 
         const publicUser: PublicUser = {
             id: result.insertId,
-            pseudo,
+            username,
             email,
             role: 'user',
         }
@@ -82,13 +82,13 @@ authRouter.post('/register', async (req, res, next) => {
 
 authRouter.post('/login', async (req, res, next) => {
     try {
-        const { email: rawEmail, mdp } = req.body
+        const { email: rawEmail, password } = req.body
 
-        if (!rawEmail || !mdp) {
-            return res.status(400).json({ erreur: 'Email et mot de passe requis' })
+        if (!rawEmail || !password) {
+            return res.status(400).json({ error: 'Email et mot de passe requis' })
         }
 
-        const email = nettoyerEmail(rawEmail)
+        const email = normalizeEmail(rawEmail)
 
         const [rows] = await db.query<RowDataPacket[]>(
             'SELECT * FROM users WHERE email = ?',
@@ -97,20 +97,20 @@ authRouter.post('/login', async (req, res, next) => {
         const user = rows[0]
 
         if (!user) {
-            return res.status(401).json({ erreur: "Identifiants incorrects" })
+            return res.status(401).json({ error: "Identifiants incorrects" })
         }
 
-        const motDePasseValide = await bcrypt.compare(mdp, user.mdp)
+        const isPasswordValid = await bcrypt.compare(password, user.password)
 
-        if (!motDePasseValide) {
-            return res.status(401).json({ erreur: "Identifiants incorrects" })
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Identifiants incorrects" })
         }
 
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' })
 
         const publicUser: PublicUser = {
             id: user.id,
-            pseudo: user.pseudo,
+            username: user.username,
             email: user.email,
             role: user.role,
         }
@@ -121,19 +121,19 @@ authRouter.post('/login', async (req, res, next) => {
     }
 })
 
-authRouter.get('/profil', verifierToken, async (_req, res, next) => {
+authRouter.get('/profile', verifyToken, async (_req, res, next) => {
     try {
         const [rows] = await db.query<RowDataPacket[]>(
-            'SELECT id, pseudo, email, role FROM users WHERE id = ?',
+            'SELECT id, username, email, role FROM users WHERE id = ?',
             [res.locals.userId]
         )
         const user = rows[0]
 
         if (!user) {
-            return res.status(401).json({ erreur: 'Veuillez vous reconnecter' })
+            return res.status(401).json({ error: 'Veuillez vous reconnecter' })
         }
 
-        const publicUser: PublicUser = { id: user.id, pseudo: user.pseudo, email: user.email, role: user.role }
+        const publicUser: PublicUser = { id: user.id, username: user.username, email: user.email, role: user.role }
         res.json({ user: publicUser })
     } catch (err) {
         next(err)

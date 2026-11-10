@@ -2,10 +2,10 @@ import type {User, RegisterData, LoginData} from "../types.ts"
 
 const API_URL = 'http://localhost:3000/api'
 
-async function authentifier(route: string, data: LoginData | RegisterData): Promise<User> {
-    let reponse: Response
+async function authenticate(route: string, data: LoginData | RegisterData): Promise<User> {
+    let response: Response
     try {
-        reponse = await fetch(`${API_URL}/auth/${route}`, {
+        response = await fetch(`${API_URL}/auth/${route}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -14,10 +14,10 @@ async function authentifier(route: string, data: LoginData | RegisterData): Prom
         throw new Error('Erreur de connexion au serveur')
     }
 
-    const json = await reponse.json()
+    const json = await response.json()
 
-    if (!reponse.ok) {
-        throw new Error(json.erreur)
+    if (!response.ok) {
+        throw new Error(json.error)
     }
 
     localStorage.setItem('token', json.token)
@@ -25,23 +25,23 @@ async function authentifier(route: string, data: LoginData | RegisterData): Prom
 }
 
 export function register(data: RegisterData): Promise<User> {
-    return authentifier('register', data)
+    return authenticate('register', data)
 }
 
 export function login(data: LoginData): Promise<User> {
-    return authentifier('login', data)
+    return authenticate('login', data)
 }
 
-export async function getProfil(): Promise<User> {
-    const reponse = await fetch(`${API_URL}/auth/profil`, {
+export async function getProfile(): Promise<User> {
+    const response = await fetch(`${API_URL}/auth/profile`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
 
-    if (!reponse.ok) {
+    if (!response.ok) {
         localStorage.removeItem('token')
         throw new Error('Session expirée')
     }
 
-    const json = await reponse.json()
+    const json = await response.json()
     return json.user
 }

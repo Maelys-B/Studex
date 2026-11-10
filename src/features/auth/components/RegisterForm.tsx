@@ -2,26 +2,26 @@ import {useState} from 'react'
 import {register} from '../services/authService'
 
 type RegisterFormProps = {
-    onInscription: () => void,
-    onAllerVersConnexion: () => void,
+    onRegister: () => void,
+    onGoToLogin: () => void,
 }
 
-export function RegisterForm({ onInscription, onAllerVersConnexion }: RegisterFormProps) {
+export function RegisterForm({ onRegister, onGoToLogin }: RegisterFormProps) {
     const [email, setEmail] = useState('')
-    const [mdp, setMdp] = useState('')
-    const [pseudo, setPseudo] = useState('')
-    const [erreur, setErreur] = useState('')
+    const [password, setPassword] = useState('')
+    const [username, setUsername] = useState('')
+    const [error, setError] = useState('')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        setErreur('')
+        setError('')
 
         try {
-            await register({email, mdp, pseudo})
-            onInscription()
+            await register({email, password, username})
+            onRegister()
         } catch (err) {
             if (err instanceof Error) {
-                setErreur(err.message)
+                setError(err.message)
             }
         }
     }
@@ -42,31 +42,31 @@ export function RegisterForm({ onInscription, onAllerVersConnexion }: RegisterFo
             </div>
 
             <div>
-                <label htmlFor="register-mdp">mot de passe</label>
+                <label htmlFor="register-password">mot de passe</label>
                 <input
-                    id="register-mdp"
+                    id="register-password"
                     type="password"
                     required
-                    value={mdp}
-                    onChange={(e) => setMdp(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
 
             <div>
-                <label htmlFor="register-pseudo">pseudo</label>
+                <label htmlFor="register-username">pseudo</label>
                 <input
-                    id="register-pseudo"
+                    id="register-username"
                     type="text"
                     required
-                    value={pseudo}
-                    onChange={(e) => setPseudo(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
 
-            {erreur && <p>{erreur}</p>}
+            {error && <p>{error}</p>}
 
             <button type="submit">Envoyer</button>
-            <button type="button" onClick={onAllerVersConnexion}>Déjà un compte ? Se connecter</button>
+            <button type="button" onClick={onGoToLogin}>Déjà un compte ? Se connecter</button>
         </form>
     )
 }
