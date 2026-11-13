@@ -43,18 +43,108 @@ html:has(.collection-page)::-webkit-scrollbar {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 24px;
-    margin-bottom: 32px;
+    gap: 12px 28px;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 40px;
+    padding: 10px 14px 10px 26px;
+    border: 1px solid rgba(120, 190, 255, 0.5);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2b2a8c, #191a66);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    font-family: 'Nunito', sans-serif;
 }
 
 .collection-page__filters label {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    margin: 0;
+    color: #fff;
+    font-weight: 800;
+}
+
+.collection-page__filters select {
+    appearance: none;
+    min-width: 11em;
+    padding: 0.45em 2.4em 0.45em 1.1em;
+    border: 1px solid rgba(120, 190, 255, 0.6);
+    border-radius: 999px;
+    background: #12144a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.9em center / 1em;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.collection-page__filters select:hover,
+.collection-page__filters select:focus-visible {
+    outline: none;
+    border-color: #fff;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2312144a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.9em center / 1em;
+    color: #12144a;
+}
+
+.collection-page__filters option {
+    background: #12144a;
+    color: #fff;
+}
+
+@supports (appearance: base-select) {
+    .collection-page__filters select,
+    .collection-page__filters select::picker(select) {
+        appearance: base-select;
+    }
+
+    .collection-page__filters select::picker-icon {
+        display: none;
+    }
+
+    .collection-page__filters select::picker(select) {
+        margin-top: 6px;
+        padding: 6px;
+        border: 1px solid rgba(120, 190, 255, 0.6);
+        border-radius: 18px;
+        background: #12144a;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 14px rgba(123, 230, 255, 0.3);
+    }
+
+    .collection-page__filters option {
+        padding: 0.45em 1.1em;
+        border-radius: 999px;
+        background: transparent;
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.12s, color 0.12s;
+    }
+
+    .collection-page__filters option::checkmark {
+        display: none;
+    }
+
+    .collection-page__filters option:checked {
+        color: #7be6ff;
+        font-weight: 800;
+    }
+
+    .collection-page__filters option:hover,
+    .collection-page__filters option:focus-visible {
+        outline: none;
+        background: #fff;
+        color: #12144a;
+    }
 }
 
 .collection-page__item {
     position: relative;
+    transition: translate 0.2s ease-out, filter 0.2s ease-out;
+}
+
+.collection-page__item:hover,
+.collection-page__item:focus-within {
+    translate: 0 -12px;
+    filter: drop-shadow(0 14px 18px rgba(10, 18, 70, 0.55)) drop-shadow(0 0 12px rgba(123, 230, 255, 0.45));
 }
 
 .collection-page__card-button {
@@ -63,13 +153,11 @@ html:has(.collection-page)::-webkit-scrollbar {
     border: none;
     background: none;
     cursor: pointer;
-    transition: transform 0.15s;
 }
 
 .collection-page__card-button:hover,
 .collection-page__card-button:focus-visible {
     background: none;
-    transform: translateY(-4px);
 }
 
 .collection-modal {
@@ -254,5 +342,18 @@ html:has(.collection-page)::-webkit-scrollbar {
     .collection-page__grid {
         --card-size: calc((100vw - 32px - 24px) / 2);
         grid-template-columns: repeat(2, max-content);
+    }
+}
+
+@media (max-width: 600px) {
+    .collection-page__filters {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 24px;
+    }
+
+    .collection-page__filters label {
+        width: 100%;
+        justify-content: space-between;
     }
 }
