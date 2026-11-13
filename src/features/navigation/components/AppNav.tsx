@@ -4,7 +4,6 @@ import { NavLink, useLocation } from 'react-router'
 
 type AppNavProps = {
     isAdmin: boolean
-    onLogout: () => void
 }
 
 const LEAD_STIFFNESS = 240
@@ -163,7 +162,7 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
     }
 }
 
-export function AppNav({ isAdmin, onLogout }: AppNavProps) {
+export function AppNav({ isAdmin }: AppNavProps) {
     const { pathname } = useLocation()
     const linksRef = useRef<HTMLDivElement>(null)
     const shapeRef = useRef<SVGSVGElement>(null)
@@ -225,12 +224,6 @@ export function AppNav({ isAdmin, onLogout }: AppNavProps) {
                 ))}
             </div>
 
-            <button className="app-nav__logout" onClick={onLogout} aria-label="Se déconnecter">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4M15 8l4 4-4 4M19 12H9" />
-                </svg>
-                <span>Se déconnecter</span>
-            </button>
         </nav>
     )
 }

@@ -38,14 +38,16 @@
     gap: 12px;
     min-height: 54px;
     padding: 6px 8px 6px 6px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(160, 195, 255, 0.3);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.5);
-    transition: background 0.15s;
+    background: rgba(8, 10, 45, 0.55);
+    color: #fff;
+    transition: background 0.15s, border-color 0.15s;
 }
 
 .friend-row:hover {
-    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(123, 230, 255, 0.6);
+    background: rgba(30, 32, 120, 0.6);
 }
 
 .friend-row__avatar {
@@ -79,21 +81,21 @@
 .friend-row__tag {
     padding: 4px 14px;
     border-radius: 999px;
-    background: rgba(18, 20, 74, 0.12);
-    color: rgba(18, 20, 74, 0.75);
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(220, 235, 255, 0.85);
     font-size: 0.9rem;
     font-weight: 800;
     white-space: nowrap;
 }
 
 .friend-row__tag--received {
-    background: rgba(122, 53, 230, 0.15);
-    color: #5a22b8;
+    background: rgba(169, 123, 255, 0.25);
+    color: #d9c6ff;
 }
 
 .friend-row__tag--friends {
-    background: rgba(39, 196, 234, 0.2);
-    color: #0b6e88;
+    background: rgba(123, 230, 255, 0.2);
+    color: #9ff0ff;
 }
 
 @media (max-width: 900px) {
@@ -136,4 +138,15 @@
     .friends__search .holo-input {
         flex: none;
     }
+}
+
+.holo-panel--glass .holo-btn--ghost {
+    border-color: rgba(220, 235, 255, 0.45);
+    color: #fff;
+}
+
+.holo-panel--glass .holo-btn--ghost:hover:not(:disabled) {
+    border-color: #fff;
+    background: #fff;
+    color: var(--ink);
 }

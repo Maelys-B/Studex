@@ -1,12 +1,3 @@
-.page-bg {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-}
-
 .page-shell {
     --ink: #12144a;
     --neon: #7be6ff;
@@ -113,6 +104,33 @@
         -3px 0 16px rgba(123, 230, 255, 0.55),
         3px 0 16px rgba(169, 123, 255, 0.55);
     color: var(--ink);
+}
+
+.holo-panel--glass {
+    background: linear-gradient(160deg, rgba(30, 32, 120, 0.72), rgba(10, 12, 56, 0.8)) padding-box,
+        linear-gradient(110deg, #7be6ff, #6f8dff 50%, #a97bff) border-box;
+    box-shadow:
+        -4px 0 18px rgba(123, 230, 255, 0.45),
+        4px 0 18px rgba(169, 123, 255, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    color: #fff;
+}
+
+.holo-panel--glass .holo-panel__empty {
+    color: rgba(220, 235, 255, 0.75);
+}
+
+.holo-panel--glass .holo-input {
+    border: 1px solid rgba(160, 195, 255, 0.45);
+    border-radius: 12px;
+    background: rgba(8, 10, 45, 0.75);
+}
+
+.holo-panel--glass .holo-input:focus {
+    border-color: var(--neon);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(123, 230, 255, 0.25);
 }
 
 .holo-panel__legend {

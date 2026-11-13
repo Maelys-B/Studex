@@ -3,7 +3,6 @@ import { CardView } from '../../boosters/components/CardView'
 import { fetchPendingCards, reviewCard } from '../service/adminApi'
 import type { PendingCard } from '../service/adminApi'
 import { PageTitle } from '../../ui/components/PageTitle'
-import fond from '../../boosters/assets/fond-booster.webp'
 import '../assets/AdminPage.css'
 
 export function AdminPage() {
@@ -32,7 +31,6 @@ export function AdminPage() {
 
     return (
         <section className="page-shell moderation">
-            <img className="page-bg" src={fond} alt="" draggable={false} />
             <div className="page-shell__head">
                 <PageTitle>Modération</PageTitle>
                 <p className="page-pill">
@@ -42,7 +40,7 @@ export function AdminPage() {
             {error && <p className="page-error">{error}</p>}
 
             {cards.length === 0 && (
-                <div className="holo-panel moderation__empty">
+                <div className="holo-panel holo-panel--glass moderation__empty">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
                     <p>Aucune carte à valider.</p>
                 </div>
@@ -50,7 +48,7 @@ export function AdminPage() {
 
             <div className="moderation__grid">
                 {cards.map(card => (
-                    <article className="holo-panel moderation__item" key={card.id}>
+                    <article className="holo-panel holo-panel--glass moderation__item" key={card.id}>
                         <h2 className="holo-panel__legend">
                             <svg className="holo-panel__icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <circle cx="12" cy="8" r="4" />

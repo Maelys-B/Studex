@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LoginForm } from './features/auth/components/LoginForm'
 import { RegisterForm } from './features/auth/components/RegisterForm'
+import { AuthLayout } from './features/auth/components/AuthLayout'
 import { getProfile } from './features/auth/services/authService'
 import { BoosterOpening } from './features/boosters/components/BoosterOpening'
 import { MyCardPage } from './features/creation-card/components/MyCardPage'
@@ -10,8 +11,7 @@ import { AppNav } from './features/navigation/components/AppNav'
 import { CollectionPage } from './features/collection/components/CollectionPage'
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router'
 import { fetchMyCard } from './features/creation-card/services/cardApi'
-import { PasswordForm } from './features/profile/components/PasswordForm'
-import { ProfileForm } from './features/profile/components/ProfileForm'
+import { ProfilePage } from './features/profile/components/ProfilePage'
 import type { User } from './features/auth/types'
 
 function App() {
@@ -51,16 +51,20 @@ function App() {
   }
 
   if (!isLoggedIn) {
-    return authPage === 'login' ? (
-      <LoginForm
-        onLogin={() => setIsLoggedIn(true)}
-        onGoToRegister={() => setAuthPage('register')}
-      />
-    ) : (
-      <RegisterForm
-        onRegister={() => setIsLoggedIn(true)}
-        onGoToLogin={() => setAuthPage('login')}
-      />
+    return (
+      <AuthLayout>
+        {authPage === 'login' ? (
+          <LoginForm
+            onLogin={() => setIsLoggedIn(true)}
+            onGoToRegister={() => setAuthPage('register')}
+          />
+        ) : (
+          <RegisterForm
+            onRegister={() => setIsLoggedIn(true)}
+            onGoToLogin={() => setAuthPage('login')}
+          />
+        )}
+      </AuthLayout>
     )
   }
 
@@ -90,7 +94,7 @@ function App() {
 
   return (
     <div>
-      <AppNav isAdmin={isAdmin} onLogout={logout} />
+      <AppNav isAdmin={isAdmin} />
 
       <div className="app-page" key={pathname}>
         <Routes>
@@ -98,13 +102,7 @@ function App() {
           <Route path="/collection" element={<CollectionPage />} />
           <Route path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
           <Route path="/friends" element={<FriendsPage />} />
-          <Route path="/profile" element={user && (
-            <>
-              <MyCardPage />
-              <ProfileForm user={user} onUpdate={reloadProfile} />
-              <PasswordForm onUpdate={() => {}} />
-            </>
-          )} />
+          <Route path="/profile" element={user && <ProfilePage user={user} onUpdate={reloadProfile} onLogout={logout} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

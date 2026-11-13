@@ -3,7 +3,6 @@ import type { FormEvent } from 'react'
 import { answerRequest, fetchFriends, fetchRequests, removeFriend, searchUsers, sendRequest } from '../services/friendsApi'
 import type { Friend, FriendRequest, SearchResult } from '../services/friendsApi'
 import { PageTitle } from '../../ui/components/PageTitle'
-import fond from '../../boosters/assets/fond-booster.webp'
 import '../assets/FriendsPage.css'
 
 function Initial({ username }: { username: string }) {
@@ -56,13 +55,12 @@ export function FriendsPage() {
 
     return (
         <section className="page-shell friends">
-            <img className="page-bg" src={fond} alt="" draggable={false} />
             <PageTitle>Amis</PageTitle>
             {error && <p className="page-error">{error}</p>}
 
             <div className="friends__grid">
                 <div className="friends__column">
-                    <section className="holo-panel">
+                    <section className="holo-panel holo-panel--glass">
                         <h2 className="holo-panel__legend">
                             <svg className="holo-panel__icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <circle cx="11" cy="11" r="6" />
@@ -104,7 +102,7 @@ export function FriendsPage() {
                         )}
                     </section>
 
-                    <section className="holo-panel">
+                    <section className="holo-panel holo-panel--glass">
                         <h2 className="holo-panel__legend">
                             <svg className="holo-panel__icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M4 6h16v12H4zM4 7l8 6 8-6" />
@@ -134,7 +132,7 @@ export function FriendsPage() {
                     </section>
                 </div>
 
-                <section className="holo-panel friends__mine">
+                <section className="holo-panel holo-panel--glass friends__mine">
                     <h2 className="holo-panel__legend">
                         <svg className="holo-panel__icon" viewBox="0 0 24 24" aria-hidden="true">
                             <circle cx="9" cy="8" r="3.5" />
