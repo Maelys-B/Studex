@@ -3,6 +3,7 @@ import { deleteCards, fetchCollection } from '../services/collectionService'
 import { CardView } from '../../boosters/components/CardView'
 import { CollectionCardView } from '../../boosters/components/CollectionCardView'
 import { BattleCardView } from '../../boosters/components/BattleCardView'
+import { CardTilt } from '../../boosters/components/CardTilt'
 import type { Card, CardKind, Rarity } from '../../boosters/types'
 import type { OwnedCard } from '../types'
 import '../assets/CollectionPage.css'
@@ -163,7 +164,9 @@ export function CollectionPage() {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="collection-modal__card">
-                            <CardByType card={selectedCard} />
+                            <CardTilt>
+                                <CardByType card={selectedCard} />
+                            </CardTilt>
                             <button type="button" className="collection-modal__close" onClick={closeModal} aria-label="Fermer">
                                 
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
