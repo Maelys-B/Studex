@@ -6,8 +6,8 @@ import { PageTitle } from '../../ui/components/PageTitle'
 import fond from '../../boosters/assets/fond-booster.webp'
 import '../assets/FriendsPage.css'
 
-function Initial({ pseudo }: { pseudo: string }) {
-    return <span className="friend-row__avatar" aria-hidden="true">{pseudo.charAt(0).toUpperCase()}</span>
+function Initial({ username }: { username: string }) {
+    return <span className="friend-row__avatar" aria-hidden="true">{username.charAt(0).toUpperCase()}</span>
 }
 
 export function FriendsPage() {
@@ -87,8 +87,8 @@ export function FriendsPage() {
                                 {results.length === 0 && <li className="holo-panel__empty">Aucun joueur trouvé.</li>}
                                 {results.map(r => (
                                     <li className="friend-row" key={r.id}>
-                                        <Initial pseudo={r.pseudo} />
-                                        <span className="friend-row__name">{r.pseudo}</span>
+                                        <Initial username={r.username} />
+                                        <span className="friend-row__name">{r.username}</span>
                                         {r.relation === 'none' && (
                                             <button className="holo-btn holo-btn--accept" onClick={() => run(() => sendRequest(r.id))}>
                                                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
@@ -116,8 +116,8 @@ export function FriendsPage() {
                             {requests.length === 0 && <li className="holo-panel__empty">Aucune demande.</li>}
                             {requests.map(r => (
                                 <li className="friend-row" key={r.id}>
-                                    <Initial pseudo={r.pseudo} />
-                                    <span className="friend-row__name">{r.pseudo}</span>
+                                    <Initial username={r.username} />
+                                    <span className="friend-row__name">{r.username}</span>
                                     <div className="friend-row__actions">
                                         <button className="holo-btn holo-btn--accept" onClick={() => run(() => answerRequest(r.id, 'accepted'))}>
                                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
@@ -147,8 +147,8 @@ export function FriendsPage() {
                         {friends.length === 0 && <li className="holo-panel__empty">Pas encore d'amis.</li>}
                         {friends.map(f => (
                             <li className="friend-row" key={f.id}>
-                                <Initial pseudo={f.pseudo} />
-                                <span className="friend-row__name">{f.pseudo}</span>
+                                <Initial username={f.username} />
+                                <span className="friend-row__name">{f.username}</span>
                                 <button className="holo-btn holo-btn--ghost" onClick={() => run(() => removeFriend(f.id))}>Retirer</button>
                             </li>
                         ))}

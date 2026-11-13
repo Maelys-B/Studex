@@ -1,4 +1,4 @@
-export type Rarity = 'commun' | 'uncommun' | 'rare' | 'epic' | 'legendary'
+export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
 
 export type CardKind = 'collection' | 'battle' | 'student'
 
@@ -46,7 +46,7 @@ export type BoosterStatus = {
 
 export type PublicUser = {
     id: number,
-    pseudo: string,
+    username: string,
     email: string,
     role: 'user' | 'admin',
 }

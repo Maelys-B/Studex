@@ -9,7 +9,7 @@ import { fetchMyCard, saveMyCard } from '../services/cardApi'
 import fond from '../../boosters/assets/fond-booster.webp'
 import '../assets/MyCardPage.css'
 
-const FRAME_COLORS = ['#2aa9ad', '#ffe100', '#00e5ff', '#0800ff', '#e100ff']
+const DEFAULT_COLOR = '#2aa9ad'
 
 const LABELS: Record<AvatarChoice, string> = {
     pose: 'Pose', hair: 'Cheveux', eyes: 'Yeux', mouth: 'Bouche', outfit: 'Tenue'
@@ -33,14 +33,18 @@ function Sparks({ className = '' }: { className?: string }) {
     )
 }
 
-export function MyCardPage() {
+type MyCardPageProps = {
+    onSaved?: () => void
+}
+
+export function MyCardPage({ onSaved }: MyCardPageProps) {
     const [loading, setLoading] = useState(true)
     const [exists, setExists] = useState(false)
     const [status, setStatus] = useState<CardStatus | null>(null)
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [subtitle, setSubtitle] = useState('')
-    const [color, setColor] = useState(FRAME_COLORS[0])
+    const [color, setColor] = useState(DEFAULT_COLOR)
     const [avatar, setAvatar] = useState<Avatar>({ pose: 0, skin: DEFAULT_SKIN, hair: 0, eyes: 0, mouth: 0, outfit: 0 })
     const [error, setError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false) 
@@ -80,6 +84,7 @@ export function MyCardPage() {
             )
             setExists(true)
             setStatus('pending')
+            onSaved?.()
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Erreur serveur')
         } finally {
@@ -102,7 +107,7 @@ export function MyCardPage() {
                             subtitle,
                             color,
                             avatar,
-                            rarity: 'commun',
+                            rarity: 'common',
                             type: 'student'
                         }}
                     />
@@ -111,6 +116,9 @@ export function MyCardPage() {
             </div>
 
             <form className="my-card__panel" onSubmit={onSubmit}>
+                {status === 'rejected' && (
+                    <p className="my-card__rejected" role="alert">Ta carte a été refusée. Modifie-la pour continuer</p>
+                )}
                 <h1 className="my-card__title">
                     Ma carte
                     <Sparks />
@@ -158,19 +166,14 @@ export function MyCardPage() {
                         </svg>
                         Couleurs
                     </legend>
-                    <div className="my-card__swatches">
-                        {FRAME_COLORS.map(c => (
-                            <button
-                                key={c}
-                                type="button"
-                                className="my-card__swatch"
-                                aria-label={`Couleur ${c}`}
-                                aria-pressed={c === color}
-                                style={{ background: c }}
-                                onClick={() => setColor(c)}
-                            />
-                        ))}
-                    </div>
+                    <label className="my-card__skin">
+                        Couleur du fond
+                        <input
+                            type="color"
+                            value={color}
+                            onChange={e => setColor(e.target.value)}
+                        />
+                    </label>
                     <label className="my-card__skin">
                         Couleur de peau
                         <input

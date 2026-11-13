@@ -2,25 +2,25 @@ import {useState} from 'react'
 import {login} from '../services/authService'
 
 type LoginFormProps = {
-    onConnexion: () => void,
-    onAllerVersInscription: () => void,
+    onLogin: () => void,
+    onGoToRegister: () => void,
 }
 
-export function LoginForm({onConnexion, onAllerVersInscription }: LoginFormProps) {
+export function LoginForm({onLogin, onGoToRegister }: LoginFormProps) {
     const [email, setEmail] = useState('')
-    const [mdp, setMdp] = useState('')
-    const [erreur, setErreur] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        setErreur('')
+        setError('')
 
         try {
-            await login({email, mdp})
-            onConnexion()
+            await login({email, password})
+            onLogin()
         } catch (err) {
             if (err instanceof Error) {
-                setErreur(err.message)
+                setError(err.message)
             }
         }
     }
@@ -41,20 +41,20 @@ export function LoginForm({onConnexion, onAllerVersInscription }: LoginFormProps
             </div>
 
             <div>
-                <label htmlFor="login-mdp">mot de passe</label>
+                <label htmlFor="login-password">mot de passe</label>
                 <input
-                    id="login-mdp"
+                    id="login-password"
                     type="password"
                     required
-                    value={mdp}
-                    onChange={(e) => setMdp(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
             </div>
 
-            {erreur && <p>{erreur}</p>}
+            {error && <p>{error}</p>}
 
             <button type="submit">Envoyer</button>
-            <button type="button" onClick={onAllerVersInscription}>Pas encore de compte ? S'inscrire</button>
+            <button type="button" onClick={onGoToRegister}>Pas encore de compte ? S'inscrire</button>
         </form>
     )
 }

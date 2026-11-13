@@ -10,15 +10,15 @@ export async function fetchCollection(): Promise<OwnedCard[]> {
     return response.json()
 }
 
-export async function deleteCards(cardIds: number[], tout: boolean): Promise<void> {
+export async function deleteCards(cardIds: number[], all: boolean): Promise<void> {
     const response = await fetch('/api/collection', {
         method: 'DELETE',
         headers: {...authHeaders(), 'Content-Type': 'application/json',},
-        body: JSON.stringify({ cardIds, tout }),
+        body: JSON.stringify({ cardIds, all }),
     })
 
     if (!response.ok) {
         const json = await response.json()
-        throw new Error(json.erreur)
+        throw new Error(json.error)
     }
 }

@@ -196,10 +196,10 @@ export function AppNav({ isAdmin, onLogout }: AppNavProps) {
 
     const pages = [
         { to: '/', label: 'Boosters' },
-        { to: '/ma-carte', label: 'Ma carte' },
         { to: '/collection', label: 'Collection' },
         ...(isAdmin ? [{ to: '/admin', label: 'Modération' }] : []),
-        { to: '/amis', label: 'Amis' }
+        { to: '/friends', label: 'Amis' },
+        { to: '/profile', label: 'Profil' }
     ]
 
     return (

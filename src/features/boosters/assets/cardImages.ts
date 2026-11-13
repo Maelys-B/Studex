@@ -1,4 +1,4 @@
-const images = import.meta.glob<string>('./carte_*/*.webp', {
+const images = import.meta.glob<string>('./cards_*/*.webp', {
     eager: true,
     import: 'default'
 })
