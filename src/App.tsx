@@ -7,7 +7,8 @@ import { MyCardPage } from './features/creation-card/components/MyCardPage'
 import { AdminPage } from './features/admin/components/AdminPage'
 import { FriendsPage } from './features/friends/components/FriendsPage'
 import { CollectionPage  } from './features/collection/components/CollectionPage'
-import { Routes, Route, NavLink, Navigate } from 'react-router'
+import { Routes, Route, NavLink, Navigate, useNavigate } from 'react-router'
+import { fetchMyCard } from './features/creation-card/services/cardApi'
 import { PasswordForm } from './features/profile/components/PasswordForm';
 import { ProfileForm } from './features/profile/components/ProfileForm';
 import type {User} from './features/auth/types';
@@ -18,6 +19,8 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [authPage, setAuthPage] = useState<'login' | 'register'>('register')
   const [user, setUser] = useState<User | null>(null)
+  const [hasCard, setHasCard] = useState<boolean | null>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!isLoggedIn) return
@@ -27,6 +30,9 @@ function App() {
         setIsAdmin(user.role === 'admin')
       })
       .catch(() => setIsLoggedIn(false))
+    fetchMyCard()
+      .then(card => setHasCard(card !== null && card.status !== 'rejected'))
+      .catch(() => setHasCard(false))
   }, [isLoggedIn])
 
   const logout = () => {
@@ -34,6 +40,7 @@ function App() {
     setIsLoggedIn(false)
     setIsAdmin(false)
     setUser(null)
+    setHasCard(null)
   }
 
   const reloadProfile = () => {
@@ -53,6 +60,22 @@ function App() {
         onRegister={() => setIsLoggedIn(true)}
         onGoToLogin={() => setAuthPage('login')}
       />
+    )
+  }
+
+  if (hasCard === null) return <p>Chargement...</p>
+
+  if (!hasCard) {
+    return (
+      <div>
+        <button onClick={logout}>se déconnecter</button>
+        <MyCardPage
+          onSaved={() => {
+            setHasCard(true)
+            navigate('/')
+          }}
+        />
+      </div>
     )
   }
 

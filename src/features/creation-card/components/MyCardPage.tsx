@@ -6,7 +6,7 @@ import { AVATAR_CHOICES, AVATAR_COUNTS, DEFAULT_SKIN, POSES } from '../assets/av
 import type { AvatarChoice } from '../assets/avatarParts'
 import { fetchMyCard, saveMyCard } from '../services/cardApi'
 
-const FRAME_COLORS = ['#2aa9ad', '#ffe100', '#00e5ff', '#0800ff', '#e100ff']
+const DEFAULT_COLOR = '#2aa9ad' 
 
 const LABELS: Record<AvatarChoice, string> = {
     pose: 'Pose', hair: 'Cheveux', eyes: 'Yeux', mouth: 'Bouche', outfit: 'Tenue'
@@ -18,17 +18,21 @@ const STATUS_LABELS: Record<CardStatus, string> = {
     rejected: 'Refusé: modifie ta carte pour la renvoyer'
 }
 
-export function MyCardPage() {
+type MyCardPageProps = {
+    onSaved?: () => void
+}
+
+export function MyCardPage({ onSaved }: MyCardPageProps) {
     const [loading, setLoading] = useState(true)
     const [exists, setExists] = useState(false)
     const [status, setStatus] = useState<CardStatus | null>(null)
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [subtitle, setSubtitle] = useState('')
-    const [color, setColor] = useState(FRAME_COLORS[0])
     const [avatar, setAvatar] = useState<Avatar>({ pose: 0, skin: DEFAULT_SKIN, hair: 0, eyes: 0, mouth: 0, outfit: 0 })
+    const [color, setColor] = useState(DEFAULT_COLOR)
     const [error, setError] = useState<string | null>(null)
-    const [saving, setSaving] = useState(false) 
+    const [saving, setSaving] = useState(false)
 
     useEffect(() => {
         fetchMyCard()
@@ -65,6 +69,7 @@ export function MyCardPage() {
             )
             setExists(true)
             setStatus('pending')
+            onSaved?.()
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Erreur serveur')
         } finally {
@@ -76,6 +81,9 @@ export function MyCardPage() {
 
     return (
         <section>
+            {status === 'rejected' && (
+                <h1>Ta carte a été refusée. Modifie-la pour continuer</h1>
+            )}
             <h2>Ma carte</h2>
             {status && <p>Statut : {STATUS_LABELS[status]}</p>}
 
@@ -108,15 +116,12 @@ export function MyCardPage() {
                 </label>
 
                 <div>
-                    {FRAME_COLORS.map(c => (
-                        <button
-                            key={c}
-                            type="button"
-                            aria-label={`Couleur ${c}`}
-                            style={{ background:c , outline: c === color ? '3px solid #fff' : 'none' }}
-                            onClick={() => setColor(c)}
-                        />
-                    ))}
+                    Couleur du fond
+                    <input
+                        type="color"
+                        value={color}
+                        onChange={e => setColor( e.target.value )}
+                    />
                 </div>
 
                 <label>
