@@ -37,9 +37,7 @@ export async function saveState(conn: PoolConnection, userId: number, state: Boo
     )
 }
 
-// without cardIds: attacks of every card, otherwise only those of the requested cards
 export async function loadAttacksByCard(conn: Pool | PoolConnection, cardIds?: number[]): Promise<Map<number, Attack[]>> {
-    // an empty IN () is invalid SQL
     if (cardIds && cardIds.length === 0) {
         return new Map()
     }

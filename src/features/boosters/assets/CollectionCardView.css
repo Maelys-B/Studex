@@ -1,14 +1,13 @@
 .ccard {
     --w: 320px;
     width: var(--w);
-    aspect-ratio: 2 / 3;            /* same format as student cards (CardView.css) */
+    aspect-ratio: 2 / 3;
     container-type: inline-size;
     box-sizing: border-box;
-    /* no cqw here: we are inside the container itself */
     padding: calc(var(--w) * 0.05);
     border-radius: calc(var(--w) * 0.06);
     box-shadow: 0 calc(var(--w) * 0.02) calc(var(--w) * 0.05) rgba(0, 0, 0, 0.35);
-    background: var(--frame);       /* the frame takes the rarity color */
+    background: var(--frame);
     display: flex;
     flex-direction: column;
 }
@@ -18,7 +17,7 @@
     min-height: 0;
     overflow: hidden;
     border-radius: 4cqw;
-    background: #0d1b2a;             /* visible if the card has no illustration */
+    background: #0d1b2a;
 }
 
 .ccard__art img {
@@ -29,7 +28,7 @@
 }
 
 .ccard__title {
-    margin: -9cqw 2cqw 2cqw;         /* negative margin: the banner overlaps the illustration */
+    margin: -9cqw 2cqw 2cqw;
     padding: 1cqw 4cqw;
     position: relative;
     z-index: 1;
@@ -71,7 +70,6 @@
     color: #333;
 }
 
-/* the two lines on each side of the number */
 .ccard__number::before,
 .ccard__number::after {
     content: '';

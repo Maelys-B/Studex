@@ -45,7 +45,6 @@
     z-index: 0;
 }
 
-/* The avatar is square and its character only fills part of it: it is enlarged, the card crops the edges */
 .card__avatar {
     left: 50%;
     right: auto;

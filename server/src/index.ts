@@ -5,10 +5,10 @@ import { cardsRouter } from './routes/cards.js'
 import { boostersRouter } from './routes/boosters.js'
 import { authRouter } from './routes/auth.js'
 import { collectionRouter } from './routes/collection.js'
-import { adminRouter } from './routes/admin.js';
-import { friendsRouter } from './routes/friends.js';
-import { profileRouter } from './routes/profile.js'
 import type { Request, Response, NextFunction } from 'express'
+import { adminRouter } from './routes/admin.js'
+import { friendsRouter } from './routes/friends.js'
+import { profileRouter } from './routes/profile.js'
 
 const app = express()
 

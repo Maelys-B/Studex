@@ -1,8 +1,9 @@
 import { Router } from 'express'
-import type { ResultSetHeader } from 'mysql2'
+import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import { db } from '../db.js'
 import verifyToken from '../middleware/verifyToken.js'
 import { validateStudentCard } from '../services/studentCardValidation.js'
+import { loadAttacksByCard } from '../services/boosterStore.js'
 
 export const cardsRouter = Router()
 
@@ -11,6 +12,15 @@ cardsRouter.get('/', async (_req, res) => {
         "SELECT id, name, position_collection, subtitle, image, color, rarity, type FROM cards WHERE status = 'approved' ORDER BY id"
     )
     res.json(rows)
+})
+
+cardsRouter.get('/showcase', async (_req, res) => {
+    const [rows] = await db.query<RowDataPacket[]>(
+        `SELECT id, name, position_collection, subtitle, description, image, hp, rarity, type
+        FROM cards WHERE status = 'approved' AND type IN ('collection', 'battle')`
+    )
+    const attacksByCard = await loadAttacksByCard(db, rows.filter(row => row.type === 'battle').map(row => row.id))
+    res.json(rows.map(row => row.type === 'battle' ? { ...row, attacks: attacksByCard.get(row.id) ?? [] } : row))
 })
 
 cardsRouter.get('/mine', verifyToken, async (_req, res) => {

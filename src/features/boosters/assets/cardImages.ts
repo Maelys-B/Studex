@@ -1,6 +1,3 @@
-// Cards received from the server only contain the file name (e.g. collection_01.webp).
-// The matching illustration is looked up here in the cards_* folders of assets.
-// File names must therefore be unique across folders.
 const images = import.meta.glob<string>('./cards_*/*.webp', {
     eager: true,
     import: 'default'
