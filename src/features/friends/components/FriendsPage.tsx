@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { answerRequest, fetchFriends, fetchRequests, removeFriend, searchUsers, sendRequest } from '../services/friendsApi'
 import type { Friend, FriendRequest, SearchResult } from '../services/friendsApi'
+import { ReportModal } from '../../reports/components/ReportModal'
 
 export function FriendsPage() {
     const [friends, setFriends] = useState<Friend[]>([])
@@ -9,6 +10,11 @@ export function FriendsPage() {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState<SearchResult[] | null>(null)
     const [error, setError] = useState<string | null>(null)
+    const [reportTarget, setReportTarget] = useState<{ id: number, username: string } | null>(null)
+
+    const reportButton = (id: number, username: string) => (
+        <button type="button" onClick={() => setReportTarget({ id, username })}>Signaler</button>
+    )
 
     const reload = async () => {
         const [f, r] = await Promise.all([fetchFriends(), fetchRequests()])
@@ -74,6 +80,7 @@ export function FriendsPage() {
                             {r.relation === 'sent' && <span>Demande envoyée</span>}
                             {r.relation === 'received' && <span>T'a envoyé une demande</span>}
                             {r.relation === 'friends' && <span>Déjà ami</span>}
+                            {' '}{reportButton(r.id, r.username)}
                         </li>
                     ))}
                 </ul>
@@ -87,6 +94,7 @@ export function FriendsPage() {
                         {r.username}{' '}
                         <button onClick={() => run(() => answerRequest(r.id, 'accepted'))}>Accepter</button>
                         <button onClick={() => run(() => answerRequest(r.id, 'rejected'))}>Refuser</button>
+                        {reportButton(r.userId, r.username)}
                     </li>
                 ))}
             </ul>
@@ -98,9 +106,17 @@ export function FriendsPage() {
                     <li key={f.id}>
                         {f.username}{' '}
                         <button onClick={() => run(() => removeFriend(f.id))}>Retirer</button>
+                        {reportButton(f.id, f.username)}
                     </li>
                 ))}
             </ul>
+
+            {reportTarget && (
+                <ReportModal
+                    target={{ kind: 'user', id: reportTarget.id, name: reportTarget.username }}
+                    onClose={() => setReportTarget(null)}
+                />
+            )}
         </section>
     )
 } 

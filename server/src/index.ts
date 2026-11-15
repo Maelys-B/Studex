@@ -8,6 +8,7 @@ import { collectionRouter } from './routes/collection.js'
 import { adminRouter } from './routes/admin.js';
 import { friendsRouter } from './routes/friends.js';
 import { profileRouter } from './routes/profile.js'
+import { reportsRouter } from './routes/reports.js'
 import type { Request, Response, NextFunction } from 'express'
 
 const app = express()
@@ -26,6 +27,7 @@ app.use('/api/collection', collectionRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/friends', friendsRouter)
 app.use('/api/profile', profileRouter)
+app.use('/api/reports', reportsRouter)
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);

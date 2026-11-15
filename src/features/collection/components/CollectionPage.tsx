@@ -5,6 +5,7 @@ import { CollectionCardView } from '../../boosters/components/CollectionCardView
 import { BattleCardView } from '../../boosters/components/BattleCardView'
 import type { Card, CardKind, Rarity } from '../../boosters/types'
 import type { OwnedCard } from '../types'
+import { ReportModal } from '../../reports/components/ReportModal'
 import '../assets/CollectionPage.css'
 
 type TypeFilter = 'all' | CardKind
@@ -47,6 +48,7 @@ export function CollectionPage() {
     const [deleting, setDeleting] = useState(false)
     const [deleteError, setDeleteError] = useState('')
     const [confirmAll, setConfirmAll] = useState<boolean | null>(null)
+    const [reporting, setReporting] = useState(false)
 
     useEffect(() => {
         fetchCollection()
@@ -61,6 +63,7 @@ export function CollectionPage() {
         setSelectedId(null)
         setDeleteError('')
         setConfirmAll(null)
+        setReporting(false)
     }
 
     useEffect(() => {
@@ -195,6 +198,12 @@ export function CollectionPage() {
                             </div>
 
                             {deleteError && <p className="collection-modal__error">{deleteError}</p>}
+
+                            {selectedCard.can_report && (
+                                <button type="button" className="collection-modal__report" onClick={() => setReporting(true)}>
+                                    Signaler la carte
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -227,6 +236,13 @@ export function CollectionPage() {
                                 </div>
                             </div>
                         </div>
+                    )}
+
+                    {reporting && (
+                        <ReportModal
+                            target={{ kind: 'card', id: selectedCard.id, name: selectedCard.name }}
+                            onClose={() => setReporting(false)}
+                        />
                     )}
                 </div>
             )}

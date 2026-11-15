@@ -10,12 +10,15 @@ collectionRouter.use(verifyToken)
 collectionRouter.get('/', async (_req, res, next) => {
     try {
         const [rows] = await db.query<RowDataPacket[]>(
-            'SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type, avatar, quantity, obtained_at FROM cards JOIN user_cards ON cards.id = user_cards.card_id WHERE user_cards.user_id = ? ORDER BY obtained_at DESC',
-            [res.locals.userId]
+            `SELECT id, name, position_collection, subtitle, description, image, hp, color, rarity, type, avatar, quantity, obtained_at,
+                (cards.created_by IS NOT NULL AND cards.created_by <> ?) AS can_report
+            FROM cards JOIN user_cards ON cards.id = user_cards.card_id
+            WHERE user_cards.user_id = ? ORDER BY obtained_at DESC`,
+            [res.locals.userId, res.locals.userId]
         )
         const attacksByCard = await loadAttacksByCard(db, rows.map(row => row.id))
 
-        res.json(rows.map(row => ({ ...row, attacks: attacksByCard.get(row.id) })))
+        res.json(rows.map(row => ({ ...row, can_report: Boolean(row.can_report), attacks: attacksByCard.get(row.id) })))
     }
     catch (err) {
         next(err)

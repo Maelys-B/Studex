@@ -1,10 +1,6 @@
--- Creates the Studex database and tables
--- Run once in phpMyAdmin (SQL tab) or with: mysql -u root < db/schema.sql
-
 CREATE DATABASE IF NOT EXISTS studex CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE studex;
 
--- Players
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
@@ -14,10 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Every card in the game
--- created_by: player who created their student card (NULL for seed cards), one card per player
--- avatar: avatar customization choices as JSON
--- status: a card created by a player stays pending until an admin approves it
 CREATE TABLE IF NOT EXISTS cards (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -35,7 +27,6 @@ CREATE TABLE IF NOT EXISTS cards (
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- The 2 attacks of each battle card (slot = 1 or 2)
 CREATE TABLE IF NOT EXISTS card_attacks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     card_id INT NOT NULL,
@@ -48,7 +39,6 @@ CREATE TABLE IF NOT EXISTS card_attacks (
     FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- Who owns which card, and how many copies
 CREATE TABLE IF NOT EXISTS user_cards (
     user_id INT NOT NULL,
     card_id INT NOT NULL,
@@ -59,17 +49,12 @@ CREATE TABLE IF NOT EXISTS user_cards (
     FOREIGN KEY (card_id) REFERENCES cards(id)
 ) ENGINE=InnoDB;
 
--- Each player's booster stock (max 5, 1 gained every 2 h)
--- last_gained_at: date in milliseconds of the last booster gained
--- user_id without a foreign key for now: server authentication is not wired in yet
 CREATE TABLE IF NOT EXISTS user_boosters (
     user_id BIGINT UNSIGNED PRIMARY KEY,
     stored_booster INT NOT NULL,
     last_gained_at BIGINT NOT NULL
 ) ENGINE=InnoDB;
 
--- Friend requests and friendships (a single row per pair of players)
--- user_low / user_high: computed by MySQL, they prevent having both A->B and B->A
 CREATE TABLE IF NOT EXISTS friendships (
     id INT AUTO_INCREMENT PRIMARY KEY,
     requester_id INT NOT NULL,
