@@ -235,6 +235,20 @@ html:has(.collection-page)::-webkit-scrollbar {
     background: #f0676b;
 }
 
+.collection-modal__report {
+    padding: 6px 12px;
+    border-color: transparent;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+.collection-modal__report:hover {
+    background: transparent;
+    color: #ff8a8a;
+}
+
 .collection-confirm {
     position: fixed;
     inset: 0;

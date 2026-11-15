@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { answerRequest, fetchFriends, fetchRequests, removeFriend, searchUsers, sendRequest } from '../services/friendsApi'
 import type { Friend, FriendRequest, SearchResult } from '../services/friendsApi'
+import { ReportModal } from '../../reports/components/ReportModal'
 import { PageTitle } from '../../ui/components/PageTitle'
 import '../assets/FriendsPage.css'
 
@@ -15,6 +16,11 @@ export function FriendsPage() {
     const [query, setQuery] = useState('')
     const [results, setResults] = useState<SearchResult[] | null>(null)
     const [error, setError] = useState<string | null>(null)
+    const [reportTarget, setReportTarget] = useState<{ id: number, username: string } | null>(null)
+
+    const reportButton = (id: number, username: string) => (
+        <button type="button" className="holo-btn holo-btn--ghost" onClick={() => setReportTarget({ id, username })}>Signaler</button>
+    )
 
     const reload = async () => {
         const [f, r] = await Promise.all([fetchFriends(), fetchRequests()])
@@ -68,7 +74,6 @@ export function FriendsPage() {
                             </svg>
                             <span>Rechercher un joueur</span>
                         </h2>
-
                         <form className="friends__search" onSubmit={onSearch}>
                             <input
                                 className="holo-input"
@@ -96,6 +101,7 @@ export function FriendsPage() {
                                         {r.relation === 'sent' && <span className="friend-row__tag">Demande envoyée</span>}
                                         {r.relation === 'received' && <span className="friend-row__tag friend-row__tag--received">T'a envoyé une demande</span>}
                                         {r.relation === 'friends' && <span className="friend-row__tag friend-row__tag--friends">Déjà ami</span>}
+                                        {reportButton(r.id, r.username)}
                                     </li>
                                 ))}
                             </ul>
@@ -125,6 +131,7 @@ export function FriendsPage() {
                                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
                                             Refuser
                                         </button>
+                                        {reportButton(r.userId, r.username)}
                                     </div>
                                 </li>
                             ))}
@@ -147,12 +154,22 @@ export function FriendsPage() {
                             <li className="friend-row" key={f.id}>
                                 <Initial username={f.username} />
                                 <span className="friend-row__name">{f.username}</span>
-                                <button className="holo-btn holo-btn--ghost" onClick={() => run(() => removeFriend(f.id))}>Retirer</button>
+                                <div className="friend-row__actions">
+                                    <button className="holo-btn holo-btn--ghost" onClick={() => run(() => removeFriend(f.id))}>Retirer</button>
+                                    {reportButton(f.id, f.username)}
+                                </div>
                             </li>
                         ))}
                     </ul>
                 </section>
             </div>
+
+            {reportTarget && (
+                <ReportModal
+                    target={{ kind: 'user', id: reportTarget.id, name: reportTarget.username }}
+                    onClose={() => setReportTarget(null)}
+                />
+            )}
         </section>
     )
 }

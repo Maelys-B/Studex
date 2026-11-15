@@ -67,3 +67,19 @@ CREATE TABLE IF NOT EXISTS friendships (
     FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (addressee_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS reports(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reporter_id INT NOT NULL,
+    reported_user_id INT NULL,
+    card_id INT NULL,
+    reason ENUM('inappropriate', 'offensive', 'harassment', 'impersonation', 'spam', 'other') NOT NULL,
+    message VARCHAR(500) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT one_target CHECK ((reported_user_id IS NULL) <> (card_id IS NULL)),
+    UNIQUE uniq_repoter_user (reporter_id, reported_user_id),
+    UNIQUE uniq_repoter_card (reporter_id, card_id),
+    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE CASCADE,
+    FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (reported_user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
