@@ -28,35 +28,41 @@ export function ProfileForm({onUpdate, user}:ProfileProps){
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1>Mon profil</h1>
+        <form className="holo-panel holo-panel--glass profile-form" onSubmit={handleSubmit}>
+            <h2 className="holo-panel__legend">
+                <svg className="holo-panel__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 21c1-5 15-5 16 0" /></svg>
+                <span>Mon compte</span>
+            </h2>
 
-            <h2>Modifier mon pseudo et email</h2>
-            <div>
-                <label htmlFor="profile-username">pseudo</label>
+            <div className="profile-form__field">
+                <label htmlFor="profile-username">Pseudo</label>
                 <input
                     id="profile-username"
+                    className="holo-input"
                     type="text"
+                    autoComplete="username"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
             </div>
 
-            <div>
-                <label htmlFor="profile-email">email</label>
+            <div className="profile-form__field">
+                <label htmlFor="profile-email">Email</label>
                 <input
                     id="profile-email"
+                    className="holo-input"
                     type="email"
+                    autoComplete="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
             </div>
 
-            {error && <p>{error}</p>}
+            {error && <p className="profile-form__error" role="alert">{error}</p>}
 
-            <button type="submit">Enregistrer</button>
+            <button className="holo-btn holo-btn--accept profile-form__submit" type="submit">Enregistrer</button>
         </form>
     )
 }

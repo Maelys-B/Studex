@@ -2,9 +2,11 @@ import { Router } from 'express'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
 import { db } from '../db.js'
 import verifyToken from '../middleware/verifyToken.js'
+import requireCard from '../middleware/requireCard.js'
 
 export const friendsRouter = Router()
 friendsRouter.use(verifyToken)
+friendsRouter.use(requireCard)
 
 type Relation = 'none' | 'sent' | 'received' | 'friends'
 

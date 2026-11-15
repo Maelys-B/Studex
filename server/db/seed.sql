@@ -1,6 +1,3 @@
--- The game's test cards
--- Run after schema.sql. Safe to run again: existing cards keep their data,
--- only the description and image are updated, then the HP and attacks of battle cards are rewritten (useful for a database created before these additions).
 USE studex;
 
 INSERT INTO cards (id, name, subtitle, description, image, color, rarity, type) VALUES
@@ -63,7 +60,6 @@ INSERT INTO card_attacks (card_id, slot, name, energy_cost, damage, description)
     (20, 1, 'Révisions de la veille', 2, 70, 'Inflige 70 dégâts. Tout le cours en une seule nuit.'),
     (20, 2, 'Les partiels', 3, 110, 'Inflige 110 dégâts. Cinq examens en cinq jours.');
 
--- Number of each card in the collection: collection 1-10, battle 11-20, students 21-25
 UPDATE cards SET position_collection = CASE id
     WHEN 31 THEN 21 WHEN 32 THEN 22 WHEN 33 THEN 23 WHEN 34 THEN 24 WHEN 35 THEN 25
     ELSE id

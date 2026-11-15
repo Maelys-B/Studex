@@ -9,9 +9,11 @@ import {
 import { getState, loadPool, saveState, withTransaction, saveCards } from '../services/boosterStore.js'
 import type { BoosterState } from '../types.js'
 import verifyToken from '../middleware/verifyToken.js'
+import requireCard from '../middleware/requireCard.js'
 
 export const boostersRouter = Router()
 boostersRouter.use(verifyToken)
+boostersRouter.use(requireCard)
 
 function describe(state: BoosterState, now: number) {
     return {

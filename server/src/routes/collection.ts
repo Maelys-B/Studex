@@ -3,9 +3,11 @@ import { db } from '../db.js'
 import verifyToken from '../middleware/verifyToken.js'
 import type { RowDataPacket, ResultSetHeader } from 'mysql2'
 import { loadAttacksByCard, withTransaction } from '../services/boosterStore.js'
+import requireCard from '../middleware/requireCard.js'
 
 export const collectionRouter = Router()
 collectionRouter.use(verifyToken)
+collectionRouter.use(requireCard)
 
 collectionRouter.get('/', async (_req, res, next) => {
     try {
