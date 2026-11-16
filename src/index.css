@@ -8,11 +8,11 @@
   --primary: #6c7cff;
   --primary-hover: #8390ff;
   --radius: 8px;
-  --nav-font-size: clamp(15px, 1.45vw, 28px);
+  --nav-font-size: clamp(13.5px, 1.3vw, 25px);
   --nav-height: calc(var(--nav-font-size) * 4.4);
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5;
   color: var(--text);
   background: var(--bg);
@@ -100,13 +100,17 @@ button:disabled {
   z-index: 1;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
   gap: 12px;
   min-height: var(--nav-height);
   padding: 0 1.5em;
   font-family: 'Nunito', sans-serif;
   font-size: var(--nav-font-size);
+}
+
+.app-nav:has(> .app-nav__logout) {
+  justify-content: space-between;
 }
 
 .app-nav__links {
@@ -247,7 +251,6 @@ button:disabled {
 
   .app-nav__links {
     gap: 0.1em;
-    margin-left: 0.7em;
     padding: 0.55em 0.5em 0.4em;
   }
 
