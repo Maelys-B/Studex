@@ -44,11 +44,11 @@ export async function loadAttacksByCard(conn: Pool | PoolConnection, cardIds?: n
 
     const [attackRows] = cardIds
         ? await conn.query<RowDataPacket[]>(
-            'SELECT card_id, name, energy_cost, damage, description FROM card_attacks WHERE card_id IN (?) ORDER BY card_id, slot',
+            'SELECT card_id, name, kind, energy_cost, damage, description FROM card_attacks WHERE card_id IN (?) ORDER BY card_id, slot',
             [cardIds]
         )
         : await conn.query<RowDataPacket[]>(
-            'SELECT card_id, name, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
+            'SELECT card_id, name, kind, energy_cost, damage, description FROM card_attacks ORDER BY card_id, slot'
         )
 
     const attacksByCard = new Map<number, Attack[]>()
@@ -56,6 +56,7 @@ export async function loadAttacksByCard(conn: Pool | PoolConnection, cardIds?: n
         const list = attacksByCard.get(row.card_id) ?? []
         list.push({
             name: row.name,
+            kind: row.kind,
             cost: row.energy_cost,
             damage: row.damage,
             description: row.description

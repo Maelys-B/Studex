@@ -29,36 +29,36 @@ INSERT INTO cards (id, name, subtitle, description, image, color, rarity, type) 
 ON DUPLICATE KEY UPDATE description = VALUES(description), image = VALUES(image);
 
 UPDATE cards SET hp = CASE id
-    WHEN 11 THEN 60  WHEN 12 THEN 70
-    WHEN 13 THEN 80  WHEN 14 THEN 80
-    WHEN 15 THEN 100 WHEN 16 THEN 100
-    WHEN 17 THEN 120 WHEN 18 THEN 120
-    WHEN 19 THEN 150 WHEN 20 THEN 150
+    WHEN 11 THEN 70 WHEN 12 THEN 60
+    WHEN 13 THEN 75 WHEN 14 THEN 80
+    WHEN 15 THEN 65 WHEN 16 THEN 85
+    WHEN 17 THEN 70 WHEN 18 THEN 90
+    WHEN 19 THEN 70 WHEN 20 THEN 95
 END
 WHERE id BETWEEN 11 AND 20;
 
 DELETE FROM card_attacks WHERE card_id BETWEEN 11 AND 20;
-INSERT INTO card_attacks (card_id, slot, name, energy_cost, damage, description) VALUES
-    (11, 1, 'Aucun bug ici', 1, 20, 'Inflige 20 dégâts. Il n''a jamais vu ce bug.'),
-    (11, 2, 'Démo qui plante', 2, 40, 'Inflige 40 dégâts. Ça marchait pourtant ce matin.'),
-    (12, 1, 'Jet brûlant', 1, 20, 'Inflige 20 dégâts. Attention, c''est très chaud.'),
-    (12, 2, 'Double expresso', 2, 40, 'Inflige 40 dégâts. Il n''a pas dormi non plus.'),
-    (13, 1, 'Connexion instable', 1, 25, 'Inflige 25 dégâts. Le chargement n''en finit pas.'),
-    (13, 2, 'Coupure en plein rendu', 2, 50, 'Inflige 50 dégâts. Tout est perdu, sans sauvegarde.'),
-    (14, 1, 'Annuler', 1, 30, 'Inflige 30 dégâts. Un retour en arrière qui fait mal.'),
-    (14, 2, 'Ctrl+Z x 50', 2, 50, 'Inflige 50 dégâts. Plus rien ne reste de la veille.'),
-    (15, 1, 'Dernière minute', 2, 50, 'Inflige 50 dégâts. La panique rend très productif.'),
-    (15, 2, 'Commit sans relire', 3, 75, 'Inflige 75 dégâts. Pas le temps de tester.'),
-    (16, 1, 'Copier-coller', 1, 30, 'Inflige 30 dégâts. Sans lire la réponse.'),
-    (16, 2, 'Réponse de 2014', 3, 70, 'Inflige 70 dégâts. Elle marche encore, étonnamment.'),
-    (17, 1, 'git push --force', 3, 80, 'Inflige 80 dégâts. Tes collègues vont avoir des questions.'),
-    (17, 2, 'Merge de la dernière chance', 2, 40, 'Inflige 40 dégâts. Tout est vert… presque.'),
-    (18, 1, '<<<<<<< HEAD', 2, 45, 'Inflige 45 dégâts. Il faut tout relire à la main.'),
-    (18, 2, 'Conflit sur 42 fichiers', 3, 80, 'Inflige 80 dégâts. Personne ne sait lequel garder.'),
-    (19, 1, 'sudo', 2, 70, 'Inflige 70 dégâts. Plus aucune permission demandée.'),
-    (19, 2, 'rm -rf /', 3, 120, 'Inflige 120 dégâts. Aucun retour en arrière possible.'),
-    (20, 1, 'Révisions de la veille', 2, 70, 'Inflige 70 dégâts. Tout le cours en une seule nuit.'),
-    (20, 2, 'Les partiels', 3, 110, 'Inflige 110 dégâts. Cinq examens en cinq jours.');
+INSERT INTO card_attacks (card_id, slot, name, kind, energy_cost, damage, description) VALUES
+    (11, 1, 'Aucun bug ici', 'defense', 1, 25, 'Bloque 25 dégâts. Il n''a jamais vu ce bug.'),
+    (11, 2, 'Démo qui plante', 'attack', 2, 40, 'Inflige 40 dégâts. Ça marchait pourtant ce matin.'),
+    (12, 1, 'Jet brûlant', 'attack', 1, 20, 'Inflige 20 dégâts. Attention, c''est très chaud.'),
+    (12, 2, 'Double expresso', 'attack', 2, 45, 'Inflige 45 dégâts. Il n''a pas dormi non plus.'),
+    (13, 1, 'Connexion instable', 'attack', 1, 20, 'Inflige 20 dégâts. Le chargement n''en finit pas.'),
+    (13, 2, 'Coupure en plein rendu', 'attack', 3, 65, 'Inflige 65 dégâts. Tout est perdu, sans sauvegarde.'),
+    (14, 1, 'Annuler', 'defense', 1, 30, 'Bloque 30 dégâts. Comme si rien ne s''était passé.'),
+    (14, 2, 'Ctrl+Z x 50', 'attack', 2, 45, 'Inflige 45 dégâts. Plus rien ne reste de la veille.'),
+    (15, 1, 'Dernière minute', 'attack', 2, 50, 'Inflige 50 dégâts. La panique rend très productif.'),
+    (15, 2, 'Commit sans relire', 'attack', 3, 75, 'Inflige 75 dégâts. Pas le temps de tester.'),
+    (16, 1, 'Copier-coller', 'attack', 1, 25, 'Inflige 25 dégâts. Sans lire la réponse.'),
+    (16, 2, 'Réponse de 2014', 'defense', 2, 55, 'Bloque 55 dégâts. Elle marche encore, étonnamment.'),
+    (17, 1, 'git push --force', 'attack', 3, 80, 'Inflige 80 dégâts. Tes collègues vont avoir des questions.'),
+    (17, 2, 'Merge de la dernière chance', 'attack', 2, 45, 'Inflige 45 dégâts. Tout est vert… presque.'),
+    (18, 1, '<<<<<<< HEAD', 'defense', 2, 50, 'Bloque 50 dégâts. Personne ne passe avant la résolution.'),
+    (18, 2, 'Conflit sur 42 fichiers', 'attack', 3, 70, 'Inflige 70 dégâts. Personne ne sait lequel garder.'),
+    (19, 1, 'sudo', 'attack', 2, 50, 'Inflige 50 dégâts. Plus aucune permission demandée.'),
+    (19, 2, 'rm -rf /', 'attack', 3, 85, 'Inflige 85 dégâts. Aucun retour en arrière possible.'),
+    (20, 1, 'Révisions de la veille', 'defense', 1, 30, 'Bloque 30 dégâts. Tout le cours en une seule nuit.'),
+    (20, 2, 'Les partiels', 'attack', 3, 75, 'Inflige 75 dégâts. Cinq examens en cinq jours.');
 
 UPDATE cards SET position_collection = CASE id
     WHEN 31 THEN 21 WHEN 32 THEN 22 WHEN 33 THEN 23 WHEN 34 THEN 24 WHEN 35 THEN 25

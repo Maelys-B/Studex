@@ -22,7 +22,16 @@ export function BattleCardView({ card }: { card: Card}) {
                             <h3>{attack.name}</h3>
                             <p>{attack.description}</p>
                         </div>
-                        <strong>{attack.damage}</strong>
+                        {attack.kind === 'defense' ? (
+                            <strong className="bcard__shield" aria-label={`Bouclier ${attack.damage}`}>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" />
+                                </svg>
+                                {attack.damage}
+                            </strong>
+                        ) : (
+                            <strong>{attack.damage}</strong>
+                        )}
                     </li>
                 ))}
             </ul>

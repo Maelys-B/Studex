@@ -117,3 +117,16 @@
     font-weight: 400;
     line-height: 1;
 }
+
+.bcard__attacks .bcard__shield {
+    display: inline-flex;
+    align-items: center;
+    gap: 1cqw;
+}
+
+.bcard__shield svg {
+    width: 0.55em;
+    height: 0.55em;
+    fill: currentColor;
+    opacity: 0.85;
+}

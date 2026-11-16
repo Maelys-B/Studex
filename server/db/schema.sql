@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS card_attacks (
     card_id INT NOT NULL,
     slot TINYINT NOT NULL,
     name VARCHAR(100) NOT NULL,
+    kind ENUM('attack', 'defense') NOT NULL DEFAULT 'attack',
     energy_cost TINYINT NOT NULL,
     damage INT NOT NULL,
     description VARCHAR(255) NOT NULL,
