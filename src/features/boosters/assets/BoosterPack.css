@@ -234,7 +234,7 @@
     border-radius: 999px;
     color: #dcebff;
     font-family: 'Nunito', sans-serif;
-    font-size: clamp(16px, calc(var(--pack-width) * 0.105), 24px);
+    font-size: clamp(13px, calc(var(--pack-width) * 0.08), 18px);
     font-weight: 800;
     box-shadow:
         0 0 12px rgba(86, 216, 255, 0.75),
@@ -264,7 +264,7 @@
     background: rgba(10, 18, 70, 0.85);
     color: #dcebff;
     font-family: 'Nunito', sans-serif;
-    font-size: clamp(16px, calc(var(--pack-width) * 0.1), 22px);
+    font-size: clamp(13px, calc(var(--pack-width) * 0.075), 17px);
     font-weight: 800;
     letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums;

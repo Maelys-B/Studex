@@ -7,7 +7,7 @@ import boosterImage from '../../boosters/assets/booster/booster.webp'
 import '../../ui/assets/ui.css'
 import '../assets/AuthPage.css'
 
-const CHANGE_DELAY_MS = 10000
+const CHANGE_DELAY_MS = 5000
 
 const RARITIES: Rarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary']
 
