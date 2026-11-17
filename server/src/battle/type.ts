@@ -51,3 +51,26 @@ export type PlayerSetup = {
     reserve: [number, number]
     
 }
+
+export type PublicPlayer = {
+    userId: number,
+    active: BattleCard,
+    bench: BattleCard[],
+    reserveCount: number,
+    energy: number,
+    shield: number,
+    knockouts: number
+}
+
+export type PlayerView = {
+    you: PlayerIndex,
+    turn: number,
+    maxTurns: number,
+    yourTurn: boolean,
+    phase: BattleState['phase'],
+    result: BattleState['result'],
+    me: PublicPlayer & { reserve: BattleCard[] },
+    opponent: PublicPlayer,
+    legalActions: Action[]
+    
+}

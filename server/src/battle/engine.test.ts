@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { applyAction, createBattle, getLegalActions } from './engine.js';
+import { applyAction, createBattle, getLegalActions, getPlayerView } from './engine.js';
 import type { BattleCard, PlayerSetup } from './type.js';
 
 function card(id: number, hp = 80): BattleCard {
@@ -133,4 +133,32 @@ test('une action interdite est refusée', () => {
     const state = createBattle(twoPlayers(), 0)
     assert.throws(() => applyAction(state, 1, { type: 'PASS' }))
     assert.throws(() => applyAction(state, 0, { type: 'SWITCH', from: 11, to: 99 }))
+})
+
+test("la réserve de l'adversaire reste cachée", () => {
+    const state = createBattle(twoPlayers(), 0)
+    const view = getPlayerView(state, 0)
+    assert.equal(view.opponent.reserveCount, 2)
+    assert.ok(!('reserve' in view.opponent))
+    assert.ok(!JSON.stringify(view).includes('Carte 19'))
+    assert.equal(view.me.reserve.length, 2)
+})
+
+test("l'adversaire n'a aucune action pendant mon tour", () => {
+    const state = createBattle(twoPlayers(), 0)
+    assert.equal(getPlayerView(state, 0).yourTurn, true)
+    assert.deepEqual(getPlayerView(state, 1).legalActions, [])
+})
+
+test('un combat complet se termine', () => {
+    let state = createBattle(twoPlayers(), 0)
+    while (state.phase !== 'ended') {
+        const actions = getLegalActions(state, state.current)
+        const action = actions.find(a => a.type === 'USE_ABILITY' && a.index === 0)
+            ?? actions.find(a => a.type === 'CHOOSE_NEXT')
+            ?? actions[0]
+        state = applyAction(state, state.current, action)
+    }
+    assert.ok(state.turn <= 30)
+    assert.equal(state.result, 0)
 })

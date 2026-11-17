@@ -1,4 +1,4 @@
-import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState } from './type.js';
+import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState, PlayerView, PublicPlayer } from './type.js';
 
 export const MAX_TURNS = 30
 export const KOS_TO_WIN = 3
@@ -184,4 +184,32 @@ export function applyAction(state: BattleState, player: PlayerIndex, action: Act
     }
 
     return next
+}
+
+function publicPlayer(player: PlayerState): PublicPlayer {
+    return {
+        userId: player.userId,
+        active: player.cards[player.active],
+        bench: player.bench.map(id => player.cards[id]),
+        reserveCount: player.reserve.length,
+        energy: player.energy,
+        shield: player.shield,
+        knockouts: player.knockouts
+    }
+}
+
+export function getPlayerView(state: BattleState, player: PlayerIndex): PlayerView {
+    const me = state.players[player]
+    const foe = state.players[opponent(player)]
+    return {
+        you: player,
+        turn: state.turn,
+        maxTurns: MAX_TURNS,
+        yourTurn: state.current === player && state.phase !== 'ended',
+        phase: state.phase,
+        result: state.result,
+        me: { ...publicPlayer(me), reserve: me.reserve.map(id => me.cards[id]) },
+        opponent: publicPlayer(foe),
+        legalActions: getLegalActions(state, player)
+    }
 }
