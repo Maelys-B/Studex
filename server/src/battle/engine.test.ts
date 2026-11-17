@@ -1,8 +1,7 @@
-import { test } from 'node:test'
-import assert from 'node:assert/strict'
-import { createBattle, getLegalActions } from './engine.js'
-import type { BattleCard, PlayerSetup } from './type.js'
-import { act } from 'react';
+import assert from 'node:assert/strict';
+import { test } from 'node:test';
+import { applyAction, createBattle, getLegalActions } from './engine.js';
+import type { BattleCard, PlayerSetup } from './type.js';
 
 function card(id: number, hp = 80): BattleCard {
     return {
@@ -61,4 +60,77 @@ test('après un K.O., seul le choix de la remplaçante est permis', () => {
         { type: 'CHOOSE_NEXT', cardId: 12 },
         { type: 'CHOOSE_NEXT', cardId: 13 }
     ])
+})
+
+test('une attaque retire des PV et passe la main', () => {
+    const start = createBattle(twoPlayers(), 0)
+    const state = applyAction(start, 0, { type: 'USE_ABILITY', index: 0 })
+    assert.equal(state.players[1].cards[16].hp, 60)
+    assert.equal(state.players[0].energy, 0)
+    assert.equal(state.current, 1)
+    assert.equal(state.players[1].energy, 1)
+    assert.equal(state.turn, 2)
+    assert.equal(start.players[1].cards[16].hp, 80)
+})
+
+test('le bouclier absorbe la prochaine attaque', () => {
+    let state = createBattle(twoPlayers(), 0)
+    state = applyAction(state, 0, { type: 'USE_ABILITY', index: 1 })
+    state = applyAction(state, 1, { type: 'USE_ABILITY', index: 0 })
+    assert.equal(state.players[0].cards[11].hp, 80)
+    assert.equal(state.players[0].shield, 0)
+})
+
+test("le bouclier disparaît à la fin du tour adverse", () => {
+    let state = createBattle(twoPlayers(), 0)
+    state = applyAction(state, 0, { type: 'USE_ABILITY', index: 1 })
+    assert.equal(state.players[0].shield, 30)
+    state = applyAction(state, 1, { type: 'PASS' })
+    assert.equal(state.players[0].shield, 0)
+})
+
+test('après un K.O., la réserve remonte et le joueur choisit sa carte', () => {
+    let state = createBattle(twoPlayers(), 0)
+    state.players[1].cards[16].hp = 20
+    state = applyAction(state, 0, { type: 'USE_ABILITY', index: 0 })
+    assert.equal(state.players[0].knockouts, 1)
+    assert.equal(state.phase, 'choose_next')
+    assert.equal(state.current, 1)
+    assert.deepEqual(state.players[1].bench, [17, 18, 19])
+
+    state = applyAction(state, 1, { type: 'CHOOSE_NEXT', cardId: 18 })
+    assert.equal(state.players[1].active, 18)
+    assert.deepEqual(state.players[1].bench, [17, 19])
+    assert.equal(state.phase, 'action')
+})
+
+test('le troisième K.O. donne la victoire', () => {
+    let state = createBattle(twoPlayers(), 0)
+    state.players[0].knockouts = 2
+    state.players[1].cards[16].hp = 20
+    state = applyAction(state, 0, { type: 'USE_ABILITY', index: 0 })
+    assert.equal(state.phase, 'ended')
+    assert.equal(state.result, 0)
+})
+
+test('au tour 30, égalité parfaite = match nul', () => {
+    let state = createBattle(twoPlayers(), 0)
+    state.turn = 30
+    state = applyAction(state, 0, { type: 'PASS' })
+    assert.equal(state.phase, 'ended')
+    assert.equal(state.result, 'draw')
+})
+
+test('au tour 30, le plus de PV restants gagne', () => {
+    let state = createBattle(twoPlayers(), 0)
+    state.turn = 30
+    state.players[1].cards[20].hp = 10
+    state = applyAction(state, 0, { type: 'PASS' })
+    assert.equal(state.result, 0)
+})
+
+test('une action interdite est refusée', () => {
+    const state = createBattle(twoPlayers(), 0)
+    assert.throws(() => applyAction(state, 1, { type: 'PASS' }))
+    assert.throws(() => applyAction(state, 0, { type: 'SWITCH', from: 11, to: 99 }))
 })

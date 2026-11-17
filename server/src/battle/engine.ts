@@ -1,5 +1,4 @@
-import { assertNuxtCompatibility } from 'nuxt/kit';
-import type { BattleState, PlayerIndex, PlayerSetup, PlayerState, Action } from './type.js'
+import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState } from './type.js';
 
 export const MAX_TURNS = 30
 export const KOS_TO_WIN = 3
@@ -50,4 +49,139 @@ export function getLegalActions(state: BattleState, player: PlayerIndex): Action
     }
 
     return actions
+}
+
+function opponent(player: PlayerIndex): PlayerIndex {
+    return player ===  0 ? 1 : 0
+}
+
+function actionKey(action: Action): string {
+    switch (action.type) {
+        case 'USE_ABILITY': return `USE_ABILITY:${action.index}`
+        case 'SWITCH': return `SWITCH:${action.from}:${action.to}`
+        case 'PASS': return 'PASS'
+        case 'CHOOSE_NEXT': return `CHOOSE_NEXT:${action.cardId}`
+    }
+}
+
+function totalHp(player: PlayerState): number {
+    return Object.values(player.cards).reduce((sum, card) => sum + card.hp, 0)
+}
+
+function decideWinner(state: BattleState): PlayerIndex | 'draw' {
+    const [a, b] = state.players
+    if (a.knockouts !== b.knockouts) {
+        return a.knockouts > b.knockouts ? 0 : 1
+    }
+    const hpA = totalHp(a)
+    const hpB = totalHp(b)
+    if (hpA !== hpB) {
+        return hpA > hpB ? 0 : 1
+    }
+    return 'draw'
+}
+
+function finish(state: BattleState, result: PlayerIndex | 'draw') {
+    state.phase = 'ended'
+    state.result = result
+}
+
+function endTurn(state: BattleState) {
+    const next = opponent(state.current)
+    state.players[next].shield = 0
+    if (state.turn >= MAX_TURNS) {
+        finish(state, decideWinner(state))
+        return
+    }
+    state.turn++
+    state.current = next
+    state.players[next].energy++
+    state.phase = 'action'
+}
+
+function switchCards(me: PlayerState, from: number, to: number) {
+    if (from === me.active) {
+        me.bench = me.bench.map(id => (id === to ? from : id))
+        me.active = to
+        me.shield = 0
+    } else {
+        me.bench = me.bench.map(id => (id === to ? from : id))
+        me.reserve = me.reserve.map(id => (id === to ? from : id))
+    }
+}
+
+function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1) {
+    const me = state.players[player]
+    const foe = state.players[opponent(player)]
+    const ability = me.cards[me.active].abilities[index]
+    me.energy -= ability.cost
+
+    if (ability.kind === 'defense') {
+        me.shield = ability.value
+        endTurn(state)
+        return
+    }
+
+    const damage = Math.max(0, ability.value - foe.shield)
+    foe.shield = 0
+    const target = foe.cards[foe.active]
+    target.hp = Math.max(0, target.hp - damage)
+
+    if (target.hp > 0) {
+        endTurn(state)
+        return
+    }
+
+    me.knockouts++
+    if (me.knockouts >= KOS_TO_WIN) {
+        finish(state, player)
+        return
+    }
+
+    const fromReserve = foe.reserve.shift()
+    if (fromReserve !== undefined) {
+        foe.bench.push(fromReserve)
+    }
+
+    endTurn(state)
+    if (state.phase === 'ended') {
+        return
+    }
+
+    if (foe.bench.length > 1) {
+        state.phase = 'choose_next'
+    } else {
+        foe.active = foe.bench[0]
+        foe.bench = []
+    }
+}
+
+export function applyAction(state: BattleState, player: PlayerIndex, action: Action): BattleState {
+    const legal = getLegalActions(state, player).map(actionKey)
+    if (!legal.includes(actionKey(action))) {
+        throw new Error('Action interdite')
+    }
+
+    const next = structuredClone(state)
+    const me = next.players[player]
+
+    switch (action.type) {
+        case 'USE_ABILITY':
+            useAbility(next, player, action.index)
+            break
+        case 'SWITCH':
+            switchCards(me, action.from, action.to)
+            endTurn(next)
+            break
+        case 'PASS':
+            endTurn(next)
+            break
+        case 'CHOOSE_NEXT':
+            me.active = action.cardId
+            me.bench = me.bench.filter(id => id !== action.cardId)
+            next.phase = 'action'
+            break
+    }
+
+    return next
 }
