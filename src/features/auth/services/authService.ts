@@ -1,54 +1,47 @@
 import type {User, RegisterData, LoginData} from "../types.ts"
 
-type StoredUser = User & {mdp: string}
+const API_URL = 'http://localhost:3000/api'
 
-export function register(data: RegisterData): User {
-    
-    const email = data.email.trim().toLowerCase()
-
-    if (data.pseudo.trim() === '') {
-    throw new Error('Le pseudo est obligatoire')
+async function authenticate(route: string, data: LoginData | RegisterData): Promise<User> {
+    let response: Response
+    try {
+        response = await fetch(`${API_URL}/auth/${route}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        })
+    } catch {
+        throw new Error('Erreur de connexion au serveur')
     }
 
-    const text = localStorage.getItem('users') ?? '[]'
-    const users: StoredUser[] = JSON.parse(text)
-    
-    const emailExists = users.some(user => user.email === email)
-    if (emailExists){
-        throw new Error('Email déjà utilisé')
+    const json = await response.json()
+
+    if (!response.ok) {
+        throw new Error(json.error)
     }
 
-    const newUser: StoredUser ={
-        id: Date.now(),
-        pseudo: data.pseudo.trim(),
-        email: email,
-        mdp: data.mdp,
-    }
-
-    users.push(newUser)
-    localStorage.setItem('users', JSON.stringify(users))
-
-    return{
-        id: newUser.id, 
-        pseudo: newUser.pseudo, 
-        email: newUser.email
-    }
+    localStorage.setItem('token', json.token)
+    return json.user
 }
 
-export function login(data: LoginData): User{
-    const email = data.email.trim().toLowerCase()
+export function register(data: RegisterData): Promise<User> {
+    return authenticate('register', data)
+}
 
-    const text = localStorage.getItem('users') ?? '[]'
-    const users: StoredUser[] = JSON.parse(text)
+export function login(data: LoginData): Promise<User> {
+    return authenticate('login', data)
+}
 
-    const compteExists = users.find(user => user.email === email && user.mdp === data.mdp)
-    if (!compteExists){
-        throw new Error('Email ou le mot de passe est faux')
+export async function getProfile(): Promise<User> {
+    const response = await fetch(`${API_URL}/auth/profile`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    })
+
+    if (!response.ok) {
+        localStorage.removeItem('token')
+        throw new Error('Session expirée')
     }
 
-    return {
-        id: compteExists.id,
-        pseudo: compteExists.pseudo,
-        email: compteExists.email
-    }
+    const json = await response.json()
+    return json.user
 }

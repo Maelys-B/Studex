@@ -1,0 +1,287 @@
+.page-shell {
+    --ink: #12144a;
+    --neon: #7be6ff;
+    --violet: #a97bff;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4vh;
+    width: min(1180px, 100%);
+    min-height: calc(100vh - var(--nav-height));
+    margin: 0 auto;
+    padding: 3vh 32px 48px;
+    font-family: 'Nunito', sans-serif;
+}
+
+.page-shell__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 24px;
+}
+
+.page-title {
+    position: relative;
+    width: fit-content;
+    margin: 0 0 1.5vh 8px;
+    color: #fff;
+    font-family: 'Caveat Brush', 'Nunito', sans-serif;
+    font-size: clamp(2.4rem, 7vh, 3.6rem);
+    font-weight: 400;
+    line-height: 1;
+    rotate: -4deg;
+    text-shadow: 0 4px 18px rgba(10, 18, 70, 0.6);
+}
+
+.page-title__line {
+    position: absolute;
+    left: -6%;
+    bottom: -0.32em;
+    width: 112%;
+    height: 0.34em;
+    fill: url(#page-title-swoosh);
+}
+
+.page-sparks {
+    position: absolute;
+    top: -0.24em;
+    left: 100%;
+    width: 0.8em;
+    aspect-ratio: 1;
+    overflow: visible;
+    fill: #dff7ff;
+}
+
+.page-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 6px 24px;
+    border: 1px solid rgba(86, 216, 255, 0.55);
+    border-radius: 999px;
+    background: rgba(10, 18, 70, 0.85);
+    color: #dcebff;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 0 14px rgba(86, 216, 255, 0.45);
+}
+
+.page-error {
+    width: fit-content;
+    margin: 0;
+    padding: 8px 20px;
+    border: 1px solid rgba(255, 143, 163, 0.7);
+    border-radius: 999px;
+    background: rgba(70, 10, 40, 0.85);
+    color: #ffc2cf;
+    font-weight: 700;
+}
+
+.page-loading {
+    margin: 20vh auto;
+    color: #dcebff;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+}
+
+.holo-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    margin: 0;
+    padding: 30px 22px 18px;
+    border: 2px solid transparent;
+    border-radius: 22px;
+    background:
+        repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.22) 0 26px, transparent 26px 70px) padding-box,
+        linear-gradient(100deg, #cfe6ff, #b9d8ff 45%, #d3c9ff) padding-box,
+        linear-gradient(100deg, #e4fbff, var(--neon) 50%, var(--violet)) border-box;
+    box-shadow:
+        -3px 0 16px rgba(123, 230, 255, 0.55),
+        3px 0 16px rgba(169, 123, 255, 0.55);
+    color: var(--ink);
+}
+
+.holo-panel--glass {
+    background: linear-gradient(160deg, rgba(30, 32, 120, 0.72), rgba(10, 12, 56, 0.8)) padding-box,
+        linear-gradient(110deg, #7be6ff, #6f8dff 50%, #a97bff) border-box;
+    box-shadow:
+        -4px 0 18px rgba(123, 230, 255, 0.45),
+        4px 0 18px rgba(169, 123, 255, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    color: #fff;
+}
+
+.holo-panel--glass .holo-panel__empty {
+    color: rgba(220, 235, 255, 0.75);
+}
+
+.holo-panel--glass .holo-input {
+    border: 1px solid rgba(160, 195, 255, 0.45);
+    border-radius: 12px;
+    background: rgba(8, 10, 45, 0.75);
+}
+
+.holo-panel--glass .holo-input:focus {
+    border-color: var(--neon);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(123, 230, 255, 0.25);
+}
+
+.holo-panel__legend {
+    position: absolute;
+    top: -17px;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 32px);
+    margin: 0;
+    padding: 3px 16px 3px 4px;
+    border: 1px solid var(--neon);
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.5;
+    white-space: nowrap;
+    box-shadow: 0 0 10px rgba(123, 230, 255, 0.5);
+}
+
+.holo-panel__legend > span:not(.holo-panel__count) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.holo-panel__icon {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.holo-panel__count {
+    min-width: 1.6em;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #27c4ea, #7a35e6);
+    font-size: 0.85em;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.holo-panel__empty {
+    margin: 0;
+    padding: 10px 4px;
+    color: rgba(18, 20, 74, 0.7);
+    font-weight: 700;
+}
+
+.holo-input {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    padding: 4px 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--ink);
+    color: #fff;
+}
+
+.holo-input::placeholder {
+    color: rgba(220, 235, 255, 0.6);
+}
+
+.holo-input:focus {
+    outline: 2px solid var(--neon);
+    outline-offset: 2px;
+}
+
+.holo-btn,
+.holo-btn:hover {
+    background: var(--ink);
+}
+
+.holo-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border: 2px solid #35c9ee;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: filter 0.15s, transform 0.05s;
+}
+
+.holo-btn:hover:not(:disabled) {
+    filter: brightness(1.3);
+}
+
+.holo-btn svg {
+    width: 1.15em;
+    height: 1.15em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.holo-btn--accept,
+.holo-btn--accept:hover {
+    background: linear-gradient(90deg, #27c4ea, var(--ink) 75%);
+}
+
+.holo-btn--accept {
+    border-color: #eafcff;
+    box-shadow: 0 0 12px rgba(123, 230, 255, 0.7);
+}
+
+.holo-btn--danger,
+.holo-btn--danger:hover {
+    background: linear-gradient(90deg, var(--ink) 25%, #7a35e6);
+}
+
+.holo-btn--danger {
+    border-color: #d9b8ff;
+    box-shadow: 0 0 12px rgba(169, 123, 255, 0.6);
+}
+
+.holo-btn--ghost,
+.holo-btn--ghost:hover {
+    background: transparent;
+}
+
+.holo-btn--ghost {
+    border-color: rgba(18, 20, 74, 0.35);
+    color: var(--ink);
+}
+
+.holo-btn--ghost:hover:not(:disabled) {
+    filter: none;
+    border-color: #7a35e6;
+    color: #7a35e6;
+}
+
+@media (max-width: 700px) {
+    .page-shell {
+        padding: 20px 16px 32px;
+        gap: 32px;
+    }
+}
