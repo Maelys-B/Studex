@@ -9,7 +9,7 @@ import { adminRouter } from './routes/admin.js'
 import { friendsRouter } from './routes/friends.js'
 import { profileRouter } from './routes/profile.js'
 import { reportsRouter } from './routes/reports.js'
-import type { Request, Response, NextFunction } from 'express'
+import { errorHandler } from './middleware/errorHandler.js'
 
 const app = express()
 
@@ -29,10 +29,7 @@ app.use('/api/friends', friendsRouter)
 app.use('/api/profile', profileRouter)
 app.use('/api/reports', reportsRouter)
 
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  console.error(err);
-  res.status(500).json({ error: 'Erreur serveur' });
-});
+app.use(errorHandler)
 
 const port = Number(process.env.PORT) || 3000
 app.listen(port, () => {
