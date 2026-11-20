@@ -6,7 +6,7 @@ import { boostersRouter } from './routes/boosters.js'
 import { authRouter } from './routes/auth.routes.js'
 import { collectionRouter } from './routes/collection.routes.js'
 import { adminRouter } from './routes/admin.routes.js'
-import { friendsRouter } from './routes/friends.js'
+import { friendRouter } from './routes/friend.routes.js'
 import { profileRouter } from './routes/profile.routes.js'
 import { reportRouter } from './routes/report.routes.js'
 import { errorHandler } from './middleware/errorHandler.js'
@@ -25,7 +25,7 @@ app.use('/api/boosters', boostersRouter)
 app.use('/api/auth', authRouter);
 app.use('/api/collection', collectionRouter)
 app.use('/api/admin', adminRouter)
-app.use('/api/friends', friendsRouter)
+app.use('/api/friends', friendRouter)
 app.use('/api/profile', profileRouter)
 app.use('/api/reports', reportRouter)
 
