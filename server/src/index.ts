@@ -8,7 +8,7 @@ import { collectionRouter } from './routes/collection.routes.js'
 import { adminRouter } from './routes/admin.routes.js'
 import { friendsRouter } from './routes/friends.js'
 import { profileRouter } from './routes/profile.routes.js'
-import { reportsRouter } from './routes/reports.js'
+import { reportRouter } from './routes/report.routes.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 const app = express()
@@ -27,7 +27,7 @@ app.use('/api/collection', collectionRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/friends', friendsRouter)
 app.use('/api/profile', profileRouter)
-app.use('/api/reports', reportsRouter)
+app.use('/api/reports', reportRouter)
 
 app.use(errorHandler)
 

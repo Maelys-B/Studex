@@ -16,6 +16,14 @@ export const userRepository = {
         return prisma.user.findUnique({ where: { email } })
     },
 
+    findUsername(id: number) {
+        return prisma.user.findUnique({ where: { id }, select: { id: true, username: true } })
+    },
+
+    findAdminEmails() {
+        return prisma.user.findMany({ where: { role: 'admin' }, select: { email: true } })
+    },
+
     findPassword(id: number) {
         return prisma.user.findUnique({ where: { id }, select: { password: true } })
     },
