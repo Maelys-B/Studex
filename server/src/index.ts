@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import 'dotenv/config' 
 import { cardRouter } from './routes/card.routes.js'
-import { boostersRouter } from './routes/boosters.js'
+import { boosterRouter } from './routes/booster.routes.js'
 import { authRouter } from './routes/auth.routes.js'
 import { collectionRouter } from './routes/collection.routes.js'
 import { adminRouter } from './routes/admin.routes.js'
@@ -21,7 +21,7 @@ app.get('/api/health', (_req, res) => {
 })
 
 app.use('/api/cards', cardRouter)
-app.use('/api/boosters', boostersRouter)
+app.use('/api/boosters', boosterRouter)
 app.use('/api/auth', authRouter);
 app.use('/api/collection', collectionRouter)
 app.use('/api/admin', adminRouter)
