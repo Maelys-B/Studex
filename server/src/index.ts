@@ -1,11 +1,11 @@
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config' 
-import { cardsRouter } from './routes/cards.js'
+import { cardRouter } from './routes/card.routes.js'
 import { boostersRouter } from './routes/boosters.js'
 import { authRouter } from './routes/auth.js'
 import { collectionRouter } from './routes/collection.js'
-import { adminRouter } from './routes/admin.js'
+import { adminRouter } from './routes/admin.routes.js'
 import { friendsRouter } from './routes/friends.js'
 import { profileRouter } from './routes/profile.js'
 import { reportsRouter } from './routes/reports.js'
@@ -20,7 +20,7 @@ app.get('/api/health', (_req, res) => {
     res.json({ ok: true })
 })
 
-app.use('/api/cards', cardsRouter)
+app.use('/api/cards', cardRouter)
 app.use('/api/boosters', boostersRouter)
 app.use('/api/auth', authRouter);
 app.use('/api/collection', collectionRouter)

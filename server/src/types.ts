@@ -8,7 +8,7 @@ export type Attack = {
     name: string,
     cost: number,
     damage: number,
-    description: string
+    description: string | null
 }
 
 export type Card = {
