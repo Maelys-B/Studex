@@ -78,7 +78,6 @@ export const reportService = {
             throw err
         }
 
-        // Le mail part en arrière-plan : un échec d'envoi ne doit pas faire échouer le signalement.
         notifyAdmins(reporterId, description, reason, message)
             .catch(err => console.error('Envoi du mail de signalement échoué :', err))
     },

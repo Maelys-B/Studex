@@ -26,7 +26,6 @@ export const collectionService = {
         }))
     },
 
-    /** Retire un exemplaire de chaque carte, ou toutes ses copies si `all` est vrai. */
     async remove(userId: number, cardIds: number[], all: boolean) {
         const { count } = await prisma.$transaction(async tx => {
             if (all) return collectionRepository.deleteAll(tx, userId, cardIds)

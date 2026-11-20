@@ -9,7 +9,6 @@ export function toAttack(attack: Pick<CardAttack, 'name' | 'energy_cost' | 'dama
     return { name: attack.name, cost: attack.energy_cost, damage: attack.damage, description: attack.description }
 }
 
-/** Carte complète envoyée au front (booster) : les valeurs vides sont retirées. */
 export function toCard(card: CardRow & { attacks: CardAttack[] }): Card {
     return {
         id: card.id,
