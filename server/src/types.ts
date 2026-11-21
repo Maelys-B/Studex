@@ -11,7 +11,7 @@ export type Attack = {
     kind: AttackKind,
     cost: number,
     damage: number,
-    description: string
+    description: string | null
 }
 
 export type Card = {
