@@ -4,6 +4,7 @@ import { isUniqueViolation } from '../lib/prisma.js'
 import { cardRepository, type StudentCardData } from '../repositories/card.repository.js'
 import type { Attack, Avatar, Card } from '../types.js'
 import type { StudentCardInput } from './studentCardValidation.js'
+import { Talent } from '../battle/talent.js';
 
 export function toAttack(attack: Pick<CardAttack, 'name' | 'kind' | 'energy_cost' | 'damage' | 'description'>): Attack {
     return { name: attack.name, kind: attack.kind, cost: attack.energy_cost, damage: attack.damage, description: attack.description }
@@ -53,12 +54,19 @@ export const cardService = {
         return card
     },
 
-    async createMine(userId: number, input: StudentCardInput) {
+    async createMine(userId: number, input: StudentCardInput, talent: Talent) {
         try {
-            await cardRepository.createStudentCard(userId, toStudentCardData(input))
+            await cardRepository.createStudentCard(userId, toStudentCardData(input), talent)
         } catch (err) {
             if (isUniqueViolation(err)) throw new HttpError(409, 'Tu as déjà créé ta carte')
             throw err
+        }
+    },
+
+    async updateTalent(userId: number, talent: Talent) {
+        const { count } = await cardRepository.updateTalent(userId, talent)
+        if (count === 0) {
+            throw new HttpError(404, 'Aucune carte')
         }
     },
 

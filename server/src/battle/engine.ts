@@ -1,9 +1,14 @@
+import { TALENTS } from './talent.js';
 import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState, PlayerView, PublicPlayer } from './type.js';
 
 export const MAX_TURNS = 30
 export const KOS_TO_WIN = 3
 
 function createPlayer(setup: PlayerSetup): PlayerState {
+    const expected = 2 + (TALENTS[setup.talent].extraReserve ?? 0)
+    if (setup.reserve.length !== expected) {
+        throw new Error('Réserve invalide')
+    }
     return {
         userId: setup.userId,
         cards: Object.fromEntries(setup.cards.map(card => [card.id, {...card}])),
@@ -12,7 +17,8 @@ function createPlayer(setup: PlayerSetup): PlayerState {
         reserve: [...setup.reserve],
         energy: 0,
         shield: 0,
-        knockouts: 0
+        knockouts: 0,
+        talent: setup.talent
     }
 }
 
@@ -113,16 +119,17 @@ function switchCards(me: PlayerState, from: number, to: number) {
 function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1) {
     const me = state.players[player]
     const foe = state.players[opponent(player)]
+    const effect = TALENTS[me.talent]
     const ability = me.cards[me.active].abilities[index]
     me.energy -= ability.cost
 
     if (ability.kind === 'defense') {
-        me.shield = ability.value
+        me.shield = ability.value + (effect.defenseBonus ?? 0)
         endTurn(state)
         return
     }
 
-    const damage = Math.max(0, ability.value - foe.shield)
+    const damage = Math.max(0, ability.value + (effect.attackBonus ?? 0) - foe.shield)
     foe.shield = 0
     const target = foe.cards[foe.active]
     target.hp = Math.max(0, target.hp - damage)
@@ -194,7 +201,8 @@ function publicPlayer(player: PlayerState): PublicPlayer {
         reserveCount: player.reserve.length,
         energy: player.energy,
         shield: player.shield,
-        knockouts: player.knockouts
+        knockouts: player.knockouts,
+        talent: player.talent
     }
 }
 

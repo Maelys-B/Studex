@@ -1,3 +1,5 @@
+import type { Talent } from './talent.js'
+
 export type PlayerIndex = 0 | 1
 
 export type Ability = {
@@ -24,7 +26,8 @@ export type PlayerState = {
     reserve: number[],
     energy: number,
     shield: number,
-    knockouts: number
+    knockouts: number,
+    talent: Talent
 
 }
 
@@ -48,7 +51,8 @@ export type PlayerSetup = {
     cards: BattleCard[],
     active:number,
     bench: [number, number],
-    reserve: [number, number]
+    reserve: number[],
+    talent: Talent 
     
 }
 
@@ -59,7 +63,9 @@ export type PublicPlayer = {
     reserveCount: number,
     energy: number,
     shield: number,
-    knockouts: number
+    knockouts: number,
+    talent: Talent
+    
 }
 
 export type PlayerView = {

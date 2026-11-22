@@ -40,6 +40,7 @@ model Card {
   created_by          Int?       @unique(map: "created_by")
   avatar              Json?
   status              CardStatus @default(approved)
+  talent              Talent ?
 
   creator User?        @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cards_user")
   attacks CardAttack[]
@@ -169,4 +170,10 @@ enum ReportReason {
   impersonation
   spam
   other
+}
+
+enum Talent {
+  striker
+  guardian
+  recruiter
 }

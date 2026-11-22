@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Avatar, CardStatus } from '../../boosters/types'
+import type { AvatarChoice } from '../assets/avatarParts'
+import type { Talent } from '../assets/talent'
 import { CardView } from '../../boosters/components/CardView'
 import { CardTilt } from '../../boosters/components/CardTilt'
 import { AVATAR_CHOICES, AVATAR_COUNTS, DEFAULT_SKIN, POSES } from '../assets/avatarParts'
-import type { AvatarChoice } from '../assets/avatarParts'
-import { fetchMyCard, saveMyCard } from '../services/cardApi'
+import { TALENTS } from '../assets/talent'
+import { fetchMyCard, saveMyCard, saveMyTalent } from '../services/cardApi'
 import fond from '../../boosters/assets/fond-booster.webp'
 import '../assets/MyCardPage.css'
 
@@ -48,6 +50,7 @@ export function MyCardPage({ onSaved }: MyCardPageProps) {
     const [avatar, setAvatar] = useState<Avatar>({ pose: 0, skin: DEFAULT_SKIN, hair: 0, eyes: 0, mouth: 0, outfit: 0 })
     const [error, setError] = useState<string | null>(null)
     const [saving, setSaving] = useState(false) 
+    const [talent, setTalent] = useState<Talent | null>(null)
 
     useEffect(() => {
         fetchMyCard()
@@ -61,6 +64,7 @@ export function MyCardPage({ onSaved }: MyCardPageProps) {
                 setAvatar(card.avatar)
                 setStatus(card.status)
                 setExists(true)
+                setTalent(card.talent)
             })
             .catch(err => setError(err.message))
             .finally(() => setLoading(false))
@@ -76,11 +80,18 @@ export function MyCardPage({ onSaved }: MyCardPageProps) {
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault()
         setError(null)
+
+        if (!exists && !talent) {
+            setError('Choisis un talent')
+            return
+        }
+
         setSaving(true)
         try {
             await saveMyCard(
                 { first_name: firstName, last_name: lastName, subtitle, color, avatar },
-                exists
+                exists,
+                talent
             )
             setExists(true)
             setStatus('pending')
@@ -89,6 +100,22 @@ export function MyCardPage({ onSaved }: MyCardPageProps) {
             setError(err instanceof Error ? err.message : 'Erreur serveur')
         } finally {
             setSaving(false)
+        }
+    }
+
+    const chooseTalent = async (next: Talent) => {
+        if (!exists) {
+            setTalent(next)
+            return
+        }
+        const previous = talent
+        setTalent(next)
+        setError(null)
+        try {
+            await saveMyTalent(next)
+        } catch (err) {
+            setTalent(previous)
+            setError(err instanceof Error ? err.message : 'Erreur serveur')
         }
     }
 
@@ -215,6 +242,29 @@ export function MyCardPage({ onSaved }: MyCardPageProps) {
                                 ▶
                             </button>
                         </div>
+                    ))}
+                </fieldset>
+
+                <fieldset className="my-card__group my-card__group--talent">
+                    <legend>
+                        <svg className="my-card__legend-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7Z" />
+                        </svg>
+                        Talent
+                    </legend>
+                    {TALENTS.map(t => (
+                        <label key={t.id} className={`my-card__talent${talent === t.id ? ' my-card__talent--selected' : ''}`}>
+                            <input
+                                type="radio"
+                                name="talent"
+                                value={t.id}
+                                checked={talent === t.id}
+                                onChange={() => chooseTalent(t.id)}
+                                required={!exists}
+                            />
+                            <span className="my-card__talent-name">{t.label}</span>
+                            <span className="my-card__talent-desc">{t.description}</span>
+                        </label>
                     ))}
                 </fieldset>
 
