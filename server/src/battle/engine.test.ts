@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createRandom, drawFirstPlayer } from './random.js'
+import { validateDeck, validateLineup, type DeckCard } from './deck.js'
+import { chooseRandomAction } from './bots/randomBot.js'
 import { applyAction, createBattle, getLegalActions, getPlayerView, forfeit } from './engine.js';
 import type { Action, BattleCard, BattleState, PlayerIndex, PlayerSetup } from './type.js';
 import type { Talent } from './talent.js'
@@ -265,4 +267,54 @@ test("abandonner donne la victoire à l'adversaire, même hors de son tour", () 
 test('on ne peut pas abandonner un combat terminé', () => {
     const { state } = forfeit(createBattle(twoPlayers(), 0), 1)
     assert.throws(() => forfeit(state, 0))
+})
+
+const owned: DeckCard[] = [
+    ...[11, 12, 13, 14, 15, 16].map((id): DeckCard => ({ id, type: 'battle' })),
+    { id: 1, type: 'collection' },
+    { id: 31, type: 'student' }
+]
+
+test('un deck de 5 cartes de combat possédées est valide', () => {
+    assert.equal(validateDeck([11, 12, 13, 14, 15], owned), null)
+})
+
+test('les decks invalides sont refusés', () => {
+    assert.equal(validateDeck('abc', owned), 'Deck invalide')
+    assert.equal(validateDeck([11, 12, 13, 14, '15'], owned), 'Deck invalide')
+    assert.equal(validateDeck([11, 12, 13, 14], owned), 'Le deck doit contenir 5 cartes')
+    assert.equal(validateDeck([11, 11, 12, 13, 14], owned), 'Le deck ne peut pas contenir deux fois la même carte')
+    assert.equal(validateDeck([11, 12, 13, 14, 20], owned), 'Le deck contient une carte que tu ne possèdes pas')
+    assert.equal(validateDeck([11, 12, 13, 14, 1], owned), 'Seules les cartes de combat peuvent être utilisées')
+    assert.equal(validateDeck([11, 12, 13, 14, 31], owned), 'Seules les cartes de combat peuvent être utilisées')
+})
+
+test('les cartes de départ viennent du deck et sont différentes', () => {
+    const deck = [11, 12, 13, 14, 15]
+    assert.equal(validateLineup(deck, 11, [12, 13]), null)
+    assert.equal(validateLineup(deck, 11, [12]), 'Cartes de départ invalides')
+    assert.equal(validateLineup(deck, 11, [11, 12]), 'Les cartes de départ doivent être différentes')
+    assert.equal(validateLineup(deck, 11, [12, 16]), 'Les cartes de départ doivent venir du deck')
+})
+
+function botBattle(seed: number): BattleState {
+    const random = createRandom(seed)
+    let state = createBattle(twoPlayers(), drawFirstPlayer(seed))
+    while (state.phase !== 'ended') {
+        const player = state.current
+        state = play(state, player, chooseRandomAction(getPlayerView(state, player), random))
+    }
+    return state
+}
+
+test('le bot aléatoire termine 1000 combats sans action interdite', () => {
+    for (let seed = 0; seed < 1000; seed++) {
+        const state = botBattle(seed)
+        assert.ok(state.turn <= 30)
+        assert.notEqual(state.result, null)
+    }
+})
+
+test('la même graine rejoue exactement le même combat', () => {
+    assert.deepEqual(botBattle(42), botBattle(42))
 })
