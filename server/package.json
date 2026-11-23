@@ -5,9 +5,11 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "test": "tsx --test src/battle/engine.test.ts",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
+    "postdb:migrate": "prisma generate",
+    "db:deploy": "prisma migrate deploy && prisma generate",
     "db:seed": "prisma db execute --file db/seed.sql"
   },
   "type": "module",

@@ -1,5 +1,6 @@
 import type { Avatar } from '../types.js'
 import { containsForbiddenWord } from './wordFilter.js'
+import { TALENTS, type Talent } from '../battle/talent.js'
 
 const COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/
 
@@ -15,6 +16,10 @@ export type StudentCardInput = {
     subtitle: string,
     color: string,
     avatar: Avatar
+}
+
+export function isTalent(value: unknown): value is Talent {
+    return typeof value === 'string' && Object.hasOwn(TALENTS, value)
 }
 
 function isValidChoice(value: unknown, max: number): value is number {

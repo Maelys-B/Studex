@@ -4,8 +4,11 @@ export type CardKind = 'collection' | 'battle' | 'student'
 
 export type CardStatus = 'pending' | 'approved' | 'rejected'
 
+export type AttackKind = 'attack' | 'defense'
+
 export type Attack = {
     name: string,
+    kind: AttackKind,
     cost: number,
     damage: number,
     description: string | null

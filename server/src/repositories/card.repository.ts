@@ -1,5 +1,6 @@
 import { prisma, type Db } from '../lib/prisma.js'
 import type { Prisma } from '../generated/prisma/client.js'
+import { Talent } from '../battle/talent.js';
 
 export type StudentCardData = {
     name: string,
@@ -38,7 +39,7 @@ export const cardRepository = {
     findByCreator(userId: number) {
         return prisma.card.findUnique({
             where: { created_by: userId },
-            select: { id: true, name: true, subtitle: true, color: true, avatar: true, rarity: true, type: true, status: true },
+            select: { id: true, name: true, subtitle: true, color: true, avatar: true, rarity: true, type: true, status: true, talent: true },
         })
     },
 
@@ -53,14 +54,18 @@ export const cardRepository = {
         })
     },
 
-    createStudentCard(userId: number, data: StudentCardData) {
+    createStudentCard(userId: number, data: StudentCardData, talent: Talent) {
         return prisma.card.create({
-            data: { ...data, rarity: 'common', type: 'student', created_by: userId, status: 'pending', position_collection: 0 },
+            data: { ...data, talent, rarity: 'common', type: 'student', created_by: userId, status: 'pending', position_collection: 0 },
         })
     },
 
     updateStudentCard(userId: number, data: StudentCardData) {
         return prisma.card.updateMany({ where: { created_by: userId }, data: { ...data, status: 'pending' } })
+    },
+
+    updateTalent(userId: number, talent: Talent) {
+        return prisma.card.updateMany({ where: { created_by: userId }, data: { talent }})
     },
 
     findPending() {
