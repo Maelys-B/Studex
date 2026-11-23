@@ -175,5 +175,5 @@ enum ReportReason {
 enum Talent {
   striker
   guardian
-  recruiter
+  energizer
 }

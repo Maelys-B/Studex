@@ -51,7 +51,7 @@ export type PlayerSetup = {
     cards: BattleCard[],
     active:number,
     bench: [number, number],
-    reserve: number[],
+    reserve: [number, number],
     talent: Talent 
     
 }
