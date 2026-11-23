@@ -1,5 +1,5 @@
 import { TALENTS } from './talent.js';
-import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState, PlayerView, PublicPlayer } from './type.js';
+import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState, PlayerView, PublicPlayer, ActionResult, BattleEvent } from './type.js';
 
 export const MAX_TURNS = 30
 export const KOS_TO_WIN = 3
@@ -112,7 +112,8 @@ function switchCards(me: PlayerState, from: number, to: number) {
     }
 }
 
-function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1) {
+function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1, events: BattleEvent[]) {
+    const foeIndex = opponent(player)
     const me = state.players[player]
     const foe = state.players[opponent(player)]
     const effect = TALENTS[me.talent]
@@ -121,14 +122,18 @@ function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1) {
 
     if (ability.kind === 'defense') {
         me.shield = ability.value + (effect.defenseBonus ?? 0)
+        events.push({ type: 'SHIELD', player, cardId: me.active, value: me.shield })
         endTurn(state)
         return
     }
 
-    const damage = Math.max(0, ability.value + (effect.attackBonus ?? 0) - foe.shield)
-    foe.shield = 0
+    const power = ability.value + (effect.attackBonus ?? 0)
+    const absorbed = Math.min(power, foe.shield)
     const target = foe.cards[foe.active]
-    target.hp = Math.max(0, target.hp - damage)
+    const hpBefore = target.hp
+    foe.shield = 0
+    target.hp = Math.max(0, hpBefore - (power - absorbed))
+    events.push({ type: 'DAMAGE', player: foeIndex, cardId: target.id, amount: hpBefore - target.hp, absorbed })
 
     if (target.hp > 0) {
         endTurn(state)
@@ -136,6 +141,7 @@ function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1) {
     }
 
     me.knockouts++
+    events.push({ type: 'KO', player: foeIndex, cardId: target.id })
     if (me.knockouts >= KOS_TO_WIN) {
         finish(state, player)
         return
@@ -144,6 +150,7 @@ function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1) {
     const fromReserve = foe.reserve.shift()
     if (fromReserve !== undefined) {
         foe.bench.push(fromReserve)
+        events.push({ type: 'RESERVE_UP', player: foeIndex, cardId: fromReserve})
     }
 
     endTurn(state)
@@ -156,10 +163,11 @@ function useAbility(state: BattleState, player: PlayerIndex, index: 0 | 1) {
     } else {
         foe.active = foe.bench[0]
         foe.bench = []
+        events.push({ type: 'NEXT_ACTIVE', player: foeIndex, cardId: foe.active})
     }
 }
 
-export function applyAction(state: BattleState, player: PlayerIndex, action: Action): BattleState {
+export function applyAction(state: BattleState, player: PlayerIndex, action: Action): ActionResult {
     const legal = getLegalActions(state, player).map(actionKey)
     if (!legal.includes(actionKey(action))) {
         throw new Error('Action interdite')
@@ -167,13 +175,15 @@ export function applyAction(state: BattleState, player: PlayerIndex, action: Act
 
     const next = structuredClone(state)
     const me = next.players[player]
+    const events: BattleEvent[] = []
 
     switch (action.type) {
         case 'USE_ABILITY':
-            useAbility(next, player, action.index)
+            useAbility(next, player, action.index, events)
             break
         case 'SWITCH':
             switchCards(me, action.from, action.to)
+            events.push({ type: 'SWITCH', player, from: action.from, to: action.to})
             endTurn(next)
             break
         case 'PASS':
@@ -183,10 +193,14 @@ export function applyAction(state: BattleState, player: PlayerIndex, action: Act
             me.active = action.cardId
             me.bench = me.bench.filter(id => id !== action.cardId)
             next.phase = 'action'
+            events.push({ type: 'NEXT_ACTIVE', player, cardId: action.cardId })
             break
     }
 
-    return next
+    if (next.result !== null) {
+        events.push({ type: 'END', result: next.result})
+    }
+    return { state: next, events }
 }
 
 function publicPlayer(player: PlayerState): PublicPlayer {

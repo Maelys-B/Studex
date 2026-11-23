@@ -80,3 +80,17 @@ export type PlayerView = {
     legalActions: Action[]
     
 }
+
+export type BattleEvent = 
+    | { type: 'DAMAGE', player: PlayerIndex, cardId: number, amount: number, absorbed: number }
+    | { type: 'SHIELD', player: PlayerIndex, cardId: number, value: number }
+    | { type: 'KO', player: PlayerIndex, cardId: number }
+    | { type: 'RESERVE_UP', player: PlayerIndex, cardId: number }
+    | { type: 'SWITCH', player: PlayerIndex, from: number, to: number }
+    | { type: 'NEXT_ACTIVE', player: PlayerIndex, cardId: number}
+    | { type: 'END', result: PlayerIndex | 'draw' }
+
+export type ActionResult = {
+    state: BattleState,
+    events: BattleEvent[]
+}
