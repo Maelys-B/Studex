@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { applyAction, createBattle, getLegalActions, getPlayerView } from './engine.js';
+import { createRandom, drawFirstPlayer } from './random.js'
+import { applyAction, createBattle, getLegalActions, getPlayerView, forfeit } from './engine.js';
 import type { Action, BattleCard, BattleState, PlayerIndex, PlayerSetup } from './type.js';
 import type { Talent } from './talent.js'
 
@@ -238,4 +239,30 @@ test('la limite de tours produit un événement END', () => {
     state.turn = 30
     const { events } = applyAction(state, 0, { type: 'PASS' })
     assert.deepEqual(events, [{ type: 'END', result: 'draw' }])
+})
+
+test('la même graine donne toujours la même suite', () => {
+    const a = createRandom(42)
+    const b = createRandom(42)
+    assert.deepEqual([a(), a(), a()], [b(), b(), b()])
+})
+
+test('le tirage au sort est équilibré', () => {
+    let zeros = 0
+    for (let seed = 0; seed < 1000; seed++) {
+        if (drawFirstPlayer(seed) === 0) zeros++
+    }
+    assert.ok(zeros > 400 && zeros < 600)
+})
+
+test("abandonner donne la victoire à l'adversaire, même hors de son tour", () => {
+    const { state, events } = forfeit(createBattle(twoPlayers(), 0), 1)
+    assert.equal(state.phase, 'ended')
+    assert.equal(state.result, 0)
+    assert.deepEqual(events, [{ type: 'FORFEIT', player: 1 }, { type: 'END', result: 0 }])
+})
+
+test('on ne peut pas abandonner un combat terminé', () => {
+    const { state } = forfeit(createBattle(twoPlayers(), 0), 1)
+    assert.throws(() => forfeit(state, 0))
 })

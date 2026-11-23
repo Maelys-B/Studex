@@ -231,3 +231,20 @@ export function getPlayerView(state: BattleState, player: PlayerIndex): PlayerVi
         legalActions: getLegalActions(state, player)
     }
 }
+
+export function forfeit(state: BattleState, player: PlayerIndex): ActionResult {
+    if (state.phase === 'ended') {
+        throw new Error('Combat déjà terminé')
+    }
+
+    const next = structuredClone(state)
+    const winner = opponent(player)
+    finish(next, winner)
+    return {
+        state: next,
+        events: [
+            { type: 'FORFEIT', player },
+            { type: 'END', result: winner }
+        ]
+    }
+}

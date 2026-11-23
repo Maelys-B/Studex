@@ -89,6 +89,7 @@ export type BattleEvent =
     | { type: 'SWITCH', player: PlayerIndex, from: number, to: number }
     | { type: 'NEXT_ACTIVE', player: PlayerIndex, cardId: number}
     | { type: 'END', result: PlayerIndex | 'draw' }
+    | { type: 'FORFEIT', player: PlayerIndex }
 
 export type ActionResult = {
     state: BattleState,
