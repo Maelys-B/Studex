@@ -1,5 +1,5 @@
-import { TALENTS } from './talent.js';
-import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState, PlayerView, PublicPlayer, ActionResult, BattleEvent } from './type.js';
+import { TALENTS } from '../shared/talent.js';
+import type { Action, BattleState, PlayerIndex, PlayerSetup, PlayerState, PlayerView, PublicPlayer, ActionResult, BattleEvent } from '../shared/type.js';
 
 export const MAX_TURNS = 30
 export const KOS_TO_WIN = 3

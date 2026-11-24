@@ -1,4 +1,4 @@
-import type { Action, PlayerView } from '../type.js'
+import type { Action, PlayerView } from '../../shared/type.js'
 
 const ABILITY_CHANCE = 0.7
 

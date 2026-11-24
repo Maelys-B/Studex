@@ -1,4 +1,4 @@
-import type { PlayerIndex } from './type.js'
+import type { PlayerIndex } from '../shared/type.js'
 
 export function createRandom(seed: number): () => number {
     let s = seed | 0

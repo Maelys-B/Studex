@@ -1,6 +1,6 @@
 import type { Avatar } from '../types.js'
 import { containsForbiddenWord } from './wordFilter.js'
-import { TALENTS, type Talent } from '../battle/talent.js'
+import { TALENTS, type Talent } from '../shared/talent.js'
 
 const COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/
 

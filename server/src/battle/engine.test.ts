@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createRandom, drawFirstPlayer } from './random.js'
-import { validateDeck, validateLineup, type DeckCard } from './deck.js'
+import { validateDeck, validateLineup, type DeckCard } from '../shared/deck.js'
 import { chooseRandomAction } from './bots/randomBot.js'
 import { applyAction, createBattle, getLegalActions, getPlayerView, forfeit } from './engine.js';
-import type { Action, BattleCard, BattleState, PlayerIndex, PlayerSetup } from './type.js';
-import type { Talent } from './talent.js'
+import type { Action, BattleCard, BattleState, PlayerIndex, PlayerSetup } from '../shared/type.js';
+import type { Talent } from '../shared/talent.js'
 
 function card(id: number, hp = 80): BattleCard {
     return {

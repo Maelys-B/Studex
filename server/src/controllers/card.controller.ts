@@ -2,7 +2,7 @@ import type { Request, Response } from 'express'
 import { HttpError } from '../errors/HttpError.js'
 import { cardService } from '../services/card.service.js'
 import { isTalent, validateStudentCard } from '../services/studentCardValidation.js'
-import { Talent } from '../battle/talent.js';
+import { Talent } from '../shared/talent.js';
 
 function readStudentCard(req: Request) {
     const data = validateStudentCard(req.body)

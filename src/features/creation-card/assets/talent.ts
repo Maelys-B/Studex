@@ -1,4 +1,4 @@
-export type Talent = 'striker' | 'guardian' | 'energizer'
+import type { Talent } from '@shared/talent'
 
 export const TALENTS: { id: Talent, label: string, description: string}[] = [
     { id: 'striker', label: 'Attaquant', description: '+10 dégâts sur toutes les attaques de ton équipe' },

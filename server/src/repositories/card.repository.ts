@@ -1,6 +1,6 @@
 import { prisma, type Db } from '../lib/prisma.js'
 import type { Prisma } from '../generated/prisma/client.js'
-import { Talent } from '../battle/talent.js';
+import { Talent } from '../shared/talent.js';
 
 export type StudentCardData = {
     name: string,
