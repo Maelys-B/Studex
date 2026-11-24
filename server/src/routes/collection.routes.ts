@@ -7,4 +7,4 @@ export const collectionRouter = Router()
 collectionRouter.use(verifyToken, requireCard)
 
 collectionRouter.get('/', collectionController.list)
-collectionRouter.delete('/', collectionController.remove)
+collectionRouter.post('/sell', collectionController.sell)

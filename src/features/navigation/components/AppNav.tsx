@@ -4,6 +4,7 @@ import { NavLink, useLocation } from 'react-router'
 
 type AppNavProps = {
     isAdmin: boolean
+    coins?: number
 }
 
 const LEAD_STIFFNESS = 240
@@ -162,7 +163,7 @@ function createBlob(nav: HTMLElement, shape: SVGSVGElement, path: SVGPathElement
     }
 }
 
-export function AppNav({ isAdmin }: AppNavProps) {
+export function AppNav({ isAdmin, coins }: AppNavProps) {
     const { pathname } = useLocation()
     const linksRef = useRef<HTMLDivElement>(null)
     const shapeRef = useRef<SVGSVGElement>(null)
@@ -224,6 +225,15 @@ export function AppNav({ isAdmin }: AppNavProps) {
                 ))}
             </div>
 
+            {coins !== undefined && (
+                <p className="app-nav__coins" aria-label={`${coins} coins`}>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="9" />
+                        <circle cx="12" cy="12" r="5.5" />
+                    </svg>
+                    <span>{coins.toLocaleString('fr-FR')}</span>
+                </p>
+            )}
         </nav>
     )
 }

@@ -226,13 +226,21 @@ html:has(.collection-page)::-webkit-scrollbar {
     align-items: stretch;
 }
 
-.collection-modal__danger {
-    border-color: #e5484d;
-    background: #e5484d;
+.collection-modal__sell {
+    border-color: #f5b83d;
+    background: #f5b83d;
+    color: #2a1d00;
 }
 
-.collection-modal__danger:hover {
-    background: #f0676b;
+.collection-modal__sell:hover {
+    background: #ffc95c;
+}
+
+.collection-modal__sale {
+    margin: 0;
+    color: #ffd36b;
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .collection-modal__report {

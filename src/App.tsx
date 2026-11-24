@@ -44,6 +44,10 @@ function App() {
     setHasCard(null)
   }
 
+  const updateCoins = (coins: number) => {
+    setUser(current => current && { ...current, coins })
+  }
+
   const reloadProfile = () => {
     getProfile()
       .then(setUser)
@@ -94,12 +98,12 @@ function App() {
 
   return (
     <div>
-      <AppNav isAdmin={isAdmin} />
+      <AppNav isAdmin={isAdmin} coins={user?.coins} />
 
       <div className="app-page" key={pathname}>
         <Routes>
           <Route path="/" element={<BoosterOpening />} />
-          <Route path="/collection" element={<CollectionPage />} />
+          <Route path="/collection" element={<CollectionPage onCoinsChange={updateCoins} />} />
           <Route path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
           <Route path="/friends" element={<FriendsPage />} />
           <Route path="/profile" element={user && <ProfilePage user={user} onUpdate={reloadProfile} onLogout={logout} />} />
