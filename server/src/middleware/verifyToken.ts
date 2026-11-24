@@ -1,10 +1,5 @@
-import jwt from 'jsonwebtoken';
 import type { Request, Response, NextFunction } from 'express'
-
-const JWT_SECRET = process.env.JWT_SECRET
-if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET missing from .env')
-}
+import { readToken } from '../lib/token.js'
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -13,13 +8,13 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ error: 'Non authentifié' });
   }
 
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number }
-    res.locals.userId = decoded.userId;
-    next();
-  } catch {
+  const userId = readToken(token)
+  if (userId === null) {
     return res.status(401).json({ error: 'Veuillez vous reconnecter' });
   }
+
+  res.locals.userId = userId;
+  next();
 }
 
 export default verifyToken
