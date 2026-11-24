@@ -9,18 +9,21 @@ export const collectionRepository = {
         })
     },
 
-    deleteAll(db: Db, userId: number, cardIds: number[]) {
-        return db.userCard.deleteMany({ where: { user_id: userId, card_id: { in: cardIds } } })
-    },
-
-    decrement(db: Db, userId: number, cardIds: number[]) {
-        return db.userCard.updateMany({
-            where: { user_id: userId, card_id: { in: cardIds } },
-            data: { quantity: { decrement: 1 } },
+    findOwnedRarity(db: Db, userId: number, cardId: number) {
+        return db.userCard.findUnique({
+            where: { user_id_card_id: { user_id: userId, card_id: cardId } },
+            select: { card: { select: { rarity: true } } },
         })
     },
 
-    deleteEmpty(db: Db, userId: number, cardIds: number[]) {
-        return db.userCard.deleteMany({ where: { user_id: userId, card_id: { in: cardIds }, quantity: 0 } })
+    removeCopies(db: Db, userId: number, cardId: number, count: number) {
+        return db.userCard.updateMany({
+            where: { user_id: userId, card_id: cardId, quantity: { gte: count } },
+            data: { quantity: { decrement: count } },
+        })
+    },
+
+    deleteEmpty(db: Db, userId: number, cardId: number) {
+        return db.userCard.deleteMany({ where: { user_id: userId, card_id: cardId, quantity: 0 } })
     },
 }

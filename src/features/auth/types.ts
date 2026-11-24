@@ -3,6 +3,7 @@ export type User = {
     username: string,
     email: string,
     role: 'user' | 'admin',
+    coins: number,
 }
 
 export type LoginData = {

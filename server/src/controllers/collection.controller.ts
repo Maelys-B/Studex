@@ -7,14 +7,12 @@ export const collectionController = {
         res.json(await collectionService.list(res.locals.userId))
     },
 
-    async remove(req: Request, res: Response) {
-        const { cardIds, all } = req.body ?? {}
+    async sell(req: Request, res: Response) {
+        const { cardId, count } = req.body ?? {}
 
-        if (!Array.isArray(cardIds) || cardIds.length === 0 || !cardIds.every(Number.isInteger)) {
-            throw new HttpError(400, 'Identifiant de carte invalide')
-        }
+        if (!Number.isInteger(cardId)) throw new HttpError(400, 'Identifiant de carte invalide')
+        if (!Number.isInteger(count) || count < 1) throw new HttpError(400, 'Nombre de cartes à vendre invalide')
 
-        await collectionService.remove(res.locals.userId, cardIds, all === true)
-        res.status(204).end()
+        res.json(await collectionService.sell(res.locals.userId, cardId, count))
     },
 }

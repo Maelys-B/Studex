@@ -240,6 +240,39 @@ button:disabled {
   stroke-linejoin: round;
 }
 
+.app-nav__coins {
+  position: absolute;
+  top: 0.75em;
+  right: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin: 0;
+  padding: 0.55em 1.1em;
+  border: 1px solid rgba(120, 190, 255, 0.5);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2b2a8c, #191a66);
+  color: #ffd36b;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.app-nav__coins svg {
+  width: 1.2em;
+  height: 1.2em;
+  fill: #f5b83d;
+  stroke: #9a6a00;
+  stroke-width: 1.5;
+}
+
+@media (max-width: 900px) {
+  .app-nav__coins {
+    position: static;
+    margin-top: 0.75em;
+  }
+}
+
 @media (max-width: 560px) {
   :root {
     --nav-font-size: clamp(11px, 3.2vw, 15px);
