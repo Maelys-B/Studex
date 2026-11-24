@@ -27,6 +27,14 @@ npx prisma migrate resolve --applied 0_init
 npm run db:deploy
 ```
 
+Ensuite, vérifier que la base correspond bien au schéma (`0_init` a été généré depuis une base qui avait déjà `card_attacks.kind`, absente du `schema.sql` de `dev`) :
+
+```bash
+npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script
+```
+
+Si la commande n'affiche pas `This is an empty migration`, enregistrer le SQL affiché dans un fichier (par exemple `rattrapage.sql`), l'appliquer avec `npx prisma db execute --file rattrapage.sql`, puis supprimer le fichier.
+
 ## Base de données (Prisma)
 
 - Le schéma est dans `prisma/schema.prisma`, les migrations dans `prisma/migrations/`.
@@ -78,7 +86,7 @@ Le serveur tourne sur http://localhost:3000 et redémarre tout seul à chaque mo
 | GET | `/api/boosters` | 🔒 🃏 | stock de boosters (recalculé avec le temps écoulé) |
 | POST | `/api/boosters/open` | 🔒 🃏 | ouvrir un booster et recevoir les 5 cartes tirées |
 | GET | `/api/collection` | 🔒 🃏 | cartes du joueur |
-| DELETE | `/api/collection` | 🔒 🃏 | retirer un exemplaire de cartes, ou toutes leurs copies (`all: true`) |
+| POST | `/api/collection/sell` | 🔒 🃏 | vendre `count` exemplaires d'une carte contre des coins selon sa rareté |
 | GET | `/api/friends` | 🔒 🃏 | liste d'amis |
 | GET | `/api/friends/search?q=` | 🔒 🃏 | chercher des joueurs par pseudo |
 | POST | `/api/friends/requests` | 🔒 🃏 | envoyer une demande d'ami |

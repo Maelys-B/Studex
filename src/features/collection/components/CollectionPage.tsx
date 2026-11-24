@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { deleteCards, fetchCollection } from '../services/collectionService'
+import { fetchCollection, sellCards } from '../services/collectionService'
 import { CardView } from '../../boosters/components/CardView'
 import { CollectionCardView } from '../../boosters/components/CollectionCardView'
 import { BattleCardView } from '../../boosters/components/BattleCardView'
@@ -39,16 +39,21 @@ function sortCards(cards: OwnedCard[], order: SortOrder): OwnedCard[] {
     })
 }
 
-export function CollectionPage() {
+type CollectionPageProps = {
+    onCoinsChange: (coins: number) => void
+}
+
+export function CollectionPage({ onCoinsChange }: CollectionPageProps) {
     const [cards, setCards] = useState<OwnedCard[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
     const [sortOrder, setSortOrder] = useState<SortOrder>('recent')
     const [selectedId, setSelectedId] = useState<number | null>(null)
-    const [deleting, setDeleting] = useState(false)
-    const [deleteError, setDeleteError] = useState('')
-    const [confirmAll, setConfirmAll] = useState<boolean | null>(null)
+    const [busy, setBusy] = useState(false)
+    const [actionError, setActionError] = useState('')
+    const [pendingSellAll, setPendingSellAll] = useState<boolean | null>(null)
+    const [lastSale, setLastSale] = useState(0)
     const [reporting, setReporting] = useState(false)
 
     useEffect(() => {
@@ -62,8 +67,9 @@ export function CollectionPage() {
 
     const closeModal = () => {
         setSelectedId(null)
-        setDeleteError('')
-        setConfirmAll(null)
+        setActionError('')
+        setPendingSellAll(null)
+        setLastSale(0)
         setReporting(false)
     }
 
@@ -75,32 +81,36 @@ export function CollectionPage() {
             if (e.key !== 'Escape') {
                 return
             }
-            if (confirmAll !== null) {
-                setConfirmAll(null)
+            if (pendingSellAll !== null) {
+                setPendingSellAll(null)
             } else {
                 closeModal()
             }
         }
         window.addEventListener('keydown', onKeyDown)
         return () => window.removeEventListener('keydown', onKeyDown)
-    }, [selectedId, confirmAll])
+    }, [selectedId, pendingSellAll])
 
-    const handleDelete = async (card: OwnedCard, all: boolean) => {
-        setConfirmAll(null)
-        setDeleting(true)
-        setDeleteError('')
+    const handleSell = async (card: OwnedCard, all: boolean) => {
+        const count = all ? card.quantity : 1
+        setPendingSellAll(null)
+        setBusy(true)
+        setActionError('')
+        setLastSale(0)
         try {
-            await deleteCards([card.id], all)
+            const { earned, coins } = await sellCards(card.id, count)
             setCards(current => current
-                .map(c => c.id === card.id ? { ...c, quantity: all ? 0 : c.quantity - 1 } : c)
+                .map(c => c.id === card.id ? { ...c, quantity: c.quantity - count } : c)
                 .filter(c => c.quantity > 0)
             )
+            setLastSale(earned)
+            onCoinsChange(coins)
         } catch (err) {
             if (err instanceof Error) {
-                setDeleteError(err.message)
+                setActionError(err.message)
             }
         } finally {
-            setDeleting(false)
+            setBusy(false)
         }
     }
 
@@ -190,17 +200,19 @@ export function CollectionPage() {
                             </p>
 
                             <div className="collection-modal__actions">
-                                <button type="button" className="collection-modal__danger" disabled={deleting} onClick={() => setConfirmAll(false)}>
-                                    Supprimer un exemplaire
+                                <button type="button" className="collection-modal__sell" disabled={busy} onClick={() => setPendingSellAll(false)}>
+                                    Vendre un exemplaire (+{selectedCard.sell_price})
                                 </button>
                                 {selectedCard.quantity > 1 && (
-                                    <button type="button" className="collection-modal__danger" disabled={deleting} onClick={() => setConfirmAll(true)}>
-                                        Supprimer tout (×{selectedCard.quantity})
+                                    <button type="button" className="collection-modal__sell" disabled={busy} onClick={() => setPendingSellAll(true)}>
+                                        Vendre tout ×{selectedCard.quantity} (+{selectedCard.quantity * selectedCard.sell_price})
                                     </button>
                                 )}
                             </div>
 
-                            {deleteError && <p className="collection-modal__error">{deleteError}</p>}
+                            {lastSale > 0 && <p className="collection-modal__sale">+{lastSale} coins</p>}
+
+                            {actionError && <p className="collection-modal__error">{actionError}</p>}
 
                             {selectedCard.can_report && (
                                 <button type="button" className="collection-modal__report" onClick={() => setReporting(true)}>
@@ -210,12 +222,12 @@ export function CollectionPage() {
                         </div>
                     </div>
 
-                    {confirmAll !== null && (
+                    {pendingSellAll !== null && (
                         <div
                             className="collection-confirm"
                             onClick={(e) => {
                                 e.stopPropagation()
-                                setConfirmAll(null)
+                                setPendingSellAll(null)
                             }}
                         >
                             <div
@@ -226,15 +238,15 @@ export function CollectionPage() {
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <p id="collection-confirm-title" className="collection-confirm__title">
-                                    {confirmAll
-                                        ? `Supprimer les ${selectedCard.quantity} exemplaires de « ${selectedCard.name} » ?`
-                                        : `Supprimer un exemplaire de « ${selectedCard.name} » ?`}
+                                    {pendingSellAll
+                                        ? `Vendre les ${selectedCard.quantity} exemplaires de « ${selectedCard.name} » pour ${selectedCard.quantity * selectedCard.sell_price} coins ?`
+                                        : `Vendre un exemplaire de « ${selectedCard.name} » pour ${selectedCard.sell_price} coins ?`}
                                 </p>
                                 <p className="collection-confirm__text">Cette action est définitive.</p>
                                 <div className="collection-modal__actions">
-                                    <button type="button" onClick={() => setConfirmAll(null)} autoFocus>Annuler</button>
-                                    <button type="button" className="collection-modal__danger" onClick={() => handleDelete(selectedCard, confirmAll)}>
-                                        Supprimer
+                                    <button type="button" onClick={() => setPendingSellAll(null)} autoFocus>Annuler</button>
+                                    <button type="button" className="collection-modal__sell" onClick={() => handleSell(selectedCard, pendingSellAll)}>
+                                        Vendre
                                     </button>
                                 </div>
                             </div>

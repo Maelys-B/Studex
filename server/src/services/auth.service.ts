@@ -39,7 +39,7 @@ export const authService = {
             throw new HttpError(401, 'Identifiants incorrects')
         }
 
-        const publicUser: PublicUser = { id: user.id, username: user.username, email: user.email, role: user.role }
+        const publicUser: PublicUser = { id: user.id, username: user.username, email: user.email, role: user.role, coins: user.coins }
         return { token: signToken(user.id), user: publicUser }
     },
 

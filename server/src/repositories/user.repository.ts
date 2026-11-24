@@ -1,6 +1,6 @@
-import { prisma } from '../lib/prisma.js'
+import { prisma, type Db } from '../lib/prisma.js'
 
-const publicFields = { id: true, username: true, email: true, role: true } as const
+const publicFields = { id: true, username: true, email: true, role: true, coins: true } as const
 
 export const userRepository = {
     findRole(id: number) {
@@ -67,5 +67,9 @@ export const userRepository = {
 
     updatePassword(id: number, password: string) {
         return prisma.user.update({ where: { id }, data: { password }, select: { id: true } })
+    },
+
+    addCoins(db: Db, id: number, amount: number) {
+        return db.user.update({ where: { id }, data: { coins: { increment: amount } }, select: { coins: true } })
     },
 }
