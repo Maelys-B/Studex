@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 const JWT_SECRET = process.env.JWT_SECRET
 if (!JWT_SECRET) {
-    throw new Error('token missing')
+    throw new Error('JWT_SECRET missing')
 }
 
 export function readToken(token: string): number | null {
