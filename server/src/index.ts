@@ -10,6 +10,9 @@ import { friendRouter } from './routes/friend.routes.js'
 import { profileRouter } from './routes/profile.routes.js'
 import { reportRouter } from './routes/report.routes.js'
 import { errorHandler } from './middleware/errorHandler.js'
+import { readToken } from './lib/token.js'
+import { Connections } from './realtime/connection.js'
+import { startSocketServer } from './realtime/socketServer.js'
 
 const app = express()
 
@@ -32,8 +35,18 @@ app.use('/api/reports', reportRouter)
 app.use(errorHandler)
 
 const port = Number(process.env.PORT) || 3000
-app.listen(port, () => {
+
+const server = app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`)
+})
+
+const connections = new Connections()
+
+startSocketServer(server, connections, {
+    readToken,
+    onConnect: userId => console.log(`Joueur ${userId} connecté`),
+    onMessage: (userId, message) => console.log(`Joueur ${userId} : ${message.type}`),
+    onDisconnect: userId => console.log(`Joueur ${userId} déconnecté`)
 })
 
 
