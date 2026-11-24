@@ -4,7 +4,7 @@ import { isUniqueViolation } from '../lib/prisma.js'
 import { cardRepository, type StudentCardData } from '../repositories/card.repository.js'
 import type { Attack, Avatar, Card } from '../types.js'
 import type { StudentCardInput } from './studentCardValidation.js'
-import { Talent } from '../battle/talent.js';
+import { Talent } from '../shared/talent.js';
 
 export function toAttack(attack: Pick<CardAttack, 'name' | 'kind' | 'energy_cost' | 'damage' | 'description'>): Attack {
     return { name: attack.name, kind: attack.kind, cost: attack.energy_cost, damage: attack.damage, description: attack.description }

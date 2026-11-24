@@ -1,5 +1,5 @@
 import type { Avatar, CardStatus } from '../../boosters/types'
-import type { Talent } from '../assets/talent';
+import type { Talent } from '@shared/talent'
 
 export type StudentCardForm = {
     first_name: string,
