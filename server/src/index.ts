@@ -13,6 +13,7 @@ import { errorHandler } from './middleware/errorHandler.js'
 import { readToken } from './lib/token.js'
 import { Connections } from './realtime/connection.js'
 import { startSocketServer } from './realtime/socketServer.js'
+import { RoomManager } from './battle/roomManager.js'
 
 const app = express()
 
@@ -41,12 +42,22 @@ const server = app.listen(port, () => {
 })
 
 const connections = new Connections()
+const rooms = new RoomManager((userId, message) => connections.send(userId, message))
 
 startSocketServer(server, connections, {
     readToken,
-    onConnect: userId => console.log(`Joueur ${userId} connecté`),
-    onMessage: (userId, message) => console.log(`Joueur ${userId} : ${message.type}`),
-    onDisconnect: userId => console.log(`Joueur ${userId} déconnecté`)
+    onConnect: userId => rooms.connect(userId),
+    onMessage: (userId, message) => {
+        switch (message.type) {
+            case 'ACTION':
+                rooms.play(userId, message.battleId, message.seq, message.action)
+                break
+            case 'FORFEIT':
+                rooms.forfeit(userId, message.battleId)
+                break
+        }
+    },
+    onDisconnect: userId => rooms.disconnect(userId)
 })
 
 
