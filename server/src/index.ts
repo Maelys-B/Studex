@@ -9,6 +9,7 @@ import { adminRouter } from './routes/admin.routes.js'
 import { friendRouter } from './routes/friend.routes.js'
 import { profileRouter } from './routes/profile.routes.js'
 import { reportRouter } from './routes/report.routes.js'
+import { tradeRouter } from './routes/trade.routes.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 const app = express()
@@ -28,6 +29,7 @@ app.use('/api/admin', adminRouter)
 app.use('/api/friends', friendRouter)
 app.use('/api/profile', profileRouter)
 app.use('/api/reports', reportRouter)
+app.use('/api/trades', tradeRouter)
 
 app.use(errorHandler)
 
