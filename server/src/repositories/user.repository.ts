@@ -72,4 +72,8 @@ export const userRepository = {
     addCoins(db: Db, id: number, amount: number) {
         return db.user.update({ where: { id }, data: { coins: { increment: amount } }, select: { coins: true } })
     },
+
+    removeCoins(db: Db, id: number, amount: number) {
+        return db.user.updateMany({ where: { id, coins: { gte: amount } }, data: { coins: { decrement: amount } } })
+    },
 }

@@ -23,6 +23,14 @@ export const collectionRepository = {
         })
     },
 
+    addCopies(db: Db, userId: number, cardId: number, count: number) {
+        return db.userCard.upsert({
+            where: { user_id_card_id: { user_id: userId, card_id: cardId } },
+            create: { user_id: userId, card_id: cardId, quantity: count },
+            update: { quantity: { increment: count } },
+        })
+    },
+
     deleteEmpty(db: Db, userId: number, cardId: number) {
         return db.userCard.deleteMany({ where: { user_id: userId, card_id: cardId, quantity: 0 } })
     },
