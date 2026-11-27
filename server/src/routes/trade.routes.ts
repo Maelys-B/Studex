@@ -8,6 +8,7 @@ tradeRouter.use(verifyToken, requireCard)
 
 tradeRouter.get('/', tradeController.list)
 tradeRouter.post('/', tradeController.create)
+tradeRouter.get('/partners/:userId/collection', tradeController.partnerCollection)
 tradeRouter.get('/:id', tradeController.get)
 tradeRouter.post('/:id/counter', tradeController.counter)
 tradeRouter.post('/:id/accept', tradeController.accept)

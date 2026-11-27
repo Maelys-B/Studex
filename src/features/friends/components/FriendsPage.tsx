@@ -4,6 +4,7 @@ import { answerRequest, fetchFriends, fetchRequests, removeFriend, searchUsers, 
 import type { Friend, FriendRequest, SearchResult } from '../services/friendsApi'
 import { ReportModal } from '../../reports/components/ReportModal'
 import { PageTitle } from '../../ui/components/PageTitle'
+import { TradesPanel } from '../../trades/components/TradesPanel'
 import '../assets/FriendsPage.css'
 
 function Initial({ username }: { username: string }) {
@@ -163,6 +164,8 @@ export function FriendsPage() {
                     </ul>
                 </section>
             </div>
+
+            <TradesPanel />
 
             {reportTarget && (
                 <ReportModal

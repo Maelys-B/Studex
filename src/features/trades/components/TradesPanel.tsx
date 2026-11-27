@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { acceptTrade, cancelTrade, declineTrade, fetchTrades } from '../services/tradesApi'
 import type { Trade, TradeSide } from '../types'
-import { PageTitle } from '../../ui/components/PageTitle'
-import '../assets/TradesPage.css'
+import '../assets/TradesPanel.css'
 
 const RARITY_LABEL = {
     common: 'Commune',
@@ -17,7 +16,7 @@ function SideContent({ title, side }: { title: string, side: TradeSide }) {
 
     return (
         <div className="trade-side">
-            <h3 className="trade-side__title">{title}</h3>
+            <h4 className="trade-side__title">{title}</h4>
             {isEmpty && <p className="trade-side__empty">Rien</p>}
             <ul className="trade-side__list">
                 {side.coins > 0 && <li className="trade-side__coins">{side.coins} coins</li>}
@@ -33,7 +32,7 @@ function SideContent({ title, side }: { title: string, side: TradeSide }) {
     )
 }
 
-export function TradesPage() {
+export function TradesPanel() {
     const [trades, setTrades] = useState<Trade[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -54,8 +53,6 @@ export function TradesPage() {
             setError(err instanceof Error ? err.message : 'Erreur serveur')
         }
     }
-
-    if (loading) return <p className="page-loading">Chargement ...</p>
 
     const toAnswer = trades.filter(trade => trade.myTurn)
     const waiting = trades.filter(trade => !trade.myTurn)
@@ -86,33 +83,36 @@ export function TradesPage() {
     )
 
     return (
-        <section className="page-shell trades">
-            <PageTitle>Échanges</PageTitle>
+        <section className="holo-panel holo-panel--glass trades">
+            <h2 className="holo-panel__legend">
+                <svg className="holo-panel__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 8h13l-3-3M20 16H7l3 3" />
+                </svg>
+                <span>Échanges en cours</span>
+                <span className="holo-panel__count">{trades.length}</span>
+            </h2>
             {error && <p className="page-error">{error}</p>}
 
-            <div className="trades__grid">
-                <section className="holo-panel holo-panel--glass">
-                    <h2 className="holo-panel__legend">
-                        <span>À toi de répondre</span>
-                        <span className="holo-panel__count">{toAnswer.length}</span>
-                    </h2>
-                    <ul className="trades__list">
-                        {toAnswer.length === 0 && <li className="holo-panel__empty">Aucun échange en attente de ta réponse.</li>}
-                        {toAnswer.map(renderTrade)}
-                    </ul>
-                </section>
-
-                <section className="holo-panel holo-panel--glass">
-                    <h2 className="holo-panel__legend">
-                        <span>En attente de ton ami</span>
-                        <span className="holo-panel__count">{waiting.length}</span>
-                    </h2>
-                    <ul className="trades__list">
-                        {waiting.length === 0 && <li className="holo-panel__empty">Aucune proposition envoyée.</li>}
-                        {waiting.map(renderTrade)}
-                    </ul>
-                </section>
-            </div>
+            {loading ? (
+                <p className="holo-panel__empty">Chargement ...</p>
+            ) : (
+                <div className="trades__grid">
+                    <div>
+                        <h3 className="trades__group">À toi de répondre</h3>
+                        <ul className="trades__list">
+                            {toAnswer.length === 0 && <li className="holo-panel__empty">Aucun échange en attente de ta réponse.</li>}
+                            {toAnswer.map(renderTrade)}
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 className="trades__group">En attente de ton ami</h3>
+                        <ul className="trades__list">
+                            {waiting.length === 0 && <li className="holo-panel__empty">Aucune proposition envoyée.</li>}
+                            {waiting.map(renderTrade)}
+                        </ul>
+                    </div>
+                </div>
+            )}
         </section>
     )
 }

@@ -30,6 +30,14 @@ async function assertBothCanGive(db: Db, offer: TradeOffer, actorId: number, oth
     await assertCanGive(db, offer, otherId, coinsOf(otherId), false)
 }
 
+async function assertFriends(userId: number, partnerId: number) {
+    if (partnerId === userId) throw new HttpError(400, 'Tu ne peux pas échanger avec toi-même')
+    if (!(await userRepository.findUsername(partnerId))) throw new HttpError(404, 'Joueur introuvable')
+
+    const [link] = await friendshipRepository.findBetween(userId, [partnerId])
+    if (link?.status !== 'accepted') throw new HttpError(403, 'Tu ne peux échanger qu\'avec tes amis')
+}
+
 async function findTradeToAnswer(db: Db, tradeId: number, userId: number) {
     const trade = await tradeRepository.findById(db, tradeId)
     if (!trade || (trade.initiator_id !== userId && trade.partner_id !== userId)) {
@@ -73,12 +81,21 @@ export const tradeService = {
         return toView(trade, userId)
     },
 
-    async create(userId: number, partnerId: number, input: OfferInput) {
-        if (partnerId === userId) throw new HttpError(400, 'Tu ne peux pas échanger avec toi-même')
-        if (!(await userRepository.findUsername(partnerId))) throw new HttpError(404, 'Joueur introuvable')
+    async partnerCollection(userId: number, partnerId: number) {
+        await assertFriends(userId, partnerId)
 
-        const [link] = await friendshipRepository.findBetween(userId, [partnerId])
-        if (link?.status !== 'accepted') throw new HttpError(403, 'Tu ne peux échanger qu\'avec tes amis')
+        const rows = await collectionRepository.findByUser(partnerId)
+        return rows.map(({ card, quantity }) => ({
+            id: card.id,
+            name: card.name,
+            image: card.image,
+            rarity: card.rarity,
+            quantity,
+        }))
+    },
+
+    async create(userId: number, partnerId: number, input: OfferInput) {
+        await assertFriends(userId, partnerId)
 
         const offer = buildTradeOffer(input, userId, partnerId, userId)
         await assertBothCanGive(prisma, offer, userId, partnerId, userId)

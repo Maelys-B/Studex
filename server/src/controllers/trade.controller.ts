@@ -24,6 +24,13 @@ export const tradeController = {
         res.json(await tradeService.get(res.locals.userId, parseTradeId(req)))
     },
 
+    async partnerCollection(req: Request, res: Response) {
+        const partnerId = Number(req.params.userId)
+        if (!Number.isInteger(partnerId)) throw new HttpError(404, 'Joueur introuvable')
+
+        res.json(await tradeService.partnerCollection(res.locals.userId, partnerId))
+    },
+
     async create(req: Request, res: Response) {
         const partnerId = req.body?.partnerId
         if (!Number.isInteger(partnerId)) throw new HttpError(400, 'Joueur invalide')

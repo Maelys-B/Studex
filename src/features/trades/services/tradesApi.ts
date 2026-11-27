@@ -1,4 +1,4 @@
-import type { Offer, Trade } from '../types'
+import type { Offer, TradableCard, Trade } from '../types'
 
 const authHeaders = () => ({
     'Content-Type': 'application/json',
@@ -18,7 +18,10 @@ export const fetchTrades = () => request<Trade[]>('/api/trades')
 
 export const fetchTrade = (id: number) => request<Trade>(`/api/trades/${id}`)
 
-export const createTrade = (partnerId: number, offer: Offer) =>
+export const fetchPartnerCollection = (userId: number) =>
+    request<TradableCard[]>(`/api/trades/partners/${userId}/collection`)
+
+export const createTrade =(partnerId: number, offer: Offer) =>
     request<Trade>('/api/trades', {
         method: 'POST',
         body: JSON.stringify({ partnerId, ...offer })

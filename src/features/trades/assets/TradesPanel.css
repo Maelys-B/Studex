@@ -1,8 +1,14 @@
+.trades__group {
+    margin: 0 0 12px;
+    color: rgba(220, 235, 255, 0.85);
+    font-size: 0.95rem;
+}
+
 .trades__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: start;
-    gap: 44px 32px;
+    gap: 24px 32px;
 }
 
 .trades__list {
