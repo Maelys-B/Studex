@@ -4,6 +4,7 @@ import { collectionRepository } from '../repositories/collection.repository.js'
 import { friendshipRepository } from '../repositories/friendship.repository.js'
 import { tradeRepository, type TradeOffer } from '../repositories/trade.repository.js'
 import { userRepository } from '../repositories/user.repository.js'
+import { collectionService } from './collection.service.js'
 import { buildTradeOffer, type OfferInput } from './tradeLogic.js'
 
 type TradeDetails = NonNullable<Awaited<ReturnType<typeof tradeRepository.findDetails>>>
@@ -28,6 +29,14 @@ async function assertBothCanGive(db: Db, offer: TradeOffer, actorId: number, oth
     const coinsOf = (userId: number) => userId === initiatorId ? offer.initiator_coins : offer.partner_coins
     await assertCanGive(db, offer, actorId, coinsOf(actorId), true)
     await assertCanGive(db, offer, otherId, coinsOf(otherId), false)
+}
+
+async function assertFriends(userId: number, partnerId: number) {
+    if (partnerId === userId) throw new HttpError(400, 'Tu ne peux pas échanger avec toi-même')
+    if (!(await userRepository.findUsername(partnerId))) throw new HttpError(404, 'Joueur introuvable')
+
+    const [link] = await friendshipRepository.findBetween(userId, [partnerId])
+    if (link?.status !== 'accepted') throw new HttpError(403, 'Tu ne peux échanger qu\'avec tes amis')
 }
 
 async function findTradeToAnswer(db: Db, tradeId: number, userId: number) {
@@ -73,12 +82,15 @@ export const tradeService = {
         return toView(trade, userId)
     },
 
-    async create(userId: number, partnerId: number, input: OfferInput) {
-        if (partnerId === userId) throw new HttpError(400, 'Tu ne peux pas échanger avec toi-même')
-        if (!(await userRepository.findUsername(partnerId))) throw new HttpError(404, 'Joueur introuvable')
+    async partnerCollection(userId: number, partnerId: number) {
+        await assertFriends(userId, partnerId)
 
-        const [link] = await friendshipRepository.findBetween(userId, [partnerId])
-        if (link?.status !== 'accepted') throw new HttpError(403, 'Tu ne peux échanger qu\'avec tes amis')
+        const cards = await collectionService.list(partnerId)
+        return cards.map(({ can_report: _canReport, sell_price: _sellPrice, ...card }) => card)
+    },
+
+    async create(userId: number, partnerId: number, input: OfferInput) {
+        await assertFriends(userId, partnerId)
 
         const offer = buildTradeOffer(input, userId, partnerId, userId)
         await assertBothCanGive(prisma, offer, userId, partnerId, userId)

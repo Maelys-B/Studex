@@ -4,19 +4,23 @@ import { answerRequest, fetchFriends, fetchRequests, removeFriend, searchUsers, 
 import type { Friend, FriendRequest, SearchResult } from '../services/friendsApi'
 import { ReportModal } from '../../reports/components/ReportModal'
 import { PageTitle } from '../../ui/components/PageTitle'
+import { TradesPanel } from '../../trades/components/TradesPanel'
+import { TradeOfferModal } from '../../trades/components/TradeOfferModal'
 import '../assets/FriendsPage.css'
 
 function Initial({ username }: { username: string }) {
     return <span className="friend-row__avatar" aria-hidden="true">{username.charAt(0).toUpperCase()}</span>
 }
 
-export function FriendsPage() {
+export function FriendsPage({ onBalanceChange }: { onBalanceChange: () => void }) {
     const [friends, setFriends] = useState<Friend[]>([])
     const [requests, setRequests] = useState<FriendRequest[]>([])
     const [query, setQuery] = useState('')
     const [results, setResults] = useState<SearchResult[] | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [reportTarget, setReportTarget] = useState<{ id: number, username: string } | null>(null)
+    const [tradePartner, setTradePartner] = useState<Friend | null>(null)
+    const [tradesVersion, setTradesVersion] = useState(0)
 
     const reportButton = (id: number, username: string) => (
         <button type="button" className="holo-btn holo-btn--ghost" onClick={() => setReportTarget({ id, username })}>Signaler</button>
@@ -155,6 +159,7 @@ export function FriendsPage() {
                                 <Initial username={f.username} />
                                 <span className="friend-row__name">{f.username}</span>
                                 <div className="friend-row__actions">
+                                    <button className="holo-btn holo-btn--accept" onClick={() => setTradePartner(f)}>Échanger</button>
                                     <button className="holo-btn holo-btn--ghost" onClick={() => run(() => removeFriend(f.id))}>Retirer</button>
                                     {reportButton(f.id, f.username)}
                                 </div>
@@ -163,6 +168,19 @@ export function FriendsPage() {
                     </ul>
                 </section>
             </div>
+
+            <TradesPanel reloadKey={tradesVersion} onAccepted={onBalanceChange} />
+
+            {tradePartner && (
+                <TradeOfferModal
+                    partner={tradePartner}
+                    onClose={() => setTradePartner(null)}
+                    onSent={() => {
+                        setTradePartner(null)
+                        setTradesVersion(version => version + 1)
+                    }}
+                />
+            )}
 
             {reportTarget && (
                 <ReportModal

@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
 import { fetchCollection, sellCards } from '../services/collectionService'
-import { CardView } from '../../boosters/components/CardView'
-import { CollectionCardView } from '../../boosters/components/CollectionCardView'
-import { BattleCardView } from '../../boosters/components/BattleCardView'
+import { CardByType } from '../../boosters/components/CardByType'
 import { CardTilt } from '../../boosters/components/CardTilt'
-import type { Card, CardKind, Rarity } from '../../boosters/types'
+import type { CardKind, Rarity } from '../../boosters/types'
 import type { OwnedCard } from '../types'
 import { ReportModal } from '../../reports/components/ReportModal'
 import '../assets/CollectionPage.css'
@@ -13,16 +11,6 @@ type TypeFilter = 'all' | CardKind
 type SortOrder = 'recent' | 'oldest' | 'rarity' | 'quantity'
 
 const RARITY_ORDER: Rarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary']
-
-function CardByType({ card }: { card: Card }) {
-    if (card.type === 'collection') {
-        return <CollectionCardView card={card} />
-    }
-    if (card.type === 'battle') {
-        return <BattleCardView card={card} />
-    }
-    return <CardView card={card} />
-}
 
 function sortCards(cards: OwnedCard[], order: SortOrder): OwnedCard[] {
     return [...cards].sort((a, b) => {

@@ -105,7 +105,7 @@ function App() {
           <Route path="/" element={<BoosterOpening />} />
           <Route path="/collection" element={<CollectionPage onCoinsChange={updateCoins} />} />
           <Route path="/admin" element={isAdmin ? <AdminPage /> : <Navigate to="/" replace />} />
-          <Route path="/friends" element={<FriendsPage />} />
+          <Route path="/friends" element={<FriendsPage onBalanceChange={reloadProfile} />} />
           <Route path="/profile" element={user && <ProfilePage user={user} onUpdate={reloadProfile} onLogout={logout} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
