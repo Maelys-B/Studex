@@ -12,7 +12,7 @@ function Initial({ username }: { username: string }) {
     return <span className="friend-row__avatar" aria-hidden="true">{username.charAt(0).toUpperCase()}</span>
 }
 
-export function FriendsPage() {
+export function FriendsPage({ onBalanceChange }: { onBalanceChange: () => void }) {
     const [friends, setFriends] = useState<Friend[]>([])
     const [requests, setRequests] = useState<FriendRequest[]>([])
     const [query, setQuery] = useState('')
@@ -169,7 +169,7 @@ export function FriendsPage() {
                 </section>
             </div>
 
-            <TradesPanel reloadKey={tradesVersion} />
+            <TradesPanel reloadKey={tradesVersion} onAccepted={onBalanceChange} />
 
             {tradePartner && (
                 <TradeOfferModal

@@ -40,7 +40,7 @@ function SideContent({ title, side }: { title: string, side: TradeSide }) {
     )
 }
 
-export function TradesPanel({ reloadKey = 0 }: { reloadKey?: number }) {
+export function TradesPanel({ reloadKey = 0, onAccepted }: { reloadKey?: number, onAccepted?: () => void }) {
     const [trades, setTrades] = useState<Trade[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -97,7 +97,10 @@ export function TradesPanel({ reloadKey = 0 }: { reloadKey?: number }) {
                     </>
                 ) : trade.myTurn ? (
                     <>
-                        <button className="holo-btn holo-btn--accept" onClick={() => run(() => acceptTrade(trade.id))}>Accepter</button>
+                        <button className="holo-btn holo-btn--accept" onClick={() => run(async () => {
+                            await acceptTrade(trade.id)
+                            onAccepted?.()
+                        })}>Accepter</button>
                         <button className="holo-btn holo-btn--ghost" onClick={() => setCountering(trade)}>Contre-proposer</button>
                         <button className="holo-btn holo-btn--danger" onClick={() => setConfirming({ id: trade.id, action: 'decline' })}>Refuser</button>
                     </>
