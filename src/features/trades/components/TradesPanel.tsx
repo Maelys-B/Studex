@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { acceptTrade, cancelTrade, declineTrade, fetchTrades } from '../services/tradesApi'
 import type { Trade, TradeSide } from '../types'
+import { TradeOfferModal } from './TradeOfferModal'
 import '../assets/TradesPanel.css'
 
 const RARITY_LABEL = {
@@ -9,6 +10,13 @@ const RARITY_LABEL = {
     rare: 'Rare',
     epic: 'Épique',
     legendary: 'Légendaire',
+}
+
+type ConfirmAction = 'decline' | 'cancel'
+
+const CONFIRM: Record<ConfirmAction, { question: string, yes: string, send: (id: number) => Promise<void> }> = {
+    decline: { question: 'Refuser cet échange ?', yes: 'Oui, refuser', send: declineTrade },
+    cancel: { question: 'Annuler ta proposition ?', yes: 'Oui, annuler', send: cancelTrade },
 }
 
 function SideContent({ title, side }: { title: string, side: TradeSide }) {
@@ -32,17 +40,19 @@ function SideContent({ title, side }: { title: string, side: TradeSide }) {
     )
 }
 
-export function TradesPanel() {
+export function TradesPanel({ reloadKey = 0 }: { reloadKey?: number }) {
     const [trades, setTrades] = useState<Trade[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [countering, setCountering] = useState<Trade | null>(null)
+    const [confirming, setConfirming] = useState<{ id: number, action: ConfirmAction } | null>(null)
 
     useEffect(() => {
         fetchTrades()
             .then(setTrades)
             .catch(err => setError(err.message))
             .finally(() => setLoading(false))
-    }, [])
+    }, [reloadKey])
 
     const run = async (action: () => Promise<unknown>) => {
         setError(null)
@@ -70,13 +80,29 @@ export function TradesPanel() {
             </div>
 
             <div className="trade-card__actions">
-                {trade.myTurn ? (
+                {confirming?.id === trade.id ? (
+                    <>
+                        <span className="trade-card__confirm">{CONFIRM[confirming.action].question}</span>
+                        <button className="holo-btn holo-btn--ghost" onClick={() => setConfirming(null)}>Non</button>
+                        <button
+                            className="holo-btn holo-btn--danger"
+                            onClick={() => {
+                                const { action } = confirming
+                                setConfirming(null)
+                                run(() => CONFIRM[action].send(trade.id))
+                            }}
+                        >
+                            {CONFIRM[confirming.action].yes}
+                        </button>
+                    </>
+                ) : trade.myTurn ? (
                     <>
                         <button className="holo-btn holo-btn--accept" onClick={() => run(() => acceptTrade(trade.id))}>Accepter</button>
-                        <button className="holo-btn holo-btn--danger" onClick={() => run(() => declineTrade(trade.id))}>Refuser</button>
+                        <button className="holo-btn holo-btn--ghost" onClick={() => setCountering(trade)}>Contre-proposer</button>
+                        <button className="holo-btn holo-btn--danger" onClick={() => setConfirming({ id: trade.id, action: 'decline' })}>Refuser</button>
                     </>
                 ) : (
-                    <button className="holo-btn holo-btn--ghost" onClick={() => run(() => cancelTrade(trade.id))}>Annuler</button>
+                    <button className="holo-btn holo-btn--ghost" onClick={() => setConfirming({ id: trade.id, action: 'cancel' })}>Annuler</button>
                 )}
             </div>
         </li>
@@ -112,6 +138,18 @@ export function TradesPanel() {
                         </ul>
                     </div>
                 </div>
+            )}
+
+            {countering && (
+                <TradeOfferModal
+                    partner={countering.partner}
+                    trade={countering}
+                    onClose={() => setCountering(null)}
+                    onSent={() => {
+                        setCountering(null)
+                        fetchTrades().then(setTrades).catch(err => setError(err.message))
+                    }}
+                />
             )}
         </section>
     )

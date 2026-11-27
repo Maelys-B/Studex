@@ -144,3 +144,20 @@
         flex: 1;
     }
 }
+
+.trade-card__confirm {
+    align-self: center;
+    margin-right: auto;
+    font-weight: 800;
+}
+
+.trades .holo-btn--ghost {
+    border-color: rgba(220, 235, 255, 0.6);
+    color: #fff;
+}
+
+.trades .holo-btn--ghost:hover:not(:disabled) {
+    border-color: #fff;
+    background: #fff;
+    color: var(--ink, #12144a);
+}

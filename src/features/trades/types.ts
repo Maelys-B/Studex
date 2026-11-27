@@ -4,7 +4,7 @@ export type TradeStatus = 'pending' | 'accepted' | 'declined' | 'cancelled'
 
 export type TradeCard = Pick<Card, 'id' | 'name' | 'image' | 'rarity'> & { quantity: number }
 
-export type TradableCard = TradeCard
+export type TradableCard = Card & { quantity: number }
 
 export type TradeSide ={ coins: number, cards: TradeCard[] }
 

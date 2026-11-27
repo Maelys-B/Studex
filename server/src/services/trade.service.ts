@@ -4,6 +4,7 @@ import { collectionRepository } from '../repositories/collection.repository.js'
 import { friendshipRepository } from '../repositories/friendship.repository.js'
 import { tradeRepository, type TradeOffer } from '../repositories/trade.repository.js'
 import { userRepository } from '../repositories/user.repository.js'
+import { collectionService } from './collection.service.js'
 import { buildTradeOffer, type OfferInput } from './tradeLogic.js'
 
 type TradeDetails = NonNullable<Awaited<ReturnType<typeof tradeRepository.findDetails>>>
@@ -84,14 +85,8 @@ export const tradeService = {
     async partnerCollection(userId: number, partnerId: number) {
         await assertFriends(userId, partnerId)
 
-        const rows = await collectionRepository.findByUser(partnerId)
-        return rows.map(({ card, quantity }) => ({
-            id: card.id,
-            name: card.name,
-            image: card.image,
-            rarity: card.rarity,
-            quantity,
-        }))
+        const cards = await collectionService.list(partnerId)
+        return cards.map(({ can_report: _canReport, sell_price: _sellPrice, ...card }) => card)
     },
 
     async create(userId: number, partnerId: number, input: OfferInput) {
