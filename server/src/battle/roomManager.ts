@@ -1,9 +1,8 @@
 import { randomInt, randomUUID } from 'node:crypto'
 import type { ErrorCode, ServerMessage } from '../shared/protocol.js'
 import type { Action, PlayerIndex } from '../shared/type.js'
-import { Room, type CreateRoom } from './room.js'
+import { DEFAULT_TIMINGS, Room, type CreateRoom, type Timings } from './room.js'
 
-const BOT_DELAY_MS = 1000
 const MAX_SEED = 2 ** 32
 
 const ERROR_TEXTS: Partial<Record<ErrorCode, string>> = {
@@ -17,11 +16,11 @@ type Seat = { battleId: string, room: Room, player: PlayerIndex }
 export class RoomManager {
     private seats = new Map<number, Seat>()
     private send: (userId: number, message: ServerMessage) => void
-    private botDelayMs: number
+    private timings: Timings
 
-    constructor(send: (userId: number, message: ServerMessage) => void, botDelayMs = BOT_DELAY_MS) {
+    constructor(send: (userId: number, message: ServerMessage) => void, timings = DEFAULT_TIMINGS) {
         this.send = send
-        this.botDelayMs = botDelayMs
+        this.timings = timings
     }
 
     createRoom: CreateRoom = (playerA, playerB) => {
@@ -35,7 +34,7 @@ export class RoomManager {
         const room = new Room(players, {
             id: battleId,
             seed: randomInt(MAX_SEED),
-            botDelayMs: this.botDelayMs,
+            timings: this.timings,
             send: this.send,
             onEnd: () => humans.forEach(userId => this.seats.delete(userId))
 
@@ -73,13 +72,15 @@ export class RoomManager {
     connect(userId: number) {
         const seat = this.seats.get(userId)
         if (!seat) return
-        seat.room.sendState(seat.player)
+        seat.room.connect(seat.player)
         this.notifyOpponent(seat, true)
     }
 
     disconnect(userId: number) {
         const seat = this.seats.get(userId)
-        if (seat) this.notifyOpponent(seat, false)
+        if (!seat) return
+        seat.room.disconnect(seat.player)
+        this.notifyOpponent(seat, false)
     }
 
     private notifyOpponent(seat: Seat, connected: boolean) {
