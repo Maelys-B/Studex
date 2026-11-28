@@ -23,6 +23,10 @@ model User {
   receivedFriendRequests Friendship[] @relation("FriendshipAddressee")
   reportsMade            Report[]     @relation("ReportReporter")
   reportsReceived        Report[]     @relation("ReportReportedUser")
+  initiatedTrades        Trade[]      @relation("TradeInitiator")
+  receivedTrades         Trade[]      @relation("TradePartner")
+  tradesToAnswer         Trade[]      @relation("TradeTurnUser")
+  givenTradeItems        TradeItem[]  @relation("TradeItemGiver")
 
   @@map("users")
 }
@@ -41,12 +45,13 @@ model Card {
   created_by          Int?       @unique(map: "created_by")
   avatar              Json?
   status              CardStatus @default(approved)
-  talent              Talent ?
+  talent              Talent?
 
-  creator User?        @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cards_user")
-  attacks CardAttack[]
-  owners  UserCard[]
-  reports Report[]
+  creator    User?        @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_cards_user")
+  attacks    CardAttack[]
+  owners     UserCard[]
+  reports    Report[]
+  tradeItems TradeItem[]
 
   @@map("cards")
 }
@@ -129,6 +134,45 @@ model Report {
   @@map("reports")
 }
 
+model Trade {
+  id              Int         @id @default(autoincrement())
+  initiator_id    Int
+  partner_id      Int
+  turn_user_id    Int
+  initiator_coins Int         @default(0)
+  partner_coins   Int         @default(0)
+  status          TradeStatus @default(pending)
+  created_at      DateTime    @default(now()) @db.Timestamp(0)
+  updated_at      DateTime    @updatedAt @db.Timestamp(0)
+
+  initiator User        @relation("TradeInitiator", fields: [initiator_id], references: [id], onDelete: Cascade)
+  partner   User        @relation("TradePartner", fields: [partner_id], references: [id], onDelete: Cascade)
+  turnUser  User        @relation("TradeTurnUser", fields: [turn_user_id], references: [id], onDelete: Cascade)
+  items     TradeItem[]
+
+  @@index([initiator_id])
+  @@index([partner_id])
+  @@index([turn_user_id])
+  @@map("trades")
+}
+
+model TradeItem {
+  id       Int @id @default(autoincrement())
+  trade_id Int
+  giver_id Int
+  card_id  Int
+  quantity Int @default(1)
+
+  trade Trade @relation(fields: [trade_id], references: [id], onDelete: Cascade)
+  giver User  @relation("TradeItemGiver", fields: [giver_id], references: [id], onDelete: Cascade)
+  card  Card  @relation(fields: [card_id], references: [id], onDelete: Cascade)
+
+  @@unique([trade_id, giver_id, card_id])
+  @@index([giver_id])
+  @@index([card_id])
+  @@map("trade_items")
+}
+
 enum Role {
   user
   admin
@@ -177,4 +221,11 @@ enum Talent {
   striker
   guardian
   energizer
+}
+
+enum TradeStatus {
+  pending
+  accepted
+  declined
+  cancelled
 }

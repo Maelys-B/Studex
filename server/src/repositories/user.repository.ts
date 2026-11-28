@@ -69,7 +69,15 @@ export const userRepository = {
         return prisma.user.update({ where: { id }, data: { password }, select: { id: true } })
     },
 
+    findCoins(db: Db, id: number) {
+        return db.user.findUnique({ where: { id }, select: { coins: true } })
+    },
+
     addCoins(db: Db, id: number, amount: number) {
         return db.user.update({ where: { id }, data: { coins: { increment: amount } }, select: { coins: true } })
+    },
+
+    removeCoins(db: Db, id: number, amount: number) {
+        return db.user.updateMany({ where: { id, coins: { gte: amount } }, data: { coins: { decrement: amount } } })
     },
 }
