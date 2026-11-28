@@ -5,7 +5,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "tsx --test src/battle/engine.test.ts src/battle/roomManager.test.ts src/realtime/parseMessage.test.ts src/realtime/socketServer.test.ts",
+    "test": "tsx --test src/battle/engine.test.ts src/battle/roomManager.test.ts src/battle/setup.test.ts src/realtime/parseMessage.test.ts src/realtime/socketServer.test.ts",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "postdb:migrate": "prisma generate",

@@ -79,4 +79,15 @@ export const cardRepository = {
     updatePlayerCardStatus(id: number, status: 'approved' | 'rejected') {
         return prisma.card.updateMany({ where: { id, created_by: { not: null } }, data: { status } })
     },
+
+    findOwnedBattleCards(userId: number) {
+        return prisma.card.findMany({
+            where: { type: 'battle', status: 'approved', owners: { some: { user_id: userId }}},
+            include: { attacks: orderedAttacks }
+        })
+    },
+
+    findBattleCards() {
+        return prisma.card.findMany({ where: { type: 'battle', status: 'approved' }, include: { attacks: orderedAttacks }})
+    },
 }

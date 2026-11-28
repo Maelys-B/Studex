@@ -22,6 +22,8 @@ export type ErrorCode =
     | 'UNKNOWN_BATTLE'
     | 'STALE_ACTION'
     | 'ILLEGAL_ACTION'
+    | 'NOT_READY'
+    | 'SERVER_ERROR'
 
 export type BattleSnapshot = {
     battleId: string,

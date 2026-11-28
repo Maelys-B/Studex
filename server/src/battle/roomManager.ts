@@ -2,6 +2,7 @@ import { randomInt, randomUUID } from 'node:crypto'
 import type { ErrorCode, ServerMessage } from '../shared/protocol.js'
 import type { Action, PlayerIndex } from '../shared/type.js'
 import { DEFAULT_TIMINGS, Room, type CreateRoom, type Timings } from './room.js'
+import { BattleError } from '../errors/BattleError.js'
 
 const MAX_SEED = 2 ** 32
 
@@ -27,7 +28,7 @@ export class RoomManager {
         const players: [typeof playerA, typeof playerB] = [playerA, playerB]
         const humans = players.filter(p => p.kind === 'human').map(p => p.setup.userId)
 
-        if (humans.some(userId => this.isBusy(userId))) throw new Error('Joueur déjà en combat')
+        if (humans.some(userId => this.isBusy(userId))) throw new BattleError('ALREADY_BUSY', 'Tu es déjà en combat')
         if (playerA.setup.userId === playerB.setup.userId) throw new Error('Un joueur ne peut pas se combattre')
 
         const battleId = randomUUID()

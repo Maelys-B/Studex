@@ -14,6 +14,7 @@ import { readToken } from './lib/token.js'
 import { Connections } from './realtime/connection.js'
 import { startSocketServer } from './realtime/socketServer.js'
 import { RoomManager } from './battle/roomManager.js'
+import { createMessageHandler } from './realtime/messageHandler.js'
 
 const app = express()
 
@@ -47,16 +48,7 @@ const rooms = new RoomManager((userId, message) => connections.send(userId, mess
 startSocketServer(server, connections, {
     readToken,
     onConnect: userId => rooms.connect(userId),
-    onMessage: (userId, message) => {
-        switch (message.type) {
-            case 'ACTION':
-                rooms.play(userId, message.battleId, message.seq, message.action)
-                break
-            case 'FORFEIT':
-                rooms.forfeit(userId, message.battleId)
-                break
-        }
-    },
+    onMessage: createMessageHandler(rooms, (userId, message) => connections.send(userId, message)),
     onDisconnect: userId => rooms.disconnect(userId)
 })
 
